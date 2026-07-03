@@ -2,6 +2,7 @@ const Report = require("../models/reportModel");
 const User = require("../models/userModel");
 const ReportHistory = require("../models/reportHistoryModel");
 const cloudinary = require("../config/cloudinary");
+const { createNotification } = require("./notificationController");
 
 const VALID_STATUSES = ["pending", "verified", "in_progress", "resolved", "rejected"];
 
@@ -87,6 +88,8 @@ const createReport = async (req, res) => {
     });
 
     await logHistory(report._id, "created", req.user._id, { title: report.title });
+
+    createNotification(req.user._id, 'Report Created', `Your report "${report.title}" has been submitted successfully.`, 'report_update', report._id);
 
     res.status(201).json({
       success: true,
@@ -263,6 +266,8 @@ const updateReportStatus = async (req, res) => {
       to: status,
     });
 
+    createNotification(report.reportedBy, 'Status Updated', `Your report "${report.title}" status changed to ${status.replace('_', ' ')}.`, 'status_change', report._id);
+
     res.status(200).json({
       success: true,
       message: "Report status updated successfully",
@@ -279,33 +284,38 @@ const updateReportStatus = async (req, res) => {
 
 const getNearbyReports = async (req, res) => {
   try {
-    const { longitude, latitude, distance = 5000 } = req.query;
+    const { longitude, latitude, distance = 5000, limit } = req.query;
 
+    let query = {};
     if (
-      longitude === undefined ||
-      longitude === null ||
-      latitude === undefined ||
-      latitude === null
+      longitude !== undefined &&
+      longitude !== null &&
+      latitude !== undefined &&
+      latitude !== null
     ) {
-      return res.status(400).json({
-        success: false,
-        message: "Longitude and latitude are required",
-      });
+      query = {
+        location: {
+          $near: {
+            $geometry: {
+              type: "Point",
+              coordinates: [Number(longitude), Number(latitude)],
+            },
+            $maxDistance: Number(distance),
+          },
+        },
+      };
     }
 
-    const reports = await Report.find({
-      location: {
-        $near: {
-          $geometry: {
-            type: "Point",
-            coordinates: [Number(longitude), Number(latitude)],
-          },
-          $maxDistance: Number(distance),
-        },
-      },
-    })
+    let reportsQuery = Report.find(query)
+      .sort({ createdAt: -1 })
       .populate("reportedBy", "fullName email profilePicture")
       .populate("assignedWorker", "fullName email");
+
+    if (limit) {
+      reportsQuery = reportsQuery.limit(Number(limit));
+    }
+
+    const reports = await reportsQuery;
 
     res.status(200).json({
       success: true,
@@ -364,6 +374,22 @@ const updateReport = async (req, res) => {
         report[field] = req.body[field];
       }
     });
+
+    if (
+      req.body.longitude !== undefined &&
+      req.body.latitude !== undefined
+    ) {
+      const newCoords = [Number(req.body.longitude), Number(req.body.latitude)];
+      const oldCoords = report.location?.coordinates || [];
+      if (newCoords[0] !== oldCoords[0] || newCoords[1] !== oldCoords[1]) {
+        changes.location = { from: oldCoords, to: newCoords };
+        report.location = {
+          type: "Point",
+          coordinates: newCoords,
+        };
+      }
+    }
+
     if (Object.keys(changes).length === 0) {
       return res.status(400).json({
         success: false,
@@ -476,6 +502,9 @@ const assignWorker = async (req, res) => {
       assignedTo: worker._id,
       workerName: worker.fullName,
     });
+
+    createNotification(report.reportedBy, 'Worker Assigned', `A worker has been assigned to your report "${report.title}".`, 'assignment', report._id);
+    createNotification(worker._id, 'New Assignment', `You have been assigned to report "${report.title}".`, 'assignment', report._id);
 
     res.status(200).json({
       success: true,

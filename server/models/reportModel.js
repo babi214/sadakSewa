@@ -142,6 +142,11 @@ const reportSchema = new mongoose.Schema(
       default: 0,
     },
 
+    annotatedImage: {
+      type: String,
+      default: null,
+    },
+
     aiAnalysis: {
       type: aiAnalysisSchema,
       default: null,
