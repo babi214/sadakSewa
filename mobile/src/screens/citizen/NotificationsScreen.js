@@ -175,36 +175,40 @@ export default function NotificationsScreen({ navigation }) {
 
   const renderHeader = () => (
     <View style={styles.header}>
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-        <Bell size={20} color={COLORS.secondary} />
-      </TouchableOpacity>
-      <View style={styles.headerCenter}>
-        <Text style={styles.headerTitle}>Notifications</Text>
-        {unreadCount > 0 && (
-          <View style={styles.badge}>
-            <Text style={styles.badgeText}>{unreadCount}</Text>
-          </View>
-        )}
+      <View style={styles.headerRow}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
+          <Bell size={20} color={COLORS.secondary} />
+        </TouchableOpacity>
+        <View style={styles.headerCenter}>
+          <Text style={styles.headerTitle} numberOfLines={1}>Notifications</Text>
+          {unreadCount > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{unreadCount}</Text>
+            </View>
+          )}
+        </View>
       </View>
-      <View style={styles.actionRow}>
-        {unreadCount > 0 && (
-          <TouchableOpacity onPress={handleMarkAllRead} style={styles.markAllBtn}>
-            <CheckCheck size={14} color={COLORS.primary} />
-            <Text style={styles.markAllText}>Mark All Read</Text>
-          </TouchableOpacity>
-        )}
-        {notifications.length > 0 && (
-          <TouchableOpacity onPress={() => {
-            Alert.alert('Delete All Notifications', 'This cannot be undone.', [
-              { text: 'Cancel', style: 'cancel' },
-              { text: 'Delete All', style: 'destructive', onPress: handleDeleteAll },
-            ])
-          }} style={styles.markAllBtn}>
-            <Trash2 size={14} color={COLORS.danger} />
-            <Text style={[styles.markAllText, { color: COLORS.danger }]}>Delete All</Text>
-          </TouchableOpacity>
-        )}
-      </View>
+      {(unreadCount > 0 || notifications.length > 0) && (
+        <View style={styles.actionRow}>
+          {unreadCount > 0 && (
+            <TouchableOpacity onPress={handleMarkAllRead} style={styles.markAllBtn}>
+              <CheckCheck size={14} color={COLORS.primary} />
+              <Text style={styles.markAllText}>Mark All Read</Text>
+            </TouchableOpacity>
+          )}
+          {notifications.length > 0 && (
+            <TouchableOpacity onPress={() => {
+              Alert.alert('Delete All Notifications', 'This cannot be undone.', [
+                { text: 'Cancel', style: 'cancel' },
+                { text: 'Delete All', style: 'destructive', onPress: handleDeleteAll },
+              ])
+            }} style={styles.markAllBtn}>
+              <Trash2 size={14} color={COLORS.danger} />
+              <Text style={[styles.markAllText, { color: COLORS.danger }]}>Delete All</Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      )}
     </View>
   )
 
@@ -261,10 +265,13 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   header: {
+    paddingHorizontal: 20,
+    paddingTop: 16,
+    paddingBottom: 8,
+  },
+  headerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
   },
   backBtn: {
     width: 40,
@@ -305,7 +312,8 @@ const styles = StyleSheet.create({
   actionRow: {
     flexDirection: 'row',
     gap: 8,
-    marginLeft: 12,
+    marginTop: 10,
+    marginLeft: 52,
   },
   markAllBtn: {
     flexDirection: 'row',
