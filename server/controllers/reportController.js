@@ -72,6 +72,13 @@ const createReport = async (req, res) => {
       });
     }
 
+    if (!images || !Array.isArray(images) || images.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "At least one photo is required to submit a report",
+      });
+    }
+
     const report = await Report.create({
       title,
       description,
@@ -392,13 +399,17 @@ const updateReport = async (req, res) => {
         message: "Report not found",
       });
     }
-    if (
-      report.reportedBy.toString() !== req.user._id.toString() &&
-      req.user.role !== "admin"
-    ) {
+    if (report.reportedBy.toString() !== req.user._id.toString()) {
       return res.status(403).json({
         success: false,
         message: "Not authorized",
+      });
+    }
+
+    if (report.status !== "pending") {
+      return res.status(400).json({
+        success: false,
+        message: "Only pending reports can be edited",
       });
     }
 
@@ -499,8 +510,6 @@ const toggleUpvote = async (req, res) => {
     }
     const added = report.toggleUpvote(req.user._id);
     await report.save();
-
-    await logHistory(report._id, added ? "upvoted" : "removed_upvote", req.user._id);
 
     res.status(200).json({
       success: true,
