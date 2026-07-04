@@ -595,7 +595,7 @@ const styles = StyleSheet.create({
   pickerPlaceholder: { color: COLORS.muted },
   pickerModal: {
     backgroundColor: COLORS.surface, borderRadius: RADIUS.md, padding: 8,
-    marginBottom: 12, borderWidth: 1, borderColor: COLORS.border, maxHeight: 180,
+    marginBottom: 12, borderWidth: 1, borderColor: COLORS.border, maxHeight: 300,
   },
   pickerItem: { paddingVertical: 10, paddingHorizontal: 12, borderRadius: RADIUS.sm },
   pickerItemText: { fontSize: 14, color: COLORS.secondary },
