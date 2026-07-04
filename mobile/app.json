@@ -1,0 +1,65 @@
+{
+  "expo": {
+    "name": "SadakSewa",
+    "slug": "sadaksewa",
+    "version": "2.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "backgroundColor": "#F8FAFC",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "backgroundColor": "#2563EB",
+      "resizeMode": "contain"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.sadaksewa.app",
+      "config": {
+        "googleMapsApiKey": ""
+      },
+      "infoPlist": {
+        "NSCameraUsageDescription": "SadakSewa needs camera access to take photos of road issues.",
+        "NSPhotoLibraryUsageDescription": "SadakSewa needs photo library access to attach evidence to reports."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#2563EB"
+      },
+      "package": "com.sadaksewa.app",
+      "config": {
+        "googleMaps": {
+          "apiKey": ""
+        }
+      },
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "SadakSewa needs access to your photos to attach evidence to reports.",
+          "cameraPermission": "SadakSewa needs camera access to take photos of road issues."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "SadakSewa needs your location to show nearby reports.",
+          "locationAlwaysAndWhenInUsePermission": "SadakSewa needs your location to track report locations."
+        }
+      ],
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "SadakSewa needs camera access to take photos of road issues."
+        }
+      ]
+    ]
+  }
+}
