@@ -186,35 +186,32 @@ export default function NotificationsScreen({ navigation }) {
           </View>
         )}
       </View>
-      {unreadCount > 0 && (
-        <TouchableOpacity onPress={handleMarkAllRead} style={styles.markAllBtn}>
-          <CheckCheck size={16} color={COLORS.primary} />
-          <Text style={styles.markAllText}>Mark All Read</Text>
-        </TouchableOpacity>
-      )}
-      {notifications.length > 0 && (
-        <TouchableOpacity onPress={() => {
-          Alert.alert('Delete All Notifications', 'This cannot be undone.', [
-            { text: 'Cancel', style: 'cancel' },
-            { text: 'Delete All', style: 'destructive', onPress: handleDeleteAll },
-          ])
-        }} style={[styles.markAllBtn, { marginLeft: 8 }]}>
-          <Trash2 size={16} color={COLORS.danger} />
-          <Text style={[styles.markAllText, { color: COLORS.danger }]}>Delete All</Text>
-        </TouchableOpacity>
-      )}
+      <View style={styles.actionRow}>
+        {unreadCount > 0 && (
+          <TouchableOpacity onPress={handleMarkAllRead} style={styles.markAllBtn}>
+            <CheckCheck size={14} color={COLORS.primary} />
+            <Text style={styles.markAllText}>Mark All Read</Text>
+          </TouchableOpacity>
+        )}
+        {notifications.length > 0 && (
+          <TouchableOpacity onPress={() => {
+            Alert.alert('Delete All Notifications', 'This cannot be undone.', [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Delete All', style: 'destructive', onPress: handleDeleteAll },
+            ])
+          }} style={styles.markAllBtn}>
+            <Trash2 size={14} color={COLORS.danger} />
+            <Text style={[styles.markAllText, { color: COLORS.danger }]}>Delete All</Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   )
 
   if (loading) {
     return (
       <SafeAreaView style={styles.safe}>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
-            <Bell size={20} color={COLORS.secondary} />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Notifications</Text>
-        </View>
+        {renderHeader()}
         <View style={styles.listContainer}>
           <SkeletonList count={5} />
         </View>
@@ -224,11 +221,11 @@ export default function NotificationsScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safe}>
+      {renderHeader()}
       <FlatList
         data={notifications}
         keyExtractor={item => item._id}
         renderItem={renderItem}
-        ListHeaderComponent={renderHeader}
         ListEmptyComponent={
           <EmptyState
             icon={Bell}
@@ -304,6 +301,11 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '700',
     color: COLORS.white,
+  },
+  actionRow: {
+    flexDirection: 'row',
+    gap: 8,
+    marginLeft: 12,
   },
   markAllBtn: {
     flexDirection: 'row',
