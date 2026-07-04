@@ -158,6 +158,7 @@ export default function ReportRoadScreen() {
     if (!form.title.trim()) return 'Title is required'
     if (!form.description.trim()) return 'Description is required'
     if (!form.category) return 'Category is required'
+    if (images.length === 0) return 'At least one photo is required'
     if (!location?.coordinates) return 'Please pin the issue location'
     return ''
   }
@@ -206,7 +207,18 @@ export default function ReportRoadScreen() {
           <ChevronLeft size={24} color={COLORS.secondary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Report an Issue</Text>
-        <View style={styles.headerSpacer} />
+        <TouchableOpacity
+          onPress={() => {
+            setForm({ ...initialForm, municipality: user?.municipality || '' })
+            setImages([])
+            setLocation(null)
+            setAiResult(null)
+          }}
+          style={styles.clearBtn}
+          activeOpacity={0.7}
+        >
+          <X size={18} color={COLORS.muted} />
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -381,7 +393,7 @@ const styles = StyleSheet.create({
     alignItems: 'center', justifyContent: 'center',
   },
   headerTitle: { fontSize: 17, fontWeight: '800', color: COLORS.secondary },
-  headerSpacer: { width: 40 },
+  clearBtn: { width: 40, height: 40, borderRadius: 20, backgroundColor: COLORS.background, alignItems: 'center', justifyContent: 'center' },
   scroll: { flex: 1 },
   scrollContent: { padding: 16, paddingBottom: 40, gap: 14 },
   card: { padding: 16 },

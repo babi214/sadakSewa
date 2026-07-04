@@ -7,6 +7,7 @@ import ManageReportsScreen from '../screens/admin/ManageReportsScreen'
 import ManageUsersScreen from '../screens/admin/ManageUsersScreen'
 import ProfileScreen from '../screens/citizen/ProfileScreen'
 import ReportDetailsScreen from '../screens/public/ReportDetailsScreen'
+import EditReportScreen from '../screens/citizen/EditReportScreen'
 import NotificationsScreen from '../screens/citizen/NotificationsScreen'
 import SettingsScreen from '../screens/citizen/SettingsScreen'
 import ChangePasswordScreen from '../screens/citizen/ChangePasswordScreen'
@@ -20,6 +21,7 @@ function AdminDashboardStack() {
     <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
       <Stack.Screen name="AdminHomeMain" component={AdminHomeScreen} />
       <Stack.Screen name="ReportDetails" component={ReportDetailsScreen} />
+      <Stack.Screen name="EditReport" component={EditReportScreen} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
@@ -32,6 +34,7 @@ function AdminReportsStack() {
     <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
       <Stack.Screen name="ManageReportsHome" component={ManageReportsScreen} />
       <Stack.Screen name="ReportDetails" component={ReportDetailsScreen} />
+      <Stack.Screen name="EditReport" component={EditReportScreen} />
     </Stack.Navigator>
   )
 }

@@ -21,6 +21,11 @@ export const notificationService = {
     return data
   },
 
+  deleteAllNotifications: async () => {
+    const { data } = await api.delete('/notifications/all')
+    return data
+  },
+
   getUnreadCount: async () => {
     const { data } = await api.get('/notifications/unread-count')
     return data

@@ -18,6 +18,7 @@ import SkeletonBlock, { SkeletonCard } from '../../components/SkeletonLoader'
 import FloatingActionButton from '../../components/FloatingActionButton'
 import AnimatedPressable from '../../components/AnimatedPressable'
 import { reportService } from '../../services/reportService'
+import { notificationService } from '../../services/notificationService'
 import { AuthContext } from '../../context/AuthContext'
 import { COLORS, GRADIENTS, RADIUS, SPACING, SHADOWS, STATUS_COLORS } from '../../constants'
 
@@ -30,7 +31,7 @@ const NEARBY_CARD_W = SCREEN_WIDTH * 0.52
 
 const QUICK_ACTIONS = [
   { id: 'report', label: 'Quick Report', icon: Camera, gradient: GRADIENTS.primary, screen: 'Report' },
-  { id: 'ai', label: 'AI Analysis', icon: Shield, gradient: GRADIENTS.accent, screen: 'Report' },
+  { id: 'ai', label: 'AI Analysis', icon: Shield, gradient: GRADIENTS.accent, screen: 'Analyze' },
   { id: 'list', label: 'My Reports', icon: FileText, gradient: GRADIENTS.dark, screen: 'My Reports' },
   { id: 'map', label: 'Map View', icon: MapPin, gradient: GRADIENTS.warning, screen: 'Map' },
 ]
@@ -84,7 +85,7 @@ function QuickActionCard({ item, onPress }) {
 
 function NearbyReportCard({ item, onPress }) {
   const thumbnail = item.images?.length > 0
-    ? (typeof item.images[0] === 'string' ? { uri: item.images[0] } : item.images[0])
+    ? { uri: item.images[0]?.url || (typeof item.images[0] === 'string' ? item.images[0] : item.images[0]?.url) }
     : null
   const distText = item.distance
     ? `${(item.distance / 1000).toFixed(1)} km`
@@ -185,6 +186,7 @@ export default function HomeScreen() {
   const [nearbyReports, setNearbyReports] = useState([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
 
   const getLocation = useCallback(async () => {
     try {
@@ -201,13 +203,16 @@ export default function HomeScreen() {
     try {
       const coords = await getLocation()
 
-      const [dashRes, nearbyRes, reportsRes] = await Promise.all([
+      const [dashRes, nearbyRes, reportsRes, notifRes] = await Promise.all([
         reportService.getMyDashboard().catch(() => ({})),
         reportService.getNearbyReports({ limit: 10, ...(coords || {}) }).catch(() => ({ reports: [] })),
         reportService.getMyReports({ limit: 5 }).catch(() => ({ reports: [] })),
+        notificationService.getUnreadCount().catch(() => ({ unreadCount: 0 })),
       ])
 
       if (!mountedRef.current) return
+
+      setUnreadCount(notifRes?.unreadCount ?? 0)
 
       const d = dashRes?.dashboard || dashRes?.data || dashRes || {}
       setStats({
@@ -264,7 +269,7 @@ export default function HomeScreen() {
             <View style={styles.headerActions}>
               <TouchableOpacity style={styles.headerBtn} onPress={() => navigateTo('Notifications')} activeOpacity={0.7}>
                 <Bell size={20} color="#FFF" />
-                <View style={styles.badgeDot} />
+                {unreadCount > 0 && <View style={styles.badgeDot} />}
               </TouchableOpacity>
               <TouchableOpacity style={styles.headerBtn} onPress={() => navigateTo('Settings')} activeOpacity={0.7}>
                 <Settings size={20} color="#FFF" />
@@ -393,7 +398,7 @@ export default function HomeScreen() {
                     <View style={styles.recentRow}>
                       {item.images?.length > 0 && (
                         <Image
-                          source={typeof item.images[0] === 'string' ? { uri: item.images[0] } : item.images[0]}
+                          source={{ uri: item.images[0]?.url || (typeof item.images[0] === 'string' ? item.images[0] : '') }}
                           style={styles.recentThumb}
                         />
                       )}

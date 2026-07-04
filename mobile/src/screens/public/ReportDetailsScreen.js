@@ -24,8 +24,6 @@ const actionIcons = {
   updated: Edit3,
   assigned: User,
   status_changed: Activity,
-  upvoted: ArrowUp,
-  removed_upvote: X,
   deleted: Trash2,
 }
 
@@ -34,8 +32,6 @@ const actionColors = {
   updated: COLORS.warning,
   assigned: '#8B5CF6',
   status_changed: COLORS.accent,
-  upvoted: COLORS.danger,
-  removed_upvote: COLORS.muted,
   deleted: COLORS.danger,
 }
 
@@ -253,7 +249,7 @@ export default function ReportDetailsScreen({ route, navigation }) {
     })
   }
 
-  const canEdit = user && (user._id === report?.reportedBy?._id || user._id === report?.reportedBy || user.role === 'admin')
+  const canEdit = user && (user._id === report?.reportedBy?._id || user._id === report?.reportedBy) && report?.status === 'pending'
   const isAdmin = user?.role === 'admin'
   const statusOptions = isAdmin
     ? (report?.status === 'pending' ? ['verified', 'rejected'] : [])

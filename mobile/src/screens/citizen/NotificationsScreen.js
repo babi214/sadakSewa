@@ -1,10 +1,9 @@
 import React, { useState, useCallback } from 'react'
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, RefreshControl, Alert } from 'react-native'
-import { Bell, AlertTriangle, ArrowRight, Activity, Clock, CheckCheck } from 'lucide-react-native'
+import { Bell, AlertTriangle, ArrowRight, Activity, Clock, CheckCheck, Trash2 } from 'lucide-react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { useFocusEffect } from '@react-navigation/native'
 import { notificationService } from '../../services/notificationService'
-import GlassCard from '../../components/GlassCard'
 import { SkeletonList } from '../../components/SkeletonLoader'
 import EmptyState from '../../components/EmptyState'
 import { COLORS, RADIUS, SHADOWS, SPACING } from '../../constants'
@@ -31,15 +30,18 @@ const iconColorMap = {
 }
 
 function timeAgo(dateString) {
-  const now = Date.now()
-  const date = new Date(dateString).getTime()
-  const diff = Math.floor((now - date) / 1000)
-  if (diff < 60) return 'Just now'
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
-  if (diff < 2592000) return `${Math.floor(diff / 86400)}d ago`
-  const d = new Date(dateString)
-  return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+  try {
+    const now = Date.now()
+    const date = new Date(dateString).getTime()
+    if (isNaN(date)) return ''
+    const diff = Math.floor((now - date) / 1000)
+    if (diff < 60) return 'Just now'
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
+    if (diff < 2592000) return `${Math.floor(diff / 86400)}d ago`
+    const d = new Date(dateString)
+    return d.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })
+  } catch { return '' }
 }
 
 export default function NotificationsScreen({ navigation }) {
@@ -53,7 +55,7 @@ export default function NotificationsScreen({ navigation }) {
       const res = await notificationService.getNotifications()
       const list = res?.notifications || res?.data || []
       setNotifications(list)
-      setUnreadCount(res?.unreadCount || list.filter(n => !n.read).length)
+      setUnreadCount(res?.unreadCount ?? list.filter(n => !(n.isRead ?? n.read)).length)
     } catch {
       // silent
     } finally {
@@ -76,7 +78,7 @@ export default function NotificationsScreen({ navigation }) {
     try {
       await notificationService.markAsRead(id)
       setNotifications(prev =>
-        prev.map(n => n._id === id ? { ...n, read: true } : n)
+        prev.map(n => n._id === id ? { ...n, isRead: true } : n)
       )
       setUnreadCount(prev => Math.max(0, prev - 1))
     } catch {}
@@ -85,7 +87,15 @@ export default function NotificationsScreen({ navigation }) {
   const handleMarkAllRead = async () => {
     try {
       await notificationService.markAllAsRead()
-      setNotifications(prev => prev.map(n => ({ ...n, read: true })))
+      setNotifications(prev => prev.map(n => ({ ...n, isRead: true })))
+      setUnreadCount(0)
+    } catch {}
+  }
+
+  const handleDeleteAll = async () => {
+    try {
+      await notificationService.deleteAllNotifications()
+      setNotifications([])
       setUnreadCount(0)
     } catch {}
   }
@@ -99,7 +109,8 @@ export default function NotificationsScreen({ navigation }) {
           try {
             await notificationService.deleteNotification(id)
             setNotifications(prev => prev.filter(n => n._id !== id))
-            const wasUnread = notifications.find(n => n._id === id)?.read === false
+            const n = notifications.find(n => n._id === id)
+            const wasUnread = !(n?.isRead ?? n?.read)
             if (wasUnread) setUnreadCount(prev => Math.max(0, prev - 1))
           } catch {}
         },
@@ -108,20 +119,29 @@ export default function NotificationsScreen({ navigation }) {
   }
 
   const handlePress = (item) => {
-    if (!item.read) handleMarkAsRead(item._id)
-    if (item.data?.reportId) {
-      navigation.navigate('ReportDetails', { reportId: item.data.reportId })
+    if (!(item.isRead ?? item.read)) handleMarkAsRead(item._id)
+    const reportId = item.report || item.data?.reportId
+    if (reportId) {
+      navigation.navigate('ReportDetails', { reportId })
     }
   }
 
   const renderItem = ({ item, index }) => {
-    const type = item.type || 'bell'
+    const d = item.data || item
+    const type = d.type || item.type || 'bell'
+    const isUnread = !(item.isRead ?? item.read)
     const Icon = iconMap[type] || Bell
     const bg = iconBgMap[type] || iconBgMap.bell
     const color = iconColorMap[type] || iconColorMap.bell
 
     return (
-      <GlassCard index={index} style={[styles.notifCard, !item.read && styles.notifUnread]}>
+      <View style={[{
+        marginBottom: 10,
+        borderRadius: 20,
+        backgroundColor: 'rgba(255,255,255,0.85)',
+        borderWidth: 1,
+        borderColor: isUnread ? 'rgba(37,99,235,0.15)' : 'rgba(255,255,255,0.5)',
+      }, isUnread && { backgroundColor: 'rgba(37,99,235,0.04)' }]}>
         <TouchableOpacity
           onPress={() => handlePress(item)}
           onLongPress={() => handleDelete(item._id)}
@@ -134,22 +154,22 @@ export default function NotificationsScreen({ navigation }) {
             </View>
             <View style={styles.notifContent}>
               <View style={styles.notifHeader}>
-                <Text style={[styles.notifTitle, !item.read && styles.notifTitleBold]} numberOfLines={1}>
-                  {item.title || 'Notification'}
+                <Text style={[styles.notifTitle, isUnread && styles.notifTitleBold]} numberOfLines={1}>
+                  {d.title || item.title || item.data?.title || item.body || type || 'Notification'}
                 </Text>
-                {!item.read && <View style={styles.unreadDot} />}
+                {isUnread && <View style={styles.unreadDot} />}
               </View>
               <Text style={styles.notifMessage} numberOfLines={2}>
-                {item.message || item.body || ''}
+                {d.message || item.message || item.data?.message || item.body || ''}
               </Text>
               <View style={styles.notifFooter}>
                 <Clock size={12} color={COLORS.muted} />
-                <Text style={styles.notifTime}>{timeAgo(item.createdAt)}</Text>
+                <Text style={styles.notifTime}>{timeAgo(d.createdAt || item.createdAt)}</Text>
               </View>
             </View>
           </View>
         </TouchableOpacity>
-      </GlassCard>
+      </View>
     )
   }
 
@@ -170,6 +190,17 @@ export default function NotificationsScreen({ navigation }) {
         <TouchableOpacity onPress={handleMarkAllRead} style={styles.markAllBtn}>
           <CheckCheck size={16} color={COLORS.primary} />
           <Text style={styles.markAllText}>Mark All Read</Text>
+        </TouchableOpacity>
+      )}
+      {notifications.length > 0 && (
+        <TouchableOpacity onPress={() => {
+          Alert.alert('Delete All Notifications', 'This cannot be undone.', [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Delete All', style: 'destructive', onPress: handleDeleteAll },
+          ])
+        }} style={[styles.markAllBtn, { marginLeft: 8 }]}>
+          <Trash2 size={16} color={COLORS.danger} />
+          <Text style={[styles.markAllText, { color: COLORS.danger }]}>Delete All</Text>
         </TouchableOpacity>
       )}
     </View>
@@ -301,6 +332,7 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(37,99,235,0.15)',
   },
   notifRow: {
+    flex: 1,
     flexDirection: 'row',
     alignItems: 'flex-start',
     gap: 14,

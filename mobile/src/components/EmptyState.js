@@ -8,7 +8,7 @@ export default function EmptyState({ icon, title, description, message, actionLa
     <View style={[styles.container, style]}>
       {icon && (
         <View style={styles.iconWrap}>
-          {typeof icon === 'function' ? React.createElement(icon, { size: 36, color: COLORS.muted }) : icon}
+          {typeof icon === 'function' || icon?.render ? React.createElement(icon, { size: 36, color: COLORS.muted }) : icon}
         </View>
       )}
       {title && <Text style={styles.title}>{title}</Text>}

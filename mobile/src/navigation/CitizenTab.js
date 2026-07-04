@@ -3,11 +3,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { Home, Map, PlusSquare, FileText, User } from 'lucide-react-native'
 import HomeScreen from '../screens/citizen/HomeScreen'
+import AnalyzeScreen from '../screens/citizen/AnalyzeScreen'
 import MapScreen from '../screens/citizen/MapScreen'
 import ReportRoadScreen from '../screens/citizen/ReportRoadScreen'
 import MyReportsScreen from '../screens/citizen/MyReportsScreen'
 import ProfileScreen from '../screens/citizen/ProfileScreen'
 import ReportDetailsScreen from '../screens/public/ReportDetailsScreen'
+import EditReportScreen from '../screens/citizen/EditReportScreen'
 import NotificationsScreen from '../screens/citizen/NotificationsScreen'
 import SettingsScreen from '../screens/citizen/SettingsScreen'
 import ChangePasswordScreen from '../screens/citizen/ChangePasswordScreen'
@@ -20,7 +22,9 @@ function HomeStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
       <Stack.Screen name="HomeMain" component={HomeScreen} />
+      <Stack.Screen name="Analyze" component={AnalyzeScreen} />
       <Stack.Screen name="ReportDetails" component={ReportDetailsScreen} />
+      <Stack.Screen name="EditReport" component={EditReportScreen} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="Settings" component={SettingsScreen} />
       <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
@@ -50,6 +54,7 @@ function MyReportsStack() {
     <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
       <Stack.Screen name="MyReportsMain" component={MyReportsScreen} />
       <Stack.Screen name="ReportDetails" component={ReportDetailsScreen} />
+      <Stack.Screen name="EditReport" component={EditReportScreen} />
     </Stack.Navigator>
   )
 }
