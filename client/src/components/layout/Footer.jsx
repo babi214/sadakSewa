@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { Mail, MapPin, Phone } from 'lucide-react'
+import { useAuth } from '../../hooks/useAuth'
 
 const footerLinks = {
   platform: [
@@ -8,14 +9,16 @@ const footerLinks = {
     { to: '/contact', label: 'Contact' },
   ],
   citizen: [
-    { to: '/register', label: 'Register' },
-    { to: '/login', label: 'Login' },
     { to: '/citizen/reports/new', label: 'Report an Issue' },
   ],
 }
 
 export default function Footer() {
+  const { isAuthenticated } = useAuth()
   const currentYear = new Date().getFullYear()
+  const citizenLinks = isAuthenticated
+    ? footerLinks.citizen
+    : [{ to: '/register', label: 'Register' }, { to: '/login', label: 'Login' }, ...footerLinks.citizen]
 
   return (
     <footer className="border-t border-border bg-secondary text-white">
@@ -60,7 +63,7 @@ export default function Footer() {
               Get Involved
             </h3>
             <ul className="mt-4 space-y-2.5">
-              {footerLinks.citizen.map((link) => (
+              {citizenLinks.map((link) => (
                 <li key={link.to}>
                   <Link
                     to={link.to}

@@ -11,6 +11,7 @@ import {
   Zap,
 } from 'lucide-react'
 import Button from '../../components/common/Button'
+import { useAuth } from '../../hooks/useAuth'
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -65,8 +66,7 @@ const features = [
 const stats = [
   { value: '2,500+', label: 'Reports Submitted' },
   { value: '85%', label: 'Resolution Rate' },
-  { value: '12', label: 'Municipalities' },
-  { value: '48hrs', label: 'Avg. Response Time' },
+  { value: '4hrs', label: 'Avg. Response Time' },
 ]
 
 const steps = [
@@ -76,6 +76,8 @@ const steps = [
 ]
 
 export default function Home() {
+  const { isAuthenticated } = useAuth()
+
   return (
     <div className="overflow-hidden">
       {/* Hero Section */}
@@ -176,7 +178,7 @@ export default function Home() {
       {/* Stats Section */}
       <section className="border-y border-border bg-white">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-8 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
             {stats.map((stat, index) => (
               <motion.div
                 key={stat.label}
@@ -265,8 +267,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 sm:py-28">
+      {!isAuthenticated && (
+        {/* CTA Section */}
+        <section className="py-20 sm:py-28">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
@@ -307,7 +310,8 @@ export default function Home() {
             </div>
           </motion.div>
         </div>
-      </section>
+        </section>
+      )}
     </div>
   )
 }
