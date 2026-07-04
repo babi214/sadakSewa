@@ -16,6 +16,7 @@ const {
   getWorkerDashboard,
   getAdminDashboard,
   getReportHistory,
+  getPublicStats,
 } = require("../controllers/reportController");
 const {
   protect,
@@ -25,6 +26,7 @@ const {
 
 
 router.get("/", getAllReports);
+router.get("/stats", getPublicStats);
 router.get("/nearby", getNearbyReports);
 router.get("/my-reports", protect, getMyReports);
 router.get("/my-assigned", protect, workerOnly, getAssignedReports);

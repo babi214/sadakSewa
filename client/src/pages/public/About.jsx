@@ -39,10 +39,9 @@ const values = [
   },
 ]
 
-const milestones = [
-  { year: '2024', event: 'SadakSewa concept developed as a Final Year Project' },
-  { year: '2025', event: 'Platform launched with citizen reporting and worker assignment' },
-  { year: '2026', event: 'Expanding to multiple municipalities across Nepal' },
+const team = [
+  { name: 'Bimal Bhandari', role: 'Developer' },
+  { name: 'Krishna Prasad Lamichhane', role: 'Developer' },
 ]
 
 export default function About() {
@@ -128,27 +127,28 @@ export default function About() {
         </div>
       </section>
 
-      {/* Timeline */}
+      {/* Project Info */}
       <section className="border-y border-border bg-white py-20">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-          <h2 className="text-center text-3xl font-bold text-secondary">Our Journey</h2>
-          <div className="mt-12 space-y-8">
-            {milestones.map((milestone, index) => (
+          <h2 className="text-center text-3xl font-bold text-secondary">About This Project</h2>
+          <p className="mx-auto mt-4 max-w-xl text-center text-muted">
+            SadakSewa is a BCA 8th Semester Final Year Project developed as a civic issue
+            reporting platform to bridge the gap between citizens and municipal services.
+          </p>
+          <div className="mt-12 grid gap-6 sm:grid-cols-2">
+            {team.map((member) => (
               <motion.div
-                key={milestone.year}
+                key={member.name}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="flex gap-6"
+                className="rounded-2xl border border-border bg-background p-6 text-center"
               >
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-primary text-sm font-bold text-white">
-                  {milestone.year.slice(2)}
+                <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+                  <Users className="h-6 w-6" />
                 </div>
-                <div>
-                  <p className="font-semibold text-secondary">{milestone.year}</p>
-                  <p className="mt-1 text-muted">{milestone.event}</p>
-                </div>
+                <h3 className="mt-4 text-lg font-semibold text-secondary">{member.name}</h3>
+                <p className="mt-1 text-sm text-muted">{member.role}</p>
               </motion.div>
             ))}
           </div>

@@ -754,6 +754,58 @@ const getReportHistory = async (req, res) => {
   }
 };
 
+const getPublicStats = async (req, res) => {
+  try {
+    const [totalReports, pending, verified, inProgress, resolved, rejected] =
+      await Promise.all([
+        Report.countDocuments(),
+        Report.countDocuments({ status: "pending" }),
+        Report.countDocuments({ status: "verified" }),
+        Report.countDocuments({ status: "in_progress" }),
+        Report.countDocuments({ status: "resolved" }),
+        Report.countDocuments({ status: "rejected" }),
+      ]);
+
+    let avgResponseTime = null;
+    if (resolved > 0) {
+      const resolvedReports = await Report.find(
+        { status: "resolved", resolvedAt: { $ne: null } },
+        { createdAt: 1, resolvedAt: 1 }
+      );
+      const totalHours = resolvedReports.reduce((sum, r) => {
+        const diff = new Date(r.resolvedAt) - new Date(r.createdAt);
+        return sum + diff / (1000 * 60 * 60);
+      }, 0);
+      avgResponseTime = Math.round((totalHours / resolvedReports.length) * 10) / 10;
+    }
+
+    const resolutionRate =
+      totalReports > 0
+        ? Math.round((resolved / totalReports) * 1000) / 10
+        : 0;
+
+    res.status(200).json({
+      success: true,
+      stats: {
+        totalReports,
+        pending,
+        verified,
+        inProgress,
+        resolved,
+        rejected,
+        resolutionRate,
+        avgResponseTime,
+      },
+    });
+  } catch (error) {
+    const isDev = process.env.NODE_ENV === "development";
+    res.status(500).json({
+      success: false,
+      message: isDev ? error.message : "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   createReport,
   getAllReports,
@@ -770,4 +822,5 @@ module.exports = {
   getWorkerDashboard,
   getAdminDashboard,
   getReportHistory,
+  getPublicStats,
 };

@@ -84,15 +84,15 @@ export default function Footer() {
             <ul className="mt-4 space-y-3">
               <li className="flex items-start gap-2.5 text-sm text-slate-400">
                 <Mail className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                support@sadaksewa.gov.np
+                Bimalbhandari563@gmail.com
               </li>
               <li className="flex items-start gap-2.5 text-sm text-slate-400">
                 <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                +977 1-4567890
+                +977 9816604620
               </li>
               <li className="flex items-start gap-2.5 text-sm text-slate-400">
                 <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                Kathmandu, Nepal
+                Pokhara, Nepal
               </li>
             </ul>
           </div>

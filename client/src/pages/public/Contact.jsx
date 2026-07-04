@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { Clock, Mail, MapPin, MessageSquare, Phone, Send } from 'lucide-react'
+import { Mail, MapPin, MessageSquare, Phone, Send } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
 import Card, { CardHeader } from '../../components/common/Card'
@@ -11,25 +11,19 @@ const contactInfo = [
   {
     icon: Mail,
     label: 'Email',
-    value: 'support@sadaksewa.gov.np',
-    href: 'mailto:support@sadaksewa.gov.np',
+    value: 'Bimalbhandari563@gmail.com',
+    href: 'mailto:Bimalbhandari563@gmail.com',
   },
   {
     icon: Phone,
     label: 'Phone',
-    value: '+977 1-4567890',
-    href: 'tel:+97714567890',
+    value: '+977 9816604620',
+    href: 'tel:+9779816604620',
   },
   {
     icon: MapPin,
     label: 'Address',
-    value: 'Kathmandu, Nepal',
-    href: null,
-  },
-  {
-    icon: Clock,
-    label: 'Support Hours',
-    value: 'Sun–Fri, 9:00 AM – 5:00 PM NPT',
+    value: 'Pokhara, Nepal',
     href: null,
   },
 ]

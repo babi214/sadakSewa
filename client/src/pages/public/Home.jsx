@@ -10,8 +10,10 @@ import {
   Users,
   Zap,
 } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import Button from '../../components/common/Button'
 import { useAuth } from '../../hooks/useAuth'
+import api from '../../api/axios'
 
 const fadeUp = {
   initial: { opacity: 0, y: 24 },
@@ -63,12 +65,6 @@ const features = [
   },
 ]
 
-const stats = [
-  { value: '2,500+', label: 'Reports Submitted' },
-  { value: '85%', label: 'Resolution Rate' },
-  { value: '4hrs', label: 'Avg. Response Time' },
-]
-
 const steps = [
   'Spot a road issue in your area',
   'Submit a report with photo & location',
@@ -77,6 +73,20 @@ const steps = [
 
 export default function Home() {
   const { isAuthenticated } = useAuth()
+  const [stats, setStats] = useState(null)
+
+  useEffect(() => {
+    api.get('/reports/stats').then(({ data }) => {
+      if (data.success) setStats(data.stats)
+    }).catch(() => {})
+  }, [])
+
+  const totalReports = stats?.totalReports?.toLocaleString() ?? '—'
+  const resolutionRate = stats ? `${stats.resolutionRate}%` : '—'
+  const avgTime = '3-4 hrs'
+  const openCount = stats?.pending?.toLocaleString() ?? '—'
+  const inProgressCount = stats?.inProgress?.toLocaleString() ?? '—'
+  const resolvedCount = stats?.resolved?.toLocaleString() ?? '—'
 
   return (
     <div className="overflow-hidden">
@@ -156,9 +166,9 @@ export default function Home() {
                 </div>
                 <div className="grid gap-4 p-6 sm:grid-cols-3">
                   {[
-                    { label: 'Open Reports', value: '24', color: 'text-warning' },
-                    { label: 'In Progress', value: '12', color: 'text-primary' },
-                    { label: 'Resolved', value: '156', color: 'text-accent' },
+                    { label: 'Open Reports', value: openCount, color: 'text-warning' },
+                    { label: 'In Progress', value: inProgressCount, color: 'text-primary' },
+                    { label: 'Resolved', value: resolvedCount, color: 'text-accent' },
                   ].map((stat) => (
                     <div
                       key={stat.label}
@@ -179,7 +189,11 @@ export default function Home() {
       <section className="border-y border-border bg-white">
         <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-3">
-            {stats.map((stat, index) => (
+            {[
+              { value: totalReports, label: 'Reports Submitted' },
+              { value: resolutionRate, label: 'Resolution Rate' },
+              { value: avgTime, label: 'Avg. Response Time' },
+            ].map((stat, index) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, y: 16 }}
@@ -288,11 +302,7 @@ export default function Home() {
               </p>
               <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
                 <Link to="/register">
-                  <Button
-                    size="lg"
-                    variant="secondary"
-                    className="bg-white text-primary hover:bg-white/90"
-                  >
+                  <Button size="lg" variant="secondary">
                     Create Free Account
                   </Button>
                 </Link>
