@@ -7,7 +7,8 @@ import Toast from 'react-native-toast-message'
 import { FormField, Input } from '../../components/Input'
 import Button from '../../components/Button'
 import { AuthContext } from '../../context/AuthContext'
-import { COLORS, GRADIENTS, RADIUS, SPACING, SHADOWS, NEPAL_MUNICIPALITIES } from '../../constants'
+import { COLORS, GRADIENTS, RADIUS, SPACING, SHADOWS } from '../../constants'
+import api from '../../api/axios'
 import { validateEmail, validatePassword, validateRequired, validateConfirmPassword, validatePhone, getApiErrorMessage } from '../../utils/validators'
 
 export default function RegisterScreen({ navigation }) {
@@ -18,12 +19,21 @@ export default function RegisterScreen({ navigation }) {
     password: '',
     confirmPassword: '',
     phone: '',
+    province: '',
+    district: '',
     municipality: '',
   })
   const [errors, setErrors] = useState({})
   const [showPassword, setShowPassword] = useState(false)
-  const [showPicker, setShowPicker] = useState(false)
+  const [showProvincePicker, setShowProvincePicker] = useState(false)
+  const [showDistrictPicker, setShowDistrictPicker] = useState(false)
+  const [showMunicipalityPicker, setShowMunicipalityPicker] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [provinces, setProvinces] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [municipalities, setMunicipalities] = useState([])
+  const [selectedProvinceId, setSelectedProvinceId] = useState('')
+  const [selectedDistrictId, setSelectedDistrictId] = useState('')
   const slideAnim = useRef(new Animated.Value(0)).current
 
   useEffect(() => {
@@ -33,11 +43,62 @@ export default function RegisterScreen({ navigation }) {
       tension: 40,
       friction: 8,
     }).start()
+    api.get('/locations/provinces').then(({ data }) => {
+      if (data.success) setProvinces(data.data)
+    }).catch(() => {})
   }, [])
+
+  useEffect(() => {
+    if (selectedProvinceId) {
+      api.get(`/locations/districts?provinceId=${selectedProvinceId}`).then(({ data }) => {
+        if (data.success) {
+          setDistricts(data.data)
+          setMunicipalities([])
+        }
+      }).catch(() => {})
+      setForm(prev => ({ ...prev, district: '', municipality: '' }))
+      setSelectedDistrictId('')
+    } else {
+      setDistricts([])
+      setMunicipalities([])
+      setForm(prev => ({ ...prev, district: '', municipality: '' }))
+      setSelectedDistrictId('')
+    }
+  }, [selectedProvinceId])
+
+  useEffect(() => {
+    if (selectedDistrictId) {
+      api.get(`/locations/municipalities?districtId=${selectedDistrictId}`).then(({ data }) => {
+        if (data.success) setMunicipalities(data.data)
+      }).catch(() => {})
+      setForm(prev => ({ ...prev, municipality: '' }))
+    } else {
+      setMunicipalities([])
+      setForm(prev => ({ ...prev, municipality: '' }))
+    }
+  }, [selectedDistrictId])
 
   const handleChange = (name, value) => {
     setForm(prev => ({ ...prev, [name]: value }))
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }))
+  }
+
+  const handleProvinceSelect = (item) => {
+    setSelectedProvinceId(String(item.id))
+    setForm(prev => ({ ...prev, province: item.name, district: '', municipality: '' }))
+    setSelectedDistrictId('')
+    setShowProvincePicker(false)
+  }
+
+  const handleDistrictSelect = (item) => {
+    setSelectedDistrictId(String(item.id))
+    setForm(prev => ({ ...prev, district: item.name, municipality: '' }))
+    setShowDistrictPicker(false)
+  }
+
+  const handleMunicipalitySelect = (item) => {
+    setForm(prev => ({ ...prev, municipality: item.name }))
+    setShowMunicipalityPicker(false)
   }
 
   const validate = () => {
@@ -47,6 +108,9 @@ export default function RegisterScreen({ navigation }) {
       password: validatePassword(form.password),
       confirmPassword: validateConfirmPassword(form.password, form.confirmPassword),
       phone: validatePhone(form.phone),
+      province: validateRequired(form.province, 'Province'),
+      district: validateRequired(form.district, 'District'),
+      municipality: validateRequired(form.municipality, 'Municipality'),
     }
     setErrors(e)
     return !Object.values(e).some(Boolean)
@@ -60,9 +124,11 @@ export default function RegisterScreen({ navigation }) {
         fullName: form.fullName.trim(),
         email: form.email.trim(),
         password: form.password,
+        phone: form.phone.trim(),
+        province: form.province,
+        district: form.district,
+        municipality: form.municipality,
       }
-      if (form.phone.trim()) payload.phone = form.phone.trim()
-      if (form.municipality) payload.municipality = form.municipality
       const res = await register(payload)
       if (res.success) {
         Toast.show({ type: 'success', text1: 'Check your email to verify your account' })
@@ -184,7 +250,7 @@ export default function RegisterScreen({ navigation }) {
                 </View>
               </FormField>
 
-              <FormField label="Phone" error={errors.phone} hint="Optional — include country code">
+              <FormField label="Phone" error={errors.phone} required>
                 <View style={styles.inputOuter}>
                   <Phone size={18} color={COLORS.mutedText} style={styles.leftIcon} />
                   <Input
@@ -198,49 +264,125 @@ export default function RegisterScreen({ navigation }) {
                 </View>
               </FormField>
 
-              <FormField label="Municipality" hint="Optional">
+              <FormField label="Province" error={errors.province} required>
                 <View style={styles.inputOuter}>
                   <MapPin size={18} color={COLORS.mutedText} style={styles.leftIcon} />
                   <TouchableOpacity
                     style={styles.selectBox}
-                    onPress={() => setShowPicker(!showPicker)}
+                    onPress={() => setShowProvincePicker(!showProvincePicker)}
                     activeOpacity={0.7}
                   >
-                    <Text style={[styles.selectText, !form.municipality && styles.placeholderText]}>
-                      {form.municipality || 'Select your municipality'}
+                    <Text style={[styles.selectText, !form.province && styles.placeholderText]}>
+                      {form.province || 'Select province'}
                     </Text>
                     <ChevronDown
                       size={18}
                       color={COLORS.mutedText}
-                      style={{ transform: [{ rotate: showPicker ? '180deg' : '0deg' }] }}
+                      style={{ transform: [{ rotate: showProvincePicker ? '180deg' : '0deg' }] }}
                     />
                   </TouchableOpacity>
                 </View>
-                {showPicker && (
+                {showProvincePicker && (
                   <View style={styles.pickerList}>
-                    {NEPAL_MUNICIPALITIES.map((m, i) => (
+                    {provinces.map((item, i) => (
                       <TouchableOpacity
-                        key={m}
+                        key={item.id}
                         style={[
                           styles.pickerItem,
-                          i === NEPAL_MUNICIPALITIES.length - 1 && styles.pickerItemLast,
-                          form.municipality === m && styles.pickerItemActive,
+                          i === provinces.length - 1 && styles.pickerItemLast,
+                          form.province === item.name && styles.pickerItemActive,
                         ]}
-                        onPress={() => {
-                          handleChange('municipality', m)
-                          setShowPicker(false)
-                        }}
+                        onPress={() => handleProvinceSelect(item)}
                         activeOpacity={0.6}
                       >
-                        <Text
-                          style={[
-                            styles.pickerItemText,
-                            form.municipality === m && styles.pickerItemTextActive,
-                          ]}
-                        >
-                          {m}
+                        <Text style={[styles.pickerItemText, form.province === item.name && styles.pickerItemTextActive]}>
+                          {item.name}
                         </Text>
-                        {form.municipality === m && <View style={styles.pickerCheck} />}
+                        {form.province === item.name && <View style={styles.pickerCheck} />}
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+              </FormField>
+
+              <FormField label="District" error={errors.district} required>
+                <View style={styles.inputOuter}>
+                  <MapPin size={18} color={COLORS.mutedText} style={styles.leftIcon} />
+                  <TouchableOpacity
+                    style={styles.selectBox}
+                    onPress={() => setShowDistrictPicker(!showDistrictPicker)}
+                    disabled={!selectedProvinceId}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[styles.selectText, !form.district && styles.placeholderText]}>
+                      {form.district || 'Select district'}
+                    </Text>
+                    <ChevronDown
+                      size={18}
+                      color={COLORS.mutedText}
+                      style={{ transform: [{ rotate: showDistrictPicker ? '180deg' : '0deg' }] }}
+                    />
+                  </TouchableOpacity>
+                </View>
+                {showDistrictPicker && (
+                  <View style={styles.pickerList}>
+                    {districts.map((item, i) => (
+                      <TouchableOpacity
+                        key={item.id}
+                        style={[
+                          styles.pickerItem,
+                          i === districts.length - 1 && styles.pickerItemLast,
+                          form.district === item.name && styles.pickerItemActive,
+                        ]}
+                        onPress={() => handleDistrictSelect(item)}
+                        activeOpacity={0.6}
+                      >
+                        <Text style={[styles.pickerItemText, form.district === item.name && styles.pickerItemTextActive]}>
+                          {item.name}
+                        </Text>
+                        {form.district === item.name && <View style={styles.pickerCheck} />}
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                )}
+              </FormField>
+
+              <FormField label="Municipality" error={errors.municipality} required>
+                <View style={styles.inputOuter}>
+                  <MapPin size={18} color={COLORS.mutedText} style={styles.leftIcon} />
+                  <TouchableOpacity
+                    style={styles.selectBox}
+                    onPress={() => setShowMunicipalityPicker(!showMunicipalityPicker)}
+                    disabled={!selectedDistrictId}
+                    activeOpacity={0.7}
+                  >
+                    <Text style={[styles.selectText, !form.municipality && styles.placeholderText]}>
+                      {form.municipality || 'Select municipality'}
+                    </Text>
+                    <ChevronDown
+                      size={18}
+                      color={COLORS.mutedText}
+                      style={{ transform: [{ rotate: showMunicipalityPicker ? '180deg' : '0deg' }] }}
+                    />
+                  </TouchableOpacity>
+                </View>
+                {showMunicipalityPicker && (
+                  <View style={styles.pickerList}>
+                    {municipalities.map((item, i) => (
+                      <TouchableOpacity
+                        key={item.id}
+                        style={[
+                          styles.pickerItem,
+                          i === municipalities.length - 1 && styles.pickerItemLast,
+                          form.municipality === item.name && styles.pickerItemActive,
+                        ]}
+                        onPress={() => handleMunicipalitySelect(item)}
+                        activeOpacity={0.6}
+                      >
+                        <Text style={[styles.pickerItemText, form.municipality === item.name && styles.pickerItemTextActive]}>
+                          {item.name}
+                        </Text>
+                        {form.municipality === item.name && <View style={styles.pickerCheck} />}
                       </TouchableOpacity>
                     ))}
                   </View>

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import {
   View, Text, TouchableOpacity, Image, ScrollView, StyleSheet, Alert,
   TextInput, ActivityIndicator,
@@ -16,6 +16,7 @@ import {
 import { AuthContext } from '../../context/AuthContext'
 import { aiService } from '../../services/aiService'
 import { reportService } from '../../services/reportService'
+import api from '../../api/axios'
 import LocationPicker from '../../components/LocationPicker'
 import GlassCard from '../../components/GlassCard'
 import {
@@ -29,6 +30,8 @@ const initialForm = {
   description: '',
   category: '',
   severity: 'medium',
+  province: '',
+  district: '',
   municipality: '',
   locationName: '',
 }
@@ -50,15 +53,93 @@ export default function ReportRoadScreen() {
   const navigation = useNavigation()
   const { user } = useContext(AuthContext)
 
-  const [form, setForm] = useState({ ...initialForm, municipality: user?.municipality || '' })
+  const [form, setForm] = useState({
+    ...initialForm,
+    province: user?.province || '',
+    district: user?.district || '',
+    municipality: user?.municipality || '',
+  })
   const [images, setImages] = useState([])
   const [location, setLocation] = useState(null)
   const [aiResult, setAiResult] = useState(null)
   const [analyzing, setAnalyzing] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [provinces, setProvinces] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [municipalities, setMunicipalities] = useState([])
+  const [selectedProvinceId, setSelectedProvinceId] = useState('')
+  const [selectedDistrictId, setSelectedDistrictId] = useState('')
+  const [showProvincePicker, setShowProvincePicker] = useState(false)
+  const [showDistrictPicker, setShowDistrictPicker] = useState(false)
+  const [showMunicipalityPicker, setShowMunicipalityPicker] = useState(false)
+
+  useEffect(() => {
+    api.get('/locations/provinces').then(({ data }) => {
+      if (data.success) setProvinces(data.data)
+    }).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (selectedProvinceId) {
+      api.get(`/locations/districts?provinceId=${selectedProvinceId}`).then(({ data }) => {
+        if (data.success) {
+          setDistricts(data.data)
+          setMunicipalities([])
+        }
+      }).catch(() => {})
+    } else {
+      setDistricts([])
+      setMunicipalities([])
+    }
+  }, [selectedProvinceId])
+
+  useEffect(() => {
+    if (selectedDistrictId) {
+      api.get(`/locations/municipalities?districtId=${selectedDistrictId}`).then(({ data }) => {
+        if (data.success) setMunicipalities(data.data)
+      }).catch(() => {})
+    } else {
+      setMunicipalities([])
+    }
+  }, [selectedDistrictId])
+
+  useEffect(() => {
+    if (provinces.length && form.province && !selectedProvinceId) {
+      const p = provinces.find((p) => p.name === form.province)
+      if (p) setSelectedProvinceId(String(p.id))
+    }
+  }, [provinces, form.province, selectedProvinceId])
+
+  useEffect(() => {
+    if (districts.length && form.district && !selectedDistrictId) {
+      const d = districts.find((d) => d.name === form.district)
+      if (d) setSelectedDistrictId(String(d.id))
+    }
+  }, [districts, form.district, selectedDistrictId])
 
   const updateField = (key, value) => {
     setForm(prev => ({ ...prev, [key]: value }))
+  }
+
+  const handleProvinceSelect = (p) => {
+    setShowProvincePicker(false)
+    setSelectedProvinceId(p ? String(p.id) : '')
+    setForm(prev => ({ ...prev, province: p ? p.name : '', district: '', municipality: '' }))
+    setSelectedDistrictId('')
+    setDistricts([])
+    setMunicipalities([])
+  }
+
+  const handleDistrictSelect = (d) => {
+    setShowDistrictPicker(false)
+    setSelectedDistrictId(d ? String(d.id) : '')
+    setForm(prev => ({ ...prev, district: d ? d.name : '', municipality: '' }))
+    setMunicipalities([])
+  }
+
+  const handleMunicipalitySelect = (m) => {
+    setShowMunicipalityPicker(false)
+    setForm(prev => ({ ...prev, municipality: m ? m.name : '' }))
   }
 
   const applyAiResult = (data) => {
@@ -186,7 +267,9 @@ export default function ReportRoadScreen() {
         latitude: location.coordinates[1],
         locationName: form.locationName.trim() || location.address || '',
       }
-      if (form.municipality.trim()) payload.municipality = form.municipality.trim()
+      if (form.province) payload.province = form.province
+      if (form.district) payload.district = form.district
+      if (form.municipality) payload.municipality = form.municipality
 
       const response = await reportService.createReport(payload, images.map(img => img.uri))
       if (response.success) {
@@ -209,7 +292,7 @@ export default function ReportRoadScreen() {
         <Text style={styles.headerTitle}>Report an Issue</Text>
         <TouchableOpacity
           onPress={() => {
-            setForm({ ...initialForm, municipality: user?.municipality || '' })
+            setForm({ ...initialForm, province: user?.province || '', district: user?.district || '', municipality: user?.municipality || '' })
             setImages([])
             setLocation(null)
             setAiResult(null)
@@ -292,13 +375,62 @@ export default function ReportRoadScreen() {
             placeholderTextColor={COLORS.muted}
             maxLength={200}
           />
-          <TextInput
-            style={styles.input}
-            value={form.municipality}
-            onChangeText={(value) => updateField('municipality', value)}
-            placeholder="Municipality"
-            placeholderTextColor={COLORS.muted}
-          />
+          {/* Province Picker */}
+          <TouchableOpacity style={styles.pickerBtn} onPress={() => setShowProvincePicker(true)}>
+            <Text style={[styles.pickerText, !form.province && styles.pickerPlaceholder]}>
+              {form.province || 'Select province'}
+            </Text>
+          </TouchableOpacity>
+          {showProvincePicker && (
+            <View style={styles.pickerModal}>
+              <ScrollView>
+                <TouchableOpacity style={styles.pickerItem} onPress={() => handleProvinceSelect(null)}>
+                  <Text style={styles.pickerItemText}>-- Clear --</Text>
+                </TouchableOpacity>
+                {provinces.map(p => (
+                  <TouchableOpacity key={p.id} style={styles.pickerItem} onPress={() => handleProvinceSelect(p)}>
+                    <Text style={[styles.pickerItemText, form.province === p.name && styles.pickerItemTextSelected]}>{p.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* District Picker */}
+          <TouchableOpacity style={[styles.pickerBtn, !selectedProvinceId && styles.pickerBtnDisabled]} onPress={() => selectedProvinceId && setShowDistrictPicker(true)} disabled={!selectedProvinceId}>
+            <Text style={[styles.pickerText, !form.district && styles.pickerPlaceholder]}>
+              {form.district || 'Select district'}
+            </Text>
+          </TouchableOpacity>
+          {showDistrictPicker && (
+            <View style={styles.pickerModal}>
+              <ScrollView>
+                {districts.map(d => (
+                  <TouchableOpacity key={d.id} style={styles.pickerItem} onPress={() => handleDistrictSelect(d)}>
+                    <Text style={[styles.pickerItemText, form.district === d.name && styles.pickerItemTextSelected]}>{d.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          )}
+
+          {/* Municipality Picker */}
+          <TouchableOpacity style={[styles.pickerBtn, !selectedDistrictId && styles.pickerBtnDisabled]} onPress={() => selectedDistrictId && setShowMunicipalityPicker(true)} disabled={!selectedDistrictId}>
+            <Text style={[styles.pickerText, !form.municipality && styles.pickerPlaceholder]}>
+              {form.municipality || 'Select municipality'}
+            </Text>
+          </TouchableOpacity>
+          {showMunicipalityPicker && (
+            <View style={styles.pickerModal}>
+              <ScrollView>
+                {municipalities.map(m => (
+                  <TouchableOpacity key={m.id} style={styles.pickerItem} onPress={() => handleMunicipalitySelect(m)}>
+                    <Text style={[styles.pickerItemText, form.municipality === m.name && styles.pickerItemTextSelected]}>{m.name}</Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          )}
           <LocationPicker location={location} onLocationSelect={setLocation} />
         </GlassCard>
 
@@ -454,4 +586,18 @@ const styles = StyleSheet.create({
     paddingVertical: 16, gap: 10,
   },
   submitLabel: { fontSize: 16, fontWeight: '800', color: COLORS.white },
+  pickerBtn: {
+    backgroundColor: COLORS.background, borderRadius: RADIUS.md, padding: 14,
+    fontSize: 14, borderWidth: 1, borderColor: COLORS.border, marginBottom: 12,
+  },
+  pickerBtnDisabled: { opacity: 0.5 },
+  pickerText: { fontSize: 14, color: COLORS.secondary },
+  pickerPlaceholder: { color: COLORS.muted },
+  pickerModal: {
+    backgroundColor: COLORS.surface, borderRadius: RADIUS.md, padding: 8,
+    marginBottom: 12, borderWidth: 1, borderColor: COLORS.border, maxHeight: 180,
+  },
+  pickerItem: { paddingVertical: 10, paddingHorizontal: 12, borderRadius: RADIUS.sm },
+  pickerItemText: { fontSize: 14, color: COLORS.secondary },
+  pickerItemTextSelected: { color: COLORS.primary, fontWeight: '700' },
 })

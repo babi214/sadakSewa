@@ -6,7 +6,8 @@ import {
 import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps'
 import {
   Search, Crosshair, Plus, List, Layers, Filter, Navigation,
-  MapPin, X, SlidersHorizontal, AlertTriangle,
+  MapPin, X, SlidersHorizontal, AlertTriangle, Trash2,
+  Droplets, Lightbulb, TrafficCone, Zap, HelpCircle,
 } from 'lucide-react-native'
 import * as Location from 'expo-location'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
@@ -36,16 +37,16 @@ const MARKER_COLORS = {
   rejected: '#6B7280',
 }
 
-const categoryIcons = {
-  pothole: 'AlertTriangle',
-  garbage: 'Trash2',
-  drainage: 'Droplets',
-  streetlight: 'Lightbulb',
-  traffic_signal: 'TrafficCone',
-  road_damage: 'TriangleAlert',
-  water_leak: 'Droplets',
-  electric_pole: 'Zap',
-  other: 'HelpCircle',
+const categoryIconMap = {
+  pothole: AlertTriangle,
+  garbage: Trash2,
+  drainage: Droplets,
+  streetlight: Lightbulb,
+  traffic_signal: TrafficCone,
+  road_damage: AlertTriangle,
+  water_leak: Droplets,
+  electric_pole: Zap,
+  other: HelpCircle,
 }
 
 export default function MapScreen({ navigation }) {
@@ -232,7 +233,7 @@ export default function MapScreen({ navigation }) {
   const MarkerPin = ({ color }) => (
     <View style={styles.markerWrap}>
       <View style={[styles.markerOuter, { backgroundColor: color }]}>
-        <AlertTriangle size={20} color={COLORS.white} strokeWidth={2.5} />
+        <TrafficCone size={24} color={COLORS.white} strokeWidth={2.5} />
       </View>
       <View style={[styles.markerTail, { borderTopColor: color }]} />
     </View>
@@ -861,28 +862,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   markerOuter: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 48,
+    height: 48,
+    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 4,
     borderColor: COLORS.white,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.45,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.5,
+    shadowRadius: 10,
+    elevation: 8,
+  },
+  markerInner: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   markerTail: {
     width: 0,
     height: 0,
-    borderLeftWidth: 7,
-    borderRightWidth: 7,
-    borderTopWidth: 10,
+    borderLeftWidth: 8,
+    borderRightWidth: 8,
+    borderTopWidth: 12,
     borderLeftColor: 'transparent',
     borderRightColor: 'transparent',
-    marginTop: -2,
+    marginTop: -3,
   },
 
   // --- Callout ---

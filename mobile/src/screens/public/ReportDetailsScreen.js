@@ -225,9 +225,8 @@ export default function ReportDetailsScreen({ route, navigation }) {
 
   const loadWorkers = async () => {
     try {
-      const { userService } = await import('../../services/userService')
-      const res = await userService.getAllUsers({ role: 'worker', limit: 50 })
-      setWorkers(res?.users || res?.data || [])
+      const res = await reportService.getAvailableWorkers(reportId)
+      setWorkers(res?.workers || [])
     } catch {
       Toast.show({ type: 'error', text1: 'Failed to load workers' })
     }
@@ -623,7 +622,7 @@ export default function ReportDetailsScreen({ route, navigation }) {
                 </TouchableOpacity>
               </View>
               {workers.length === 0 ? (
-                <Text style={styles.noWorkers}>No workers available</Text>
+                <Text style={styles.noWorkers}>No available workers in this district/municipality</Text>
               ) : (
                 <ScrollView style={{ maxHeight: 360 }}>
                   {workers.map(w => (
@@ -645,6 +644,9 @@ export default function ReportDetailsScreen({ route, navigation }) {
                       <View style={styles.workerInfo}>
                         <Text style={styles.workerName}>{w.fullName}</Text>
                         <Text style={styles.workerEmail}>{w.email}</Text>
+                        {w.district && (
+                          <Text style={styles.workerLocation}>{w.district}{w.municipality ? ` / ${w.municipality}` : ''}</Text>
+                        )}
                       </View>
                       <ChevronLeft size={18} color={COLORS.muted} style={{ transform: [{ rotate: '180deg' }] }} />
                     </TouchableOpacity>
@@ -1121,5 +1123,10 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: COLORS.mutedText,
     marginTop: 1,
+  },
+  workerLocation: {
+    fontSize: 11,
+    color: COLORS.muted,
+    marginTop: 2,
   },
 })

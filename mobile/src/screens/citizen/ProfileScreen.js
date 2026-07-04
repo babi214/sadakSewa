@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useCallback } from 'react'
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Alert, RefreshControl } from 'react-native'
 import { User, Mail, Phone, MapPin, Shield, Camera, LogOut, Settings, Edit3, Save, X, Calendar, ArrowUp, CheckCircle } from 'lucide-react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -12,22 +12,85 @@ import { FormField, Input } from '../../components/Input'
 import { AuthContext } from '../../context/AuthContext'
 import { authService } from '../../services/authService'
 import { COLORS, GRADIENTS, RADIUS, SHADOWS, SPACING } from '../../constants'
+import api from '../../api/axios'
 import { getApiErrorMessage } from '../../utils/validators'
 import { formatDate } from '../../utils/formatters'
 
 export default function ProfileScreen({ navigation }) {
   const { user, logout, updateUser } = useContext(AuthContext)
   const [editing, setEditing] = useState(false)
-  const [form, setForm] = useState({ fullName: '', phone: '', municipality: '' })
+  const [form, setForm] = useState({ fullName: '', phone: '', province: '', district: '', municipality: '' })
   const [saving, setSaving] = useState(false)
+  const [phoneError, setPhoneError] = useState('')
   const [uploadingPic, setUploadingPic] = useState(false)
   const [refreshing, setRefreshing] = useState(false)
+  const [provinces, setProvinces] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [municipalities, setMunicipalities] = useState([])
+  const [selectedProvinceId, setSelectedProvinceId] = useState('')
+  const [selectedDistrictId, setSelectedDistrictId] = useState('')
+  const [showProvincePicker, setShowProvincePicker] = useState(false)
+  const [showDistrictPicker, setShowDistrictPicker] = useState(false)
+  const [showMunicipalityPicker, setShowMunicipalityPicker] = useState(false)
+  const [stats, setStats] = useState(null)
 
   useEffect(() => {
-    if (user) setForm({ fullName: user.fullName || '', phone: user.phone || '', municipality: user.municipality || '' })
+    api.get('/locations/provinces').then(({ data }) => {
+      if (data.success) setProvinces(data.data)
+    }).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (user) {
+      setForm({
+        fullName: user.fullName || '',
+        phone: user.phone || '',
+        province: user.province || '',
+        district: user.district || '',
+        municipality: user.municipality || '',
+      })
+    }
   }, [user])
 
-  useFocusEffect(React.useCallback(() => {}, []))
+  useEffect(() => {
+    if (user?.province && provinces.length > 0) {
+      const p = provinces.find((p) => p.name === user.province)
+      if (p) setSelectedProvinceId(String(p.id))
+    }
+  }, [user, provinces])
+
+  useEffect(() => {
+    if (selectedProvinceId && user?.district && districts.length > 0) {
+      const d = districts.find((d) => d.name === user.district && d.provinceId === Number(selectedProvinceId))
+      if (d) setSelectedDistrictId(String(d.id))
+    }
+  }, [districts, selectedProvinceId])
+
+  useEffect(() => {
+    if (selectedProvinceId) {
+      api.get(`/locations/districts?provinceId=${selectedProvinceId}`).then(({ data }) => {
+        if (data.success) setDistricts(data.data)
+      }).catch(() => {})
+    }
+  }, [selectedProvinceId])
+
+  useEffect(() => {
+    if (selectedDistrictId) {
+      api.get(`/locations/municipalities?districtId=${selectedDistrictId}`).then(({ data }) => {
+        if (data.success) setMunicipalities(data.data)
+      }).catch(() => {})
+    }
+  }, [selectedDistrictId])
+
+  const loadStats = useCallback(() => {
+    authService.getProfile().then((res) => {
+      if (res?.success && res.user) setStats(res.user)
+    }).catch(() => {})
+  }, [])
+
+  useFocusEffect(React.useCallback(() => {
+    loadStats()
+  }, [loadStats]))
 
   const handlePickPhoto = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({ mediaTypes: ['images'], quality: 0.7, allowsEditing: true, aspect: [1, 1] })
@@ -46,9 +109,21 @@ export default function ProfileScreen({ navigation }) {
   }
 
   const handleSave = async () => {
+    setPhoneError('')
+    if (!form.phone.trim()) {
+      setPhoneError('Phone number is required')
+      setSaving(false)
+      return
+    }
     setSaving(true)
     try {
-      const res = await authService.updateProfile({ fullName: form.fullName.trim(), phone: form.phone.trim(), municipality: form.municipality })
+      const res = await authService.updateProfile({
+        fullName: form.fullName.trim(),
+        phone: form.phone.trim(),
+        province: form.province || null,
+        district: form.district || null,
+        municipality: form.municipality || null,
+      })
       const updatedUser = res?.user || res?.data
       if (updatedUser) updateUser(updatedUser)
       setEditing(false)
@@ -76,7 +151,14 @@ export default function ProfileScreen({ navigation }) {
       <ScrollView
         contentContainerStyle={styles.scrollContent}
         showsVerticalScrollIndicator={false}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={() => {}} tintColor={COLORS.primary} colors={[COLORS.primary]} />}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => { setRefreshing(true); loadStats(); setTimeout(() => setRefreshing(false), 2000) }}
+            tintColor={COLORS.primary}
+            colors={[COLORS.primary]}
+          />
+        }
       >
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Profile</Text>
@@ -117,35 +199,58 @@ export default function ProfileScreen({ navigation }) {
 
         <GlassCard style={styles.statsCard}>
           <View style={styles.statsRow}>
-            <View style={styles.stat}>
-              <View style={[styles.statIconWrap, { backgroundColor: COLORS.primary + '12' }]}>
-                <ArrowUp size={18} color={COLORS.primary} />
-              </View>
-              <Text style={styles.statValue}>{user?.reportCount ?? 0}</Text>
-              <Text style={styles.statLabel}>Reports</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.stat}>
-              <View style={[styles.statIconWrap, { backgroundColor: COLORS.accent + '12' }]}>
-                <CheckCircle size={18} color={COLORS.accent} />
-              </View>
-              <Text style={styles.statValue}>{user?.resolvedCount ?? 0}</Text>
-              <Text style={styles.statLabel}>Resolved</Text>
-            </View>
-            <View style={styles.statDivider} />
-            <View style={styles.stat}>
-              <View style={[styles.statIconWrap, { backgroundColor: COLORS.warning + '12' }]}>
-                <ArrowUp size={18} color={COLORS.warning} />
-              </View>
-              <Text style={styles.statValue}>{user?.upvoteCount ?? 0}</Text>
-              <Text style={styles.statLabel}>Upvotes</Text>
-            </View>
-            <View style={styles.statDivider} />
+            {user?.role === 'worker' ? (
+              <>
+                <View style={styles.stat}>
+                  <View style={[styles.statIconWrap, { backgroundColor: COLORS.primary + '12' }]}>
+                    <ArrowUp size={18} color={COLORS.primary} />
+                  </View>
+                  <Text style={styles.statValue}>{stats?.assignedCount ?? user?.assignedCount ?? 0}</Text>
+                  <Text style={styles.statLabel}>Assigned</Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.stat}>
+                  <View style={[styles.statIconWrap, { backgroundColor: COLORS.accent + '12' }]}>
+                    <CheckCircle size={18} color={COLORS.accent} />
+                  </View>
+                  <Text style={styles.statValue}>{stats?.resolvedCount ?? user?.resolvedCount ?? 0}</Text>
+                  <Text style={styles.statLabel}>Resolved</Text>
+                </View>
+                <View style={styles.statDivider} />
+              </>
+            ) : user?.role === 'citizen' ? (
+              <>
+                <View style={styles.stat}>
+                  <View style={[styles.statIconWrap, { backgroundColor: COLORS.primary + '12' }]}>
+                    <ArrowUp size={18} color={COLORS.primary} />
+                  </View>
+                  <Text style={styles.statValue}>{stats?.reportCount ?? user?.reportCount ?? 0}</Text>
+                  <Text style={styles.statLabel}>Reports</Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.stat}>
+                  <View style={[styles.statIconWrap, { backgroundColor: COLORS.accent + '12' }]}>
+                    <CheckCircle size={18} color={COLORS.accent} />
+                  </View>
+                  <Text style={styles.statValue}>{stats?.resolvedCount ?? user?.resolvedCount ?? 0}</Text>
+                  <Text style={styles.statLabel}>Resolved</Text>
+                </View>
+                <View style={styles.statDivider} />
+                <View style={styles.stat}>
+                  <View style={[styles.statIconWrap, { backgroundColor: COLORS.warning + '12' }]}>
+                    <ArrowUp size={18} color={COLORS.warning} />
+                  </View>
+                  <Text style={styles.statValue}>{stats?.upvoteCount ?? user?.upvoteCount ?? 0}</Text>
+                  <Text style={styles.statLabel}>Upvotes</Text>
+                </View>
+                <View style={styles.statDivider} />
+              </>
+            ) : null}
             <View style={styles.stat}>
               <View style={[styles.statIconWrap, { backgroundColor: '#8B5CF615' }]}>
                 <Calendar size={18} color="#8B5CF6" />
               </View>
-              <Text style={styles.statValue}>{user?.createdAt ? formatDate(user.createdAt) : '-'}</Text>
+              <Text style={styles.statValue}>{stats?.createdAt ? formatDate(stats.createdAt) : user?.createdAt ? formatDate(user.createdAt) : '-'}</Text>
               <Text style={styles.statLabel}>Joined</Text>
             </View>
           </View>
@@ -165,6 +270,22 @@ export default function ProfileScreen({ navigation }) {
             <View style={styles.infoContent}>
               <Text style={styles.infoLabel}>Phone</Text>
               <Text style={styles.infoValue}>{user?.phone || 'Not set'}</Text>
+            </View>
+          </View>
+          <View style={styles.infoDivider} />
+          <View style={styles.infoRow}>
+            <MapPin size={16} color={COLORS.muted} />
+            <View style={styles.infoContent}>
+              <Text style={styles.infoLabel}>Province</Text>
+              <Text style={styles.infoValue}>{user?.province || 'Not set'}</Text>
+            </View>
+          </View>
+          <View style={styles.infoDivider} />
+          <View style={styles.infoRow}>
+            <MapPin size={16} color={COLORS.muted} />
+            <View style={styles.infoContent}>
+              <Text style={styles.infoLabel}>District</Text>
+              <Text style={styles.infoValue}>{user?.district || 'Not set'}</Text>
             </View>
           </View>
           <View style={styles.infoDivider} />
@@ -192,20 +313,109 @@ export default function ProfileScreen({ navigation }) {
                 placeholder="Your full name"
               />
             </FormField>
-            <FormField label="Phone">
+            <FormField label="Phone" required error={phoneError}>
               <Input
                 value={form.phone}
-                onChangeText={v => setForm(prev => ({ ...prev, phone: v }))}
+                onChangeText={v => { setForm(prev => ({ ...prev, phone: v })); setPhoneError('') }}
                 placeholder="+97798..."
                 keyboardType="phone-pad"
+                error={!!phoneError}
               />
             </FormField>
+            <FormField label="Province">
+              <TouchableOpacity
+                style={styles.pickerBox}
+                onPress={() => setShowProvincePicker(!showProvincePicker)}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.pickerText, !form.province && styles.pickerPlaceholder]}>
+                  {form.province || 'Select province'}
+                </Text>
+              </TouchableOpacity>
+              {showProvincePicker && (
+                <View style={styles.pickerDropdown}>
+                  {provinces.map((item) => (
+                    <TouchableOpacity
+                      key={item.id}
+                      style={[styles.pickerItem, form.province === item.name && styles.pickerItemSelected]}
+                      onPress={() => {
+                        setSelectedProvinceId(String(item.id))
+                        setForm(prev => ({ ...prev, province: item.name, district: '', municipality: '' }))
+                        setSelectedDistrictId('')
+                        setMunicipalities([])
+                        setShowProvincePicker(false)
+                      }}
+                    >
+                      <Text style={[styles.pickerItemText, form.province === item.name && styles.pickerItemTextSelected]}>
+                        {item.name}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            </FormField>
+
+            <FormField label="District">
+              <TouchableOpacity
+                style={styles.pickerBox}
+                onPress={() => setShowDistrictPicker(!showDistrictPicker)}
+                disabled={!selectedProvinceId}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.pickerText, !form.district && styles.pickerPlaceholder]}>
+                  {form.district || 'Select district'}
+                </Text>
+              </TouchableOpacity>
+              {showDistrictPicker && (
+                <View style={styles.pickerDropdown}>
+                  {districts.map((item) => (
+                    <TouchableOpacity
+                      key={item.id}
+                      style={[styles.pickerItem, form.district === item.name && styles.pickerItemSelected]}
+                      onPress={() => {
+                        setSelectedDistrictId(String(item.id))
+                        setForm(prev => ({ ...prev, district: item.name, municipality: '' }))
+                        setShowDistrictPicker(false)
+                      }}
+                    >
+                      <Text style={[styles.pickerItemText, form.district === item.name && styles.pickerItemTextSelected]}>
+                        {item.name}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
+            </FormField>
+
             <FormField label="Municipality">
-              <Input
-                value={form.municipality}
-                onChangeText={v => setForm(prev => ({ ...prev, municipality: v }))}
-                placeholder="Your municipality"
-              />
+              <TouchableOpacity
+                style={styles.pickerBox}
+                onPress={() => setShowMunicipalityPicker(!showMunicipalityPicker)}
+                disabled={!selectedDistrictId}
+                activeOpacity={0.7}
+              >
+                <Text style={[styles.pickerText, !form.municipality && styles.pickerPlaceholder]}>
+                  {form.municipality || 'Select municipality'}
+                </Text>
+              </TouchableOpacity>
+              {showMunicipalityPicker && (
+                <View style={styles.pickerDropdown}>
+                  {municipalities.map((item) => (
+                    <TouchableOpacity
+                      key={item.id}
+                      style={[styles.pickerItem, form.municipality === item.name && styles.pickerItemSelected]}
+                      onPress={() => {
+                        setForm(prev => ({ ...prev, municipality: item.name }))
+                        setShowMunicipalityPicker(false)
+                      }}
+                    >
+                      <Text style={[styles.pickerItemText, form.municipality === item.name && styles.pickerItemTextSelected]}>
+                        {item.name}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              )}
             </FormField>
             <View style={styles.editActions}>
               <Button variant="outline" onPress={() => setEditing(false)} style={{ flex: 1 }}>
@@ -432,6 +642,47 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: 12,
     marginTop: 4,
+  },
+  pickerBox: {
+    borderWidth: 1.5,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    paddingHorizontal: 14,
+    paddingVertical: 14,
+    backgroundColor: COLORS.background,
+  },
+  pickerText: {
+    fontSize: 15,
+    color: COLORS.secondary,
+  },
+  pickerPlaceholder: {
+    color: COLORS.muted,
+  },
+  pickerDropdown: {
+    marginTop: 4,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.surface,
+    overflow: 'hidden',
+    ...SHADOWS.md,
+  },
+  pickerItem: {
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.cardBorder,
+  },
+  pickerItemSelected: {
+    backgroundColor: COLORS.primary + '10',
+  },
+  pickerItemText: {
+    fontSize: 14,
+    color: COLORS.secondary,
+  },
+  pickerItemTextSelected: {
+    color: COLORS.primary,
+    fontWeight: '600',
   },
   editBtn: {
     marginBottom: SPACING.md,

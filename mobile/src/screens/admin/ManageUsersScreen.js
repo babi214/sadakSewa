@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
-import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity, Alert, Switch } from 'react-native'
-import { Users, Shield, Search, CheckCircle2, XCircle } from 'lucide-react-native'
+import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity, Alert } from 'react-native'
+import { ChevronDown, ChevronRight, Mail, MapPin, Phone, Shield, Search, Users, CheckCircle2, XCircle } from 'lucide-react-native'
 import { useFocusEffect } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
@@ -20,6 +20,7 @@ export default function ManageUsersScreen({ navigation }) {
   const [refreshing, setRefreshing] = useState(false)
   const [search, setSearch] = useState('')
   const [updatingUser, setUpdatingUser] = useState(null)
+  const [expandedId, setExpandedId] = useState(null)
 
   const fetchUsers = useCallback(async (isRefresh = false) => {
     try {
@@ -72,23 +73,36 @@ export default function ManageUsersScreen({ navigation }) {
     ])
   }
 
-  const renderItem = ({ item, index }) => (
+  const renderItem = ({ item, index }) => {
+    const isExpanded = expandedId === item._id
+    const locationParts = [item.province, item.district, item.municipality].filter(Boolean)
+
+    return (
     <Animated.View entering={FadeInUp.delay(index * 60).springify()}>
       <GlassCard style={styles.userCard}>
-        <View style={styles.userHeader}>
-          <View style={[styles.avatar, { backgroundColor: item.isActive ? COLORS.primary + '20' : COLORS.muted + '20' }]}>
-            <Text style={styles.avatarText}>{item.fullName?.charAt(0)?.toUpperCase() || 'U'}</Text>
+        <TouchableOpacity onPress={() => setExpandedId(isExpanded ? null : item._id)} activeOpacity={0.7}>
+          <View style={styles.userHeader}>
+            <View style={[styles.avatar, { backgroundColor: item.isActive ? COLORS.primary + '20' : COLORS.muted + '20' }]}>
+              <Text style={styles.avatarText}>{item.fullName?.charAt(0)?.toUpperCase() || 'U'}</Text>
+            </View>
+            <View style={styles.userInfo}>
+              <Text style={styles.userName}>{item.fullName}</Text>
+              <Text style={styles.userEmail}>{item.email}</Text>
+              <View style={styles.userMeta}>
+                <Text style={styles.metaText}>{item.role}</Text>
+                {item.phone && <Text style={styles.metaText}>· {item.phone}</Text>}
+              </View>
+            </View>
+            <View style={styles.statusColumn}>
+              <View style={[styles.statusBadge, { backgroundColor: item.isActive ? '#D1FAE5' : '#FEE2E2' }]}>
+                <Text style={[styles.statusText, { color: item.isActive ? '#059669' : '#DC2626' }]}>
+                  {item.isActive ? 'Active' : 'Inactive'}
+                </Text>
+              </View>
+              {isExpanded ? <ChevronDown size={16} color={COLORS.muted} /> : <ChevronRight size={16} color={COLORS.muted} />}
+            </View>
           </View>
-          <View style={styles.userInfo}>
-            <Text style={styles.userName}>{item.fullName}</Text>
-            <Text style={styles.userEmail}>{item.email}</Text>
-          </View>
-          <View style={[styles.statusBadge, { backgroundColor: item.isActive ? '#D1FAE5' : '#FEE2E2' }]}>
-            <Text style={[styles.statusText, { color: item.isActive ? '#059669' : '#DC2626' }]}>
-              {item.isActive ? 'Active' : 'Inactive'}
-            </Text>
-          </View>
-        </View>
+        </TouchableOpacity>
 
         <View style={styles.userActions}>
           <View style={styles.roleRow}>
@@ -108,9 +122,36 @@ export default function ManageUsersScreen({ navigation }) {
             {item.isActive ? <XCircle size={20} color={COLORS.danger} /> : <CheckCircle2 size={20} color={COLORS.accent} />}
           </TouchableOpacity>
         </View>
+
+        {isExpanded && (
+          <View style={styles.detailSection}>
+            <View style={styles.detailRow}>
+              <Mail size={14} color={COLORS.muted} />
+              <Text style={styles.detailText}>{item.email}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Phone size={14} color={COLORS.muted} />
+              <Text style={styles.detailText}>{item.phone || 'Not provided'}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <MapPin size={14} color={COLORS.muted} />
+              <Text style={styles.detailText}>{locationParts.length > 0 ? locationParts.join(', ') : 'Not provided'}</Text>
+            </View>
+            <View style={styles.detailDivider} />
+            <View style={styles.detailMeta}>
+              <Text style={styles.detailMetaText}>
+                Email verified: {item.isVerified ? 'Yes' : 'No'}
+              </Text>
+              <Text style={styles.detailMetaText}>
+                Joined: {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : 'N/A'}
+              </Text>
+            </View>
+          </View>
+        )}
       </GlassCard>
     </Animated.View>
-  )
+    )
+  }
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
@@ -167,6 +208,9 @@ const styles = StyleSheet.create({
   userInfo: { flex: 1, marginLeft: 12 },
   userName: { fontSize: 15, fontWeight: '600', color: COLORS.secondary },
   userEmail: { fontSize: 13, color: COLORS.mutedText, marginTop: 1 },
+  userMeta: { flexDirection: 'row', gap: 4, marginTop: 2 },
+  metaText: { fontSize: 11, color: COLORS.muted, textTransform: 'capitalize' },
+  statusColumn: { alignItems: 'flex-end', gap: 6 },
   statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 100 },
   statusText: { fontSize: 11, fontWeight: '700' },
   userActions: {
@@ -182,4 +226,23 @@ const styles = StyleSheet.create({
   roleChipText: { fontSize: 11, fontWeight: '600', color: COLORS.muted },
   empty: { alignItems: 'center', paddingTop: 60 },
   emptyTitle: { fontSize: 18, fontWeight: '700', color: COLORS.mutedText, marginTop: 16 },
+
+  detailSection: {
+    marginTop: 12, paddingTop: 12, borderTopWidth: 1, borderTopColor: COLORS.cardBorder,
+  },
+  detailRow: {
+    flexDirection: 'row', alignItems: 'center', gap: 10, paddingVertical: 4,
+  },
+  detailText: {
+    fontSize: 13, color: COLORS.mutedText, flex: 1,
+  },
+  detailDivider: {
+    height: 1, backgroundColor: COLORS.cardBorder, marginVertical: 8,
+  },
+  detailMeta: {
+    gap: 4,
+  },
+  detailMetaText: {
+    fontSize: 12, color: COLORS.muted,
+  },
 })

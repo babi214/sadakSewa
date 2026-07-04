@@ -73,6 +73,11 @@ export const reportService = {
     const { data } = await api.patch(`/reports/${id}/assign`, { workerId })
     return data
   },
+
+  getAvailableWorkers: async (id) => {
+    const { data } = await api.get(`/reports/${id}/available-workers`)
+    return data
+  },
   updateReport: async (id, reportData, imageUris = []) => {
     const images = await uploadImages(imageUris)
     const { data } = await api.put(`/reports/${id}`, { ...reportData, images })
