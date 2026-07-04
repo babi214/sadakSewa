@@ -5,7 +5,7 @@ import { uploadService } from '../../services/uploadService'
 import { MAX_REPORT_IMAGES } from '../../utils/constants'
 import { getApiErrorMessage } from '../../utils/validators'
 
-export default function ImageUploader({ images, onChange, error }) {
+export default function ImageUploader({ images, onChange, error, onFileSelect }) {
   const inputRef = useRef(null)
   const [uploading, setUploading] = useState(false)
 
@@ -22,6 +22,10 @@ export default function ImageUploader({ images, onChange, error }) {
     const filesToUpload = files.slice(0, remaining)
     if (files.length > remaining) {
       toast.error(`Only ${remaining} more image(s) can be added`)
+    }
+
+    if (onFileSelect && filesToUpload.length > 0) {
+      onFileSelect(filesToUpload[0])
     }
 
     setUploading(true)

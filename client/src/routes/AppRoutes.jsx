@@ -13,7 +13,11 @@ import ReportDetails from '../pages/public/ReportDetails'
 import PlaceholderPage from '../pages/public/PlaceholderPage'
 import Login from '../pages/auth/Login'
 import Register from '../pages/auth/Register'
+import ForgotPassword from '../pages/auth/ForgotPassword'
+import ResetPassword from '../pages/auth/ResetPassword'
+import VerifyEmail from '../pages/auth/VerifyEmail'
 import CreateReport from '../pages/citizen/CreateReport'
+import AnalyzeRoad from '../pages/citizen/AnalyzeRoad'
 import EditReport from '../pages/citizen/EditReport'
 import MyReports from '../pages/citizen/MyReports'
 import Profile from '../pages/citizen/Profile'
@@ -57,6 +61,30 @@ export default function AppRoutes() {
             </GuestRoute>
           }
         />
+        <Route
+          path="forgot-password"
+          element={
+            <GuestRoute>
+              <ForgotPassword />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="reset-password"
+          element={
+            <GuestRoute>
+              <ResetPassword />
+            </GuestRoute>
+          }
+        />
+        <Route
+          path="verify-email"
+          element={
+            <GuestRoute>
+              <VerifyEmail />
+            </GuestRoute>
+          }
+        />
       </Route>
 
       {/* Protected Dashboard Routes */}
@@ -71,6 +99,7 @@ export default function AppRoutes() {
         <Route path="citizen/dashboard" element={<RoleRoute allowedRoles={['citizen']}><CitizenDashboard /></RoleRoute>} />
         <Route path="citizen/reports" element={<RoleRoute allowedRoles={['citizen']}><MyReports /></RoleRoute>} />
         <Route path="citizen/reports/new" element={<RoleRoute allowedRoles={['citizen']}><CreateReport /></RoleRoute>} />
+        <Route path="citizen/analyze" element={<RoleRoute allowedRoles={['citizen']}><AnalyzeRoad /></RoleRoute>} />
         <Route path="citizen/reports/:id/edit" element={<RoleRoute allowedRoles={['citizen', 'admin']}><EditReport /></RoleRoute>} />
         <Route path="citizen/profile" element={<RoleRoute allowedRoles={['citizen']}><Profile /></RoleRoute>} />
 

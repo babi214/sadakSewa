@@ -1,42 +1,47 @@
 import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
-import { Eye, EyeOff, LogIn } from 'lucide-react'
+import { Eye, EyeOff, KeyRound } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
 import { FormField, Input } from '../../components/common/Input'
-import { useAuth } from '../../hooks/useAuth'
-import { ROLE_DASHBOARD_PATHS } from '../../utils/constants'
+import { authService } from '../../services/authService'
 import {
   getApiErrorMessage,
+  validateConfirmPassword,
   validateEmail,
   validatePassword,
 } from '../../utils/validators'
 
-export default function Login() {
+export default function ResetPassword() {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login } = useAuth()
 
-  const [form, setForm] = useState({ email: '', password: '' })
+  const [form, setForm] = useState({
+    email: location.state?.email || '',
+    code: '',
+    password: '',
+    confirmPassword: '',
+  })
   const [errors, setErrors] = useState({})
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
-    if (errors[name]) {
-      setErrors((prev) => ({ ...prev, [name]: '' }))
-    }
+    const nextValue = name === 'code' ? value.replace(/\D/g, '').slice(0, 6) : value
+    setForm((prev) => ({ ...prev, [name]: nextValue }))
+    if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }))
   }
 
   const validate = () => {
-    const newErrors = {
+    const nextErrors = {
       email: validateEmail(form.email),
+      code: !form.code ? 'Reset code is required' : form.code.length !== 6 ? 'Code must be 6 digits' : '',
       password: validatePassword(form.password),
+      confirmPassword: validateConfirmPassword(form.password, form.confirmPassword),
     }
-    setErrors(newErrors)
-    return !Object.values(newErrors).some(Boolean)
+    setErrors(nextErrors)
+    return !Object.values(nextErrors).some(Boolean)
   }
 
   const handleSubmit = async (e) => {
@@ -45,21 +50,15 @@ export default function Login() {
 
     setIsLoading(true)
     try {
-      const response = await login({
+      const response = await authService.resetPassword({
         email: form.email.trim(),
+        code: form.code,
         password: form.password,
       })
-
-      if (response.success) {
-        toast.success('Welcome back!')
-        const redirectTo =
-          location.state?.from?.pathname ||
-          ROLE_DASHBOARD_PATHS[response.user.role] ||
-          '/'
-        navigate(redirectTo, { replace: true })
-      }
-    } catch (error) {
-      toast.error(getApiErrorMessage(error, 'Login failed'))
+      toast.success(response.message || 'Password reset successfully')
+      navigate('/login', { replace: true })
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, 'Could not reset password'))
     } finally {
       setIsLoading(false)
     }
@@ -69,12 +68,12 @@ export default function Login() {
     <div>
       <div className="mb-8 lg:hidden">
         <h1 className="text-2xl font-bold text-secondary">SadakSewa</h1>
-        <p className="mt-1 text-sm text-muted">Sign in to your account</p>
+        <p className="mt-1 text-sm text-muted">Create a new password</p>
       </div>
 
       <div className="mb-8 hidden lg:block">
-        <h1 className="text-2xl font-bold text-secondary">Welcome back</h1>
-        <p className="mt-2 text-muted">Sign in to continue reporting and tracking issues</p>
+        <h1 className="text-2xl font-bold text-secondary">Reset password</h1>
+        <p className="mt-2 text-muted">Enter your 6-digit code and choose a new password.</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5" noValidate>
@@ -90,15 +89,29 @@ export default function Login() {
           />
         </FormField>
 
-        <FormField label="Password" error={errors.password} required>
+        <FormField label="Reset code" error={errors.code} required>
+          <Input
+            type="text"
+            name="code"
+            value={form.code}
+            onChange={handleChange}
+            placeholder="123456"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            error={errors.code}
+            className="text-center text-lg font-semibold tracking-[0.35em]"
+          />
+        </FormField>
+
+        <FormField label="New password" error={errors.password} required hint="Minimum 8 characters">
           <div className="relative">
             <Input
               type={showPassword ? 'text' : 'password'}
               name="password"
               value={form.password}
               onChange={handleChange}
-              placeholder="Enter your password"
-              autoComplete="current-password"
+              placeholder="Create a new password"
+              autoComplete="new-password"
               error={errors.password}
               className="pr-11"
             />
@@ -113,34 +126,33 @@ export default function Login() {
           </div>
         </FormField>
 
-        <div className="-mt-2 flex justify-end">
-          <Link
-            to="/forgot-password"
-            className="text-sm font-medium text-primary hover:text-primary-dark"
-          >
-            Forgot password?
-          </Link>
-        </div>
+        <FormField label="Confirm password" error={errors.confirmPassword} required>
+          <Input
+            type="password"
+            name="confirmPassword"
+            value={form.confirmPassword}
+            onChange={handleChange}
+            placeholder="Confirm your new password"
+            autoComplete="new-password"
+            error={errors.confirmPassword}
+          />
+        </FormField>
 
         <Button
           type="submit"
           className="w-full"
           size="lg"
           isLoading={isLoading}
-          leftIcon={!isLoading && <LogIn className="h-4 w-4" />}
+          leftIcon={!isLoading && <KeyRound className="h-4 w-4" />}
         >
-          Sign In
+          Reset Password
         </Button>
       </form>
 
       <p className="mt-8 text-center text-sm text-muted">
-        Don&apos;t have an account?{' '}
-        <Link
-          to="/register"
-          state={location.state}
-          className="font-medium text-primary hover:text-primary-dark"
-        >
-          Create one
+        Back to{' '}
+        <Link to="/login" className="font-medium text-primary hover:text-primary-dark">
+          sign in
         </Link>
       </p>
     </div>

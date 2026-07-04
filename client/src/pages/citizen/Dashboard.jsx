@@ -7,6 +7,7 @@ import {
   Clock,
   FileText,
   Plus,
+  Scan,
   ThumbsUp,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -77,9 +78,14 @@ export default function CitizenDashboard() {
             Track your reports and monitor civic issues in your area
           </p>
         </div>
-        <Link to="/citizen/reports/new">
-          <Button leftIcon={<Plus className="h-4 w-4" />}>New Report</Button>
-        </Link>
+        <div className="flex gap-3">
+          <Link to="/citizen/analyze">
+            <Button variant="outline" leftIcon={<Scan className="h-4 w-4" />}>Analyze Road</Button>
+          </Link>
+          <Link to="/citizen/reports/new">
+            <Button leftIcon={<Plus className="h-4 w-4" />}>New Report</Button>
+          </Link>
+        </div>
       </motion.div>
 
       {/* Stats Grid */}

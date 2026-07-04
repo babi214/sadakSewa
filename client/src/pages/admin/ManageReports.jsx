@@ -16,6 +16,7 @@ import { formatDate } from '../../utils/formatters'
 import { getApiErrorMessage } from '../../utils/validators'
 
 const emptyFilters = { search: '', status: '', category: '', severity: '' }
+const ADMIN_REVIEW_STATUSES = ['verified', 'rejected']
 
 export default function ManageReports() {
   const [reports, setReports] = useState([])
@@ -102,7 +103,7 @@ export default function ManageReports() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-secondary sm:text-3xl">Manage Reports</h1>
-        <p className="mt-1 text-muted">Assign workers and monitor all platform reports</p>
+        <p className="mt-1 text-muted">Review pending reports, assign verified reports, and monitor progress</p>
       </div>
 
       <ReportFilters
@@ -154,17 +155,21 @@ export default function ManageReports() {
                     <Link to={`/reports/${report._id}`}>
                       <Button variant="outline" size="sm">View</Button>
                     </Link>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      leftIcon={<UserPlus className="h-3.5 w-3.5" />}
-                      onClick={() => setAssignReport(report)}
-                    >
-                      Assign
-                    </Button>
-                    <Button size="sm" onClick={() => setStatusReport(report)}>
-                      Status
-                    </Button>
+                    {report.status === 'verified' && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        leftIcon={<UserPlus className="h-3.5 w-3.5" />}
+                        onClick={() => setAssignReport(report)}
+                      >
+                        {report.assignedWorker ? 'Reassign' : 'Assign'}
+                      </Button>
+                    )}
+                    {report.status === 'pending' && (
+                      <Button size="sm" onClick={() => setStatusReport(report)}>
+                        Review
+                      </Button>
+                    )}
                   </div>
                 </Card>
               </motion.div>
@@ -194,6 +199,7 @@ export default function ManageReports() {
         report={statusReport}
         onSubmit={handleStatusUpdate}
         isLoading={statusLoading}
+        allowedStatuses={ADMIN_REVIEW_STATUSES}
       />
     </div>
   )

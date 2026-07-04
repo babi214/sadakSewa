@@ -11,8 +11,23 @@ export const authService = {
     return data
   },
 
+  verifyEmail: async ({ email, code }) => {
+    const { data } = await api.patch('/auth/verify-email', { email, code })
+    return data
+  },
+
   logout: async () => {
     const { data } = await api.post('/auth/logout')
+    return data
+  },
+
+  forgotPassword: async (email) => {
+    const { data } = await api.post('/auth/forgot-password', { email })
+    return data
+  },
+
+  resetPassword: async ({ email, code, password }) => {
+    const { data } = await api.patch('/auth/reset-password', { email, code, password })
     return data
   },
 

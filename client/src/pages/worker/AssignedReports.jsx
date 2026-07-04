@@ -15,6 +15,12 @@ import { getApiErrorMessage } from '../../utils/validators'
 
 const emptyFilters = { search: '', status: '', category: '', severity: '' }
 
+const getWorkerStatusOptions = (status) => {
+  if (status === 'verified') return ['in_progress']
+  if (status === 'in_progress') return ['resolved']
+  return []
+}
+
 export default function AssignedReports() {
   const [reports, setReports] = useState([])
   const [filters, setFilters] = useState(emptyFilters)
@@ -140,9 +146,11 @@ export default function AssignedReports() {
                   <Link to={`/reports/${report._id}`}>
                     <Button variant="outline" size="sm">View</Button>
                   </Link>
-                  <Button size="sm" onClick={() => setSelectedReport(report)}>
-                    Update Status
-                  </Button>
+                  {getWorkerStatusOptions(report.status).length > 0 && (
+                    <Button size="sm" onClick={() => setSelectedReport(report)}>
+                      Update Status
+                    </Button>
+                  )}
                 </div>
               </Card>
             </motion.div>
@@ -156,6 +164,7 @@ export default function AssignedReports() {
         report={selectedReport}
         onSubmit={handleStatusUpdate}
         isLoading={statusLoading}
+        allowedStatuses={getWorkerStatusOptions(selectedReport?.status)}
       />
     </div>
   )

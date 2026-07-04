@@ -5,7 +5,7 @@ import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
 import { FormField, Input } from '../../components/common/Input'
 import { useAuth } from '../../hooks/useAuth'
-import { ROLE_DASHBOARD_PATHS, NEPAL_MUNICIPALITIES } from '../../utils/constants'
+import { NEPAL_MUNICIPALITIES } from '../../utils/constants'
 import {
   getApiErrorMessage,
   validateConfirmPassword,
@@ -70,9 +70,13 @@ export default function Register() {
       const response = await register(payload)
 
       if (response.success) {
-        toast.success('Account created successfully!')
-        const redirectTo = ROLE_DASHBOARD_PATHS[response.user.role] || '/'
-        navigate(redirectTo, { replace: true })
+        toast.success('Account created. Check your email to verify it.')
+        navigate('/verify-email', {
+          replace: true,
+          state: {
+            email: payload.email,
+          },
+        })
       }
     } catch (error) {
       toast.error(getApiErrorMessage(error, 'Registration failed'))

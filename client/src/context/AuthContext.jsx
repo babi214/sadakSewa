@@ -36,7 +36,7 @@ export function AuthProvider({ children }) {
 
   const register = useCallback(async (userData) => {
     const response = await authService.register(userData)
-    if (response.success) {
+    if (response.success && response.token) {
       persistAuth(response.token, response.user)
     }
     return response

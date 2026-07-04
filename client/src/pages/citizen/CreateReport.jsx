@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Send } from 'lucide-react'
+import { ArrowLeft, Send, Scan, XCircle, CheckCircle2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
 import Card from '../../components/common/Card'
@@ -9,6 +9,7 @@ import ImageUploader from '../../components/report/ImageUploader'
 import LocationPicker from '../../components/report/LocationPicker'
 import { useAuth } from '../../hooks/useAuth'
 import { reportService } from '../../services/reportService'
+import { aiService } from '../../services/aiService'
 import {
   NEPAL_MUNICIPALITIES,
   REPORT_CATEGORIES,
@@ -41,11 +42,41 @@ export default function CreateReport() {
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const [aiResult, setAiResult] = useState(null)
+  const [analyzing, setAnalyzing] = useState(false)
+
   const handleChange = (e) => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }))
+    }
+  }
+
+  const handleFileSelect = async (file) => {
+    setAnalyzing(true)
+    setAiResult(null)
+    try {
+      const response = await aiService.analyzeImage(file)
+      if (response.success && response.data.damage_detected) {
+        setAiResult(response.data)
+        const detectedType = response.data.detections[0]?.type || ''
+        const mappedCategory = detectedType === 'pothole' ? 'pothole' : 'road_damage'
+        setForm((prev) => ({
+          ...prev,
+          category: prev.category || mappedCategory,
+          title: prev.title || `AI Detected: ${detectedType.replace(/_/g, ' ')}`,
+          description: prev.description || `AI detected ${detectedType} with ${(response.data.detections[0]?.confidence * 100).toFixed(0)}% confidence.`,
+          severity: response.data.detections[0]?.confidence > 0.7 ? 'high' : response.data.detections[0]?.confidence > 0.4 ? 'medium' : 'low',
+        }))
+        toast.success(`AI detected: ${detectedType.replace(/_/g, ' ')}`)
+      } else if (response.success) {
+        setAiResult({ road_status: 'good', damage_detected: false, detections: [] })
+      }
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, 'AI analysis failed'))
+    } finally {
+      setAnalyzing(false)
     }
   }
 
@@ -68,6 +99,13 @@ export default function CreateReport() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     if (!validate()) return
+
+    if (aiResult && !aiResult.damage_detected) {
+      const confirmed = window.confirm(
+        'AI analysis did not detect road damage in the image. Are you sure you want to submit this report?'
+      )
+      if (!confirmed) return
+    }
 
     setIsSubmitting(true)
     try {
@@ -216,7 +254,58 @@ export default function CreateReport() {
 
         <Card>
           <h2 className="mb-5 text-lg font-semibold text-secondary">Photos</h2>
-          <ImageUploader images={images} onChange={setImages} />
+          <ImageUploader
+            images={images}
+            onChange={setImages}
+            onFileSelect={handleFileSelect}
+          />
+
+          {analyzing && (
+            <div className="mt-3 flex items-center gap-2 text-sm text-muted">
+              <Scan className="h-4 w-4 animate-pulse" />
+              Analyzing image with AI...
+            </div>
+          )}
+
+          {aiResult && !analyzing && (
+            <div className="mt-3">
+              {aiResult.damage_detected ? (
+                <div className="rounded-xl border border-border bg-background p-4">
+                  <div className="mb-3 flex items-center gap-2 text-sm font-medium text-danger">
+                    <XCircle className="h-4 w-4" />
+                    AI Detected Damage
+                  </div>
+                  <div className="space-y-2">
+                    {aiResult.detections.map((d, i) => (
+                      <div key={i} className="flex items-center justify-between rounded-lg bg-white px-4 py-2 text-sm">
+                        <span className="font-medium text-secondary capitalize">
+                          {d.type.replace(/_/g, ' ')}
+                        </span>
+                        <span className="text-muted">
+                          {(d.confidence * 100).toFixed(1)}% confidence
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-sm text-accent">
+                  <CheckCircle2 className="h-4 w-4" />
+                  No damage detected in image
+                </div>
+              )}
+            </div>
+          )}
+
+          {aiResult?.annotated_image && (
+            <div className="mt-3 overflow-hidden rounded-xl border border-border">
+              <img
+                src={`data:image/jpeg;base64,${aiResult.annotated_image}`}
+                alt="AI Analysis"
+                className="w-full object-contain"
+              />
+            </div>
+          )}
         </Card>
 
         <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
