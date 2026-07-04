@@ -45,7 +45,7 @@ router.post("/", protect, createReport);
 
 router.put("/:id", protect, updateReport);
 
-router.patch("/:id/status", protect, workerOnly, updateReportStatus);
+router.patch("/:id/status", protect, updateReportStatus);
 router.patch("/:id/upvote", protect, toggleUpvote);
 router.patch("/:id/assign", protect, adminOnly, assignWorker);
 

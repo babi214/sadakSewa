@@ -114,7 +114,11 @@ const getAllReports = async (req, res) => {
 
     const filter = {};
 
-    if (req.query.status) filter.status = req.query.status;
+    if (req.query.status) {
+      filter.status = req.query.status;
+    } else {
+      filter.status = { $ne: "rejected" };
+    }
     if (req.query.category) filter.category = req.query.category;
     if (req.query.severity) filter.severity = req.query.severity;
 
@@ -257,6 +261,54 @@ const updateReportStatus = async (req, res) => {
       });
     }
 
+    if (status === report.status) {
+      return res.status(400).json({
+        success: false,
+        message: "Report is already in that status",
+      });
+    }
+
+    const isAdmin = req.user.role === "admin";
+    const isWorker = req.user.role === "worker";
+    const isAssignedWorker = report.assignedWorker?.toString() === req.user._id.toString();
+
+    if (isAdmin) {
+      const allowedAdminTransitions = {
+        pending: ["verified", "rejected"],
+      };
+      const allowed = allowedAdminTransitions[report.status] || [];
+      if (!allowed.includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: "Admins can only review pending reports as verified or rejected",
+        });
+      }
+    } else if (isWorker) {
+      if (!isAssignedWorker) {
+        return res.status(403).json({
+          success: false,
+          message: "Only the assigned worker can update this report",
+        });
+      }
+
+      const allowedWorkerTransitions = {
+        verified: ["in_progress"],
+        in_progress: ["resolved"],
+      };
+      const allowed = allowedWorkerTransitions[report.status] || [];
+      if (!allowed.includes(status)) {
+        return res.status(400).json({
+          success: false,
+          message: "Workers can only move verified reports to in progress, then resolve them",
+        });
+      }
+    } else {
+      return res.status(403).json({
+        success: false,
+        message: "Only admins and assigned workers can update report status",
+      });
+    }
+
     const previousStatus = report.status;
     report.status = status;
     await report.save();
@@ -281,12 +333,11 @@ const updateReportStatus = async (req, res) => {
     });
   }
 };
-
 const getNearbyReports = async (req, res) => {
   try {
     const { longitude, latitude, distance = 5000, limit } = req.query;
 
-    let query = {};
+    let query = { status: { $ne: "rejected" } };
     if (
       longitude !== undefined &&
       longitude !== null &&
@@ -294,6 +345,7 @@ const getNearbyReports = async (req, res) => {
       latitude !== null
     ) {
       query = {
+        status: { $ne: "rejected" },
         location: {
           $near: {
             $geometry: {
@@ -494,6 +546,13 @@ const assignWorker = async (req, res) => {
         message: "Report not found",
       });
     }
+    if (report.status !== "verified") {
+      return res.status(400).json({
+        success: false,
+        message: "Verify the report before assigning a worker",
+      });
+    }
+
     report.assignedWorker = worker._id;
     await report.save();
     await report.populate("assignedWorker", "fullName email");
