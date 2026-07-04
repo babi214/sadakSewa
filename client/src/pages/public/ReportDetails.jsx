@@ -150,7 +150,7 @@ export default function ReportDetails() {
 
   const isOwner =
     String(report.reportedBy?._id || report.reportedBy) === String(user?._id)
-  const canManage = isOwner || user?.role === 'admin'
+  const canManage = isOwner && report?.status === 'pending'
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">

@@ -86,6 +86,7 @@ export default function CreateReport() {
       description: validateRequired(form.description, 'Description'),
       category: validateRequired(form.category, 'Category'),
       location: !location ? 'Please select a location on the map' : '',
+      images: images.length === 0 ? 'At least one photo is required' : '',
     }
 
     if (form.description && form.description.length > 2000) {
@@ -259,6 +260,9 @@ export default function CreateReport() {
             onChange={setImages}
             onFileSelect={handleFileSelect}
           />
+          {errors.images && (
+            <p className="mt-2 text-sm text-danger">{errors.images}</p>
+          )}
 
           {analyzing && (
             <div className="mt-3 flex items-center gap-2 text-sm text-muted">

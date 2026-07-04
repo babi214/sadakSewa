@@ -20,6 +20,7 @@ import CreateReport from '../pages/citizen/CreateReport'
 import AnalyzeRoad from '../pages/citizen/AnalyzeRoad'
 import EditReport from '../pages/citizen/EditReport'
 import MyReports from '../pages/citizen/MyReports'
+import Notifications from '../pages/citizen/Notifications'
 import Profile from '../pages/citizen/Profile'
 import CitizenDashboard from '../pages/citizen/Dashboard'
 import NearbyReports from '../pages/citizen/NearbyReports'
@@ -95,12 +96,15 @@ export default function AppRoutes() {
           </ProtectedRoute>
         }
       >
+        {/* Notifications (all roles) */}
+        <Route path="notifications" element={<Notifications />} />
+
         {/* Citizen */}
         <Route path="citizen/dashboard" element={<RoleRoute allowedRoles={['citizen']}><CitizenDashboard /></RoleRoute>} />
         <Route path="citizen/reports" element={<RoleRoute allowedRoles={['citizen']}><MyReports /></RoleRoute>} />
         <Route path="citizen/reports/new" element={<RoleRoute allowedRoles={['citizen']}><CreateReport /></RoleRoute>} />
         <Route path="citizen/analyze" element={<RoleRoute allowedRoles={['citizen']}><AnalyzeRoad /></RoleRoute>} />
-        <Route path="citizen/reports/:id/edit" element={<RoleRoute allowedRoles={['citizen', 'admin']}><EditReport /></RoleRoute>} />
+        <Route path="citizen/reports/:id/edit" element={<RoleRoute allowedRoles={['citizen']}><EditReport /></RoleRoute>} />
         <Route path="citizen/profile" element={<RoleRoute allowedRoles={['citizen']}><Profile /></RoleRoute>} />
 
         {/* Worker */}

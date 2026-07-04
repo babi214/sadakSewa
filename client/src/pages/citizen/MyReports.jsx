@@ -141,7 +141,7 @@ export default function MyReports() {
               key={report._id}
               report={report}
               index={index}
-              showOwnerActions
+              showOwnerActions={report.status === 'pending'}
               onEdit={() => navigate(`/citizen/reports/${report._id}/edit`)}
               onDelete={setDeleteTarget}
               onUpdate={(updated) =>

@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import {
   Bell,
   ChevronDown,
@@ -12,6 +12,7 @@ import {
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../../hooks/useAuth'
+import { notificationService } from '../../services/notificationService'
 import Button from '../common/Button'
 
 const publicLinks = [
@@ -85,12 +86,28 @@ function NavItem({ to, label, onClick }) {
 
 export default function Navbar() {
   const { user, isAuthenticated, logout, getDashboardPath } = useAuth()
+  const navigate = useNavigate()
   const [mobileOpen, setMobileOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
   const profileRef = useRef(null)
 
   const roleLinks = isAuthenticated ? getRoleLinks(user?.role) : []
   const profilePath = isAuthenticated ? getProfilePath(user?.role) : '/profile'
+
+  useEffect(() => {
+    if (!isAuthenticated) return
+    let cancelled = false
+    const fetch = async () => {
+      try {
+        const res = await notificationService.getUnreadCount()
+        if (!cancelled) setUnreadCount(res?.unreadCount ?? 0)
+      } catch {}
+    }
+    fetch()
+    const interval = setInterval(fetch, 30000)
+    return () => { cancelled = true; clearInterval(interval) }
+  }, [isAuthenticated])
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -150,10 +167,15 @@ export default function Navbar() {
               <button
                 type="button"
                 aria-label="Notifications"
+                onClick={() => navigate('/notifications')}
                 className="relative rounded-xl p-2 text-secondary/60 transition-colors hover:bg-secondary/5 hover:text-secondary"
               >
                 <Bell className="h-5 w-5" />
-                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-danger ring-2 ring-white" />
+                {unreadCount > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold text-white ring-2 ring-white">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
               </button>
 
               <div className="relative" ref={profileRef}>

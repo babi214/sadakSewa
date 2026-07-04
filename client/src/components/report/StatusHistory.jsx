@@ -1,7 +1,6 @@
 import {
   CheckCircle2,
   FileText,
-  ThumbsUp,
   UserCheck,
   RefreshCw,
   Trash2,
@@ -18,8 +17,6 @@ const actionConfig = {
     color: 'bg-accent/10 text-accent',
     label: 'Status changed',
   },
-  upvoted: { icon: ThumbsUp, color: 'bg-accent/10 text-accent', label: 'Upvoted' },
-  removed_upvote: { icon: ThumbsUp, color: 'bg-secondary/5 text-muted', label: 'Upvote removed' },
   deleted: { icon: Trash2, color: 'bg-danger/10 text-danger', label: 'Report deleted' },
 }
 
