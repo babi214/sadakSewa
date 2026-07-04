@@ -15,3 +15,6 @@ desktop.ini
 coverage/
 uploads/
 *.log
+RDD2022/
+runs/
+ai-service/
