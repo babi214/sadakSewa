@@ -58,6 +58,8 @@ const createReport = async (req, res) => {
       description,
       category,
       severity,
+      province,
+      district,
       municipality,
       locationName,
       longitude,
@@ -84,6 +86,8 @@ const createReport = async (req, res) => {
       description,
       category,
       severity,
+      province,
+      district,
       municipality,
       locationName,
       images: images || [],
@@ -562,6 +566,18 @@ const assignWorker = async (req, res) => {
       });
     }
 
+    const activeAssignment = await Report.findOne({
+      assignedWorker: worker._id,
+      status: { $in: ["verified", "in_progress"] },
+      _id: { $ne: report._id },
+    });
+    if (activeAssignment) {
+      return res.status(400).json({
+        success: false,
+        message: "This worker already has an active assignment. Please wait until their current report is resolved.",
+      });
+    }
+
     report.assignedWorker = worker._id;
     await report.save();
     await report.populate("assignedWorker", "fullName email");
@@ -726,6 +742,43 @@ const getAdminDashboard = async (req, res) => {
   }
 };
 
+const getAvailableWorkers = async (req, res) => {
+  try {
+    const report = await Report.findById(req.params.id);
+    if (!report) {
+      return res.status(404).json({ success: false, message: "Report not found" });
+    }
+
+    const matchConditions = { role: "worker", isActive: true };
+
+    const orConditions = [];
+    if (report.district) orConditions.push({ district: report.district });
+    if (report.municipality) orConditions.push({ municipality: report.municipality });
+
+    if (orConditions.length > 0) {
+      matchConditions.$or = orConditions;
+    }
+
+    const candidateWorkers = await User.find(matchConditions).select("_id");
+
+    const candidateIds = candidateWorkers.map(w => w._id);
+
+    const busyWorkerIds = await Report.distinct("assignedWorker", {
+      assignedWorker: { $in: candidateIds },
+      status: { $in: ["verified", "in_progress"] },
+    });
+
+    const availableIds = candidateIds.filter(id => !busyWorkerIds.some(b => b.equals(id)));
+
+    const workers = await User.find({ _id: { $in: availableIds } }).select("fullName email phone province district municipality profilePicture");
+
+    res.status(200).json({ success: true, workers, totalAvailable: workers.length, totalBusy: busyWorkerIds.length });
+  } catch (error) {
+    const isDev = process.env.NODE_ENV === "development";
+    res.status(500).json({ success: false, message: isDev ? error.message : "Internal server error" });
+  }
+};
+
 const getReportHistory = async (req, res) => {
   try {
     const report = await Report.findById(req.params.id);
@@ -823,4 +876,5 @@ module.exports = {
   getAdminDashboard,
   getReportHistory,
   getPublicStats,
+  getAvailableWorkers,
 };

@@ -104,13 +104,22 @@ const reportSchema = new mongoose.Schema(
       default: null,
     },
 
+    province: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    district: {
+      type: String,
+      trim: true,
+      default: "",
+    },
     municipality: {
       type: String,
       trim: true,
       default: "",
       index: true,
     },
-
     location: {
       type: {
         type: String,

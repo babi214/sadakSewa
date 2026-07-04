@@ -17,6 +17,7 @@ const {
   getAdminDashboard,
   getReportHistory,
   getPublicStats,
+  getAvailableWorkers,
 } = require("../controllers/reportController");
 const {
   protect,
@@ -41,6 +42,7 @@ router.get("/test", (req, res) => {
   });
 });
 router.get("/:id", getSingleReport);
+router.get("/:id/available-workers", protect, adminOnly, getAvailableWorkers);
 router.get("/:id/history", protect, getReportHistory);
 
 router.post("/", protect, createReport);

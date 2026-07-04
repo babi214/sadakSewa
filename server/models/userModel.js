@@ -55,6 +55,16 @@ const userSchema = new mongoose.Schema(
       default: true,
       index: true,
     },
+    province: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+    district: {
+      type: String,
+      trim: true,
+      default: null,
+    },
     municipality: {
       type: String,
       trim: true,

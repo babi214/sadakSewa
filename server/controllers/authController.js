@@ -13,7 +13,7 @@ const createOtpCode = () => {
 
 const registerUser = async (req, res) => {
   try {
-    const { fullName, email, password, phone, municipality } = req.body;
+    const { fullName, email, password, phone, province, district, municipality } = req.body;
 
     if (!fullName || !email || !password) {
       return res.status(400).json({
@@ -53,6 +53,8 @@ const registerUser = async (req, res) => {
       email: normalizedEmail,
       password,
       phone: phone || null,
+      province: province || null,
+      district: district || null,
       municipality: municipality || null,
       emailVerificationToken: hashedCode,
       emailVerificationExpires: Date.now() + 10 * 60 * 1000,
@@ -79,6 +81,8 @@ const registerUser = async (req, res) => {
         email: user.email,
         role: user.role,
         phone: user.phone,
+        province: user.province,
+        district: user.district,
         municipality: user.municipality,
         profilePicture: user.profilePicture,
         isVerified: user.isVerified,
@@ -172,6 +176,8 @@ const loginUser = async (req, res) => {
         email: user.email,
         role: user.role,
         phone: user.phone,
+        province: user.province,
+        district: user.district,
         municipality: user.municipality,
         profilePicture: user.profilePicture,
         isVerified: user.isVerified,
@@ -456,19 +462,25 @@ const resetPassword = async (req, res) => {
 
 const getProfile = async (req, res) => {
   try {
-    const reports = await Report.find({ reportedBy: req.user._id }).select("status upvoteCount");
-    const reportCount = reports.length;
-    const resolvedCount = reports.filter((report) => report.status === "resolved").length;
-    const upvoteCount = reports.reduce((sum, report) => sum + (report.upvoteCount || 0), 0);
+    const isWorker = req.user.role === "worker";
+    const userObj = req.user.toObject();
+
+    if (isWorker) {
+      const assignedReports = await Report.find({ assignedWorker: req.user._id }).select("status");
+      const assignedCount = assignedReports.length;
+      const resolvedCount = assignedReports.filter((r) => r.status === "resolved").length;
+      userObj.assignedCount = assignedCount;
+      userObj.resolvedCount = resolvedCount;
+    } else {
+      const reports = await Report.find({ reportedBy: req.user._id }).select("status upvoteCount");
+      userObj.reportCount = reports.length;
+      userObj.resolvedCount = reports.filter((r) => r.status === "resolved").length;
+      userObj.upvoteCount = reports.reduce((sum, r) => sum + (r.upvoteCount || 0), 0);
+    }
 
     res.status(200).json({
       success: true,
-      user: {
-        ...req.user.toObject(),
-        reportCount,
-        resolvedCount,
-        upvoteCount,
-      },
+      user: userObj,
     });
   } catch (error) {
     const isDev = process.env.NODE_ENV === "development";
@@ -480,7 +492,7 @@ const getProfile = async (req, res) => {
 };
 const updateProfile = async (req, res) => {
   try {
-    const allowedFields = ["fullName", "phone", "municipality"];
+    const allowedFields = ["fullName", "phone", "province", "district", "municipality"];
 
     const updates = {};
     allowedFields.forEach((field) => {

@@ -9,6 +9,7 @@ const uploadRoutes = require("./routes/uploadRoutes");
 const userRoutes = require("./routes/userRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const locationRoutes = require("./routes/locationRoutes");
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/locations", locationRoutes);
 // app.use((err, req, res, next) => {
 //     console.error("--- SERVER ERROR STACK ---");
 //     console.error(err); // This prints the actual error to your VS Code terminal
