@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Search, Shield, Users } from 'lucide-react'
+import { ChevronDown, ChevronRight, Mail, MapPin, Phone, Search, Shield, Users } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
 import Card from '../../components/common/Card'
@@ -23,6 +23,7 @@ export default function ManageUsers() {
   const [roleFilter, setRoleFilter] = useState('')
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [updatingId, setUpdatingId] = useState(null)
+  const [expandedId, setExpandedId] = useState(null)
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(search), 400)
@@ -134,53 +135,131 @@ export default function ManageUsers() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.03 }}
             >
-              <Card className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-sm font-bold text-primary">
-                    {user.profilePicture ? (
-                      <img
-                        src={user.profilePicture}
-                        alt={user.fullName}
-                        className="h-full w-full rounded-xl object-cover"
-                      />
-                    ) : (
-                      user.fullName?.charAt(0)?.toUpperCase()
-                    )}
-                  </div>
-                  <div>
-                    <p className="font-semibold text-secondary">{user.fullName}</p>
-                    <p className="text-sm text-muted">{user.email}</p>
-                    <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted">
-                      <span className="capitalize">{user.role}</span>
-                      <span>·</span>
-                      <span>{formatDate(user.createdAt)}</span>
-                      {!user.isActive && (
-                        <span className="font-medium text-danger">Inactive</span>
+              <Card className="flex flex-col gap-4">
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center gap-4">
+                    <button
+                      type="button"
+                      onClick={() => setExpandedId(expandedId === user._id ? null : user._id)}
+                      className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-sm font-bold text-primary hover:bg-primary/20 transition-colors"
+                    >
+                      {user.profilePicture ? (
+                        <img
+                          src={user.profilePicture}
+                          alt={user.fullName}
+                          className="h-full w-full rounded-xl object-cover"
+                        />
+                      ) : (
+                        user.fullName?.charAt(0)?.toUpperCase()
                       )}
+                    </button>
+                    <div className="flex-1">
+                      <p className="font-semibold text-secondary">{user.fullName}</p>
+                      <p className="flex items-center gap-1 text-sm text-muted">
+                        <Mail className="h-3 w-3" />
+                        {user.email}
+                      </p>
+                      <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted">
+                        <span className="capitalize">{user.role}</span>
+                        <span>·</span>
+                        <span>{formatDate(user.createdAt)}</span>
+                        {user.phone && <><span>·</span><span>{user.phone}</span></>}
+                        {!user.isActive && (
+                          <span className="font-medium text-danger">Inactive</span>
+                        )}
+                        {user.isVerified && (
+                          <span className="font-medium text-accent">Verified</span>
+                        )}
+                      </div>
                     </div>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-2">
+                    <Select
+                      value={user.role}
+                      onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                      disabled={updatingId === user._id}
+                      className="w-full sm:w-32 py-2 text-xs"
+                    >
+                      {ROLES.map((r) => (
+                        <option key={r.value} value={r.value}>{r.label}</option>
+                      ))}
+                    </Select>
+                    <Button
+                      variant={user.isActive ? 'outline' : 'accent'}
+                      size="sm"
+                      disabled={updatingId === user._id}
+                      onClick={() => handleToggleActive(user._id, user.isActive)}
+                    >
+                      {user.isActive ? 'Deactivate' : 'Activate'}
+                    </Button>
+                    <button
+                      type="button"
+                      onClick={() => setExpandedId(expandedId === user._id ? null : user._id)}
+                      className="rounded-lg p-2 text-muted hover:bg-secondary/5 transition-colors"
+                    >
+                      {expandedId === user._id ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </button>
                   </div>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2">
-                  <Select
-                    value={user.role}
-                    onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                    disabled={updatingId === user._id}
-                    className="w-full sm:w-32 py-2 text-xs"
+                {expandedId === user._id && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="border-t border-border pt-4"
                   >
-                    {ROLES.map((r) => (
-                      <option key={r.value} value={r.value}>{r.label}</option>
-                    ))}
-                  </Select>
-                  <Button
-                    variant={user.isActive ? 'outline' : 'accent'}
-                    size="sm"
-                    disabled={updatingId === user._id}
-                    onClick={() => handleToggleActive(user._id, user.isActive)}
-                  >
-                    {user.isActive ? 'Deactivate' : 'Activate'}
-                  </Button>
-                </div>
+                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                      <div>
+                        <p className="text-xs font-medium uppercase tracking-wider text-muted">Contact</p>
+                        <div className="mt-2 space-y-1.5">
+                          <p className="flex items-center gap-2 text-sm text-secondary">
+                            <Mail className="h-3.5 w-3.5 text-muted" />
+                            {user.email}
+                          </p>
+                          <p className="flex items-center gap-2 text-sm text-secondary">
+                            <Phone className="h-3.5 w-3.5 text-muted" />
+                            {user.phone || 'Not provided'}
+                          </p>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium uppercase tracking-wider text-muted">Location</p>
+                        <div className="mt-2 space-y-1.5">
+                          <p className="flex items-center gap-2 text-sm text-secondary">
+                            <MapPin className="h-3.5 w-3.5 text-muted" />
+                            {[user.province, user.district, user.municipality].filter(Boolean).join(', ') || 'Not provided'}
+                          </p>
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium uppercase tracking-wider text-muted">Account</p>
+                        <div className="mt-2 space-y-1.5">
+                          <p className="text-sm text-secondary">
+                            <span className="text-muted">Role:</span> <span className="capitalize font-medium">{user.role}</span>
+                          </p>
+                          <p className="text-sm text-secondary">
+                            <span className="text-muted">Status:</span>{' '}
+                            <span className={user.isActive ? 'text-accent font-medium' : 'text-danger font-medium'}>
+                              {user.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                          </p>
+                          <p className="text-sm text-secondary">
+                            <span className="text-muted">Email verified:</span>{' '}
+                            {user.isVerified ? <span className="text-accent font-medium">Yes</span> : <span className="text-danger font-medium">No</span>}
+                          </p>
+                          <p className="text-sm text-secondary">
+                            <span className="text-muted">Joined:</span> {formatDate(user.createdAt)}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
               </Card>
             </motion.div>
           ))}

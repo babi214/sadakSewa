@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import Modal from '../common/Modal'
 import Button from '../common/Button'
 import { FormField, Select } from '../common/Input'
-import { userService } from '../../services/userService'
+import { reportService } from '../../services/reportService'
 import { getApiErrorMessage } from '../../utils/validators'
 
 export default function AssignWorkerModal({
@@ -17,14 +17,14 @@ export default function AssignWorkerModal({
   const [loadingWorkers, setLoadingWorkers] = useState(false)
 
   useEffect(() => {
-    if (!isOpen) return
+    if (!isOpen || !report?._id) return
 
     const fetchWorkers = async () => {
       setLoadingWorkers(true)
       try {
-        const response = await userService.getUsers({ role: 'worker', isActive: true })
+        const response = await reportService.getAvailableWorkers(report._id)
         if (response.success) {
-          setWorkers(response.users)
+          setWorkers(response.workers)
           const current = report?.assignedWorker?._id || report?.assignedWorker
           setWorkerId(current ? String(current) : '')
         }
@@ -57,14 +57,14 @@ export default function AssignWorkerModal({
           </option>
           {workers.map((worker) => (
             <option key={worker._id} value={worker._id}>
-              {worker.fullName} ({worker.email})
+              {worker.fullName} ({worker.email}){worker.district ? ` - ${worker.district}` : ''}
             </option>
           ))}
         </Select>
       </FormField>
 
       {workers.length === 0 && !loadingWorkers && (
-        <p className="mt-2 text-xs text-muted">No active workers found.</p>
+        <p className="mt-2 text-xs text-muted">No available workers in this district/municipality. All workers in this area are currently busy with other assignments.</p>
       )}
 
       <div className="mt-6 flex justify-end gap-3">

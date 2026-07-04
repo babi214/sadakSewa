@@ -41,7 +41,7 @@ export default function LocationPicker({ value, onChange, error }) {
 
   return (
     <div className="space-y-3">
-      <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2 text-sm text-muted break-all">
           <MapPin className="h-4 w-4 shrink-0" />
           <span className="truncate">
@@ -70,7 +70,7 @@ export default function LocationPicker({ value, onChange, error }) {
         <MapContainer
           center={[position.lat, position.lng]}
           zoom={14}
-          className="h-72 w-full"
+          className="h-56 w-full"
           scrollWheelZoom
         >
           <TileLayer

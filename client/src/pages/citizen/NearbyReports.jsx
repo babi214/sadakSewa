@@ -23,10 +23,20 @@ const DISTANCE_OPTIONS = [
 export default function NearbyReports() {
   const [userLocation, setUserLocation] = useState(null)
   const [reports, setReports] = useState([])
+  const [allReports, setAllReports] = useState([])
   const [distance, setDistance] = useState(5000)
   const [activeReportId, setActiveReportId] = useState(null)
   const [loading, setLoading] = useState(true)
   const [locationError, setLocationError] = useState('')
+
+  const fetchAllReports = useCallback(async () => {
+    try {
+      const response = await reportService.getAllReports()
+      if (response.success) {
+        setAllReports(response.reports || response.data || [])
+      }
+    } catch (_) {}
+  }, [])
 
   const fetchNearby = useCallback(async (coords) => {
     setLoading(true)
@@ -72,7 +82,8 @@ export default function NearbyReports() {
 
   useEffect(() => {
     requestLocation()
-  }, [requestLocation])
+    fetchAllReports()
+  }, [requestLocation, fetchAllReports])
 
   useEffect(() => {
     if (userLocation) fetchNearby(userLocation)
@@ -121,7 +132,7 @@ export default function NearbyReports() {
         <div className="xl:col-span-3">
           {userLocation ? (
             <ReportsMap
-              reports={reports}
+              reports={allReports}
               userLocation={userLocation}
               activeReportId={activeReportId}
               onMarkerClick={setActiveReportId}

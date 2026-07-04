@@ -1,11 +1,11 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { Eye, EyeOff, UserPlus } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
-import { FormField, Input } from '../../components/common/Input'
+import { FormField, Input, Select } from '../../components/common/Input'
 import { useAuth } from '../../hooks/useAuth'
-import { NEPAL_MUNICIPALITIES } from '../../utils/constants'
+import api from '../../api/axios'
 import {
   getApiErrorMessage,
   validateConfirmPassword,
@@ -26,11 +26,73 @@ export default function Register() {
     password: '',
     confirmPassword: '',
     phone: '',
+    province: '',
+    district: '',
     municipality: '',
   })
   const [errors, setErrors] = useState({})
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [provinces, setProvinces] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [municipalities, setMunicipalities] = useState([])
+  const [selectedProvinceId, setSelectedProvinceId] = useState('')
+  const [selectedDistrictId, setSelectedDistrictId] = useState('')
+
+  useEffect(() => {
+    api.get('/locations/provinces').then(({ data }) => {
+      if (data.success) setProvinces(data.data)
+    }).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (selectedProvinceId) {
+      api.get(`/locations/districts?provinceId=${selectedProvinceId}`).then(({ data }) => {
+        if (data.success) setDistricts(data.data)
+      }).catch(() => {})
+      setForm((prev) => ({ ...prev, district: '', municipality: '' }))
+      setSelectedDistrictId('')
+      setMunicipalities([])
+    } else {
+      setDistricts([])
+      setForm((prev) => ({ ...prev, district: '', municipality: '' }))
+      setSelectedDistrictId('')
+      setMunicipalities([])
+    }
+  }, [selectedProvinceId])
+
+  useEffect(() => {
+    if (selectedDistrictId) {
+      api.get(`/locations/municipalities?districtId=${selectedDistrictId}`).then(({ data }) => {
+        if (data.success) setMunicipalities(data.data)
+      }).catch(() => {})
+      setForm((prev) => ({ ...prev, municipality: '' }))
+    } else {
+      setMunicipalities([])
+      setForm((prev) => ({ ...prev, municipality: '' }))
+    }
+  }, [selectedDistrictId])
+
+  const handleProvinceChange = (e) => {
+    const id = e.target.value
+    setSelectedProvinceId(id)
+    const name = id ? provinces.find((p) => p.id === Number(id))?.name : ''
+    setForm((prev) => ({ ...prev, province: name, district: '', municipality: '' }))
+    setSelectedDistrictId('')
+    if (!id) { setDistricts([]); setMunicipalities([]) }
+  }
+
+  const handleDistrictChange = (e) => {
+    const id = e.target.value
+    setSelectedDistrictId(id)
+    const name = id ? districts.find((d) => d.id === Number(id))?.name : ''
+    setForm((prev) => ({ ...prev, district: name, municipality: '' }))
+    if (!id) setMunicipalities([])
+  }
+
+  const handleMunicipalityChange = (e) => {
+    setForm((prev) => ({ ...prev, municipality: e.target.value }))
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -47,6 +109,9 @@ export default function Register() {
       password: validatePassword(form.password),
       confirmPassword: validateConfirmPassword(form.password, form.confirmPassword),
       phone: validatePhone(form.phone),
+      province: validateRequired(form.province, 'Province'),
+      district: validateRequired(form.district, 'District'),
+      municipality: validateRequired(form.municipality, 'Municipality'),
     }
     setErrors(newErrors)
     return !Object.values(newErrors).some(Boolean)
@@ -62,10 +127,11 @@ export default function Register() {
         fullName: form.fullName.trim(),
         email: form.email.trim(),
         password: form.password,
+        phone: form.phone.trim(),
+        province: form.province,
+        district: form.district,
+        municipality: form.municipality,
       }
-
-      if (form.phone.trim()) payload.phone = form.phone.trim()
-      if (form.municipality) payload.municipality = form.municipality
 
       const response = await register(payload)
 
@@ -159,7 +225,7 @@ export default function Register() {
           />
         </FormField>
 
-        <FormField label="Phone number" error={errors.phone} hint="Optional — include country code">
+        <FormField label="Phone number" error={errors.phone} required>
           <Input
             type="tel"
             name="phone"
@@ -171,20 +237,42 @@ export default function Register() {
           />
         </FormField>
 
-        <FormField label="Municipality" hint="Optional — helps route your reports">
-          <select
-            name="municipality"
+        <FormField label="Province" error={errors.province} required>
+          <Select
+            value={selectedProvinceId}
+            onChange={handleProvinceChange}
+          >
+            <option value="">Select province</option>
+            {provinces.map((p) => (
+              <option key={p.id} value={p.id}>{p.name}</option>
+            ))}
+          </Select>
+        </FormField>
+
+        <FormField label="District" error={errors.district} required>
+          <Select
+            value={selectedDistrictId}
+            onChange={handleDistrictChange}
+            disabled={!selectedProvinceId}
+          >
+            <option value="">Select district</option>
+            {districts.map((d) => (
+              <option key={d.id} value={d.id}>{d.name}</option>
+            ))}
+          </Select>
+        </FormField>
+
+        <FormField label="Municipality" error={errors.municipality} required>
+          <Select
             value={form.municipality}
-            onChange={handleChange}
-            className="w-full rounded-xl border border-border bg-white px-4 py-2.5 text-sm text-secondary transition-all focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
+            onChange={handleMunicipalityChange}
+            disabled={!selectedDistrictId}
           >
             <option value="">Select municipality</option>
-            {NEPAL_MUNICIPALITIES.map((m) => (
-              <option key={m} value={m}>
-                {m}
-              </option>
+            {municipalities.map((m) => (
+              <option key={m.id} value={m.name}>{m.name}</option>
             ))}
-          </select>
+          </Select>
         </FormField>
 
         <Button

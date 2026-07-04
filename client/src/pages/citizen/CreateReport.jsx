@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, Send, Scan, XCircle, CheckCircle2 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -10,8 +10,8 @@ import LocationPicker from '../../components/report/LocationPicker'
 import { useAuth } from '../../hooks/useAuth'
 import { reportService } from '../../services/reportService'
 import { aiService } from '../../services/aiService'
+import api from '../../api/axios'
 import {
-  NEPAL_MUNICIPALITIES,
   REPORT_CATEGORIES,
   SEVERITY_LEVELS,
 } from '../../utils/constants'
@@ -25,6 +25,8 @@ const initialForm = {
   description: '',
   category: '',
   severity: 'medium',
+  province: '',
+  district: '',
   municipality: '',
   locationName: '',
 }
@@ -35,12 +37,63 @@ export default function CreateReport() {
 
   const [form, setForm] = useState({
     ...initialForm,
+    province: user?.province || '',
+    district: user?.district || '',
     municipality: user?.municipality || '',
   })
   const [location, setLocation] = useState(null)
   const [images, setImages] = useState([])
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [provinces, setProvinces] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [municipalities, setMunicipalities] = useState([])
+  const [selectedProvinceId, setSelectedProvinceId] = useState('')
+  const [selectedDistrictId, setSelectedDistrictId] = useState('')
+
+  useEffect(() => {
+    api.get('/locations/provinces').then(({ data }) => {
+      if (data.success) setProvinces(data.data)
+    }).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (provinces.length && form.province && !selectedProvinceId) {
+      const p = provinces.find((p) => p.name === form.province)
+      if (p) setSelectedProvinceId(String(p.id))
+    }
+  }, [provinces, form.province, selectedProvinceId])
+
+  useEffect(() => {
+    if (districts.length && form.district && !selectedDistrictId) {
+      const d = districts.find((d) => d.name === form.district)
+      if (d) setSelectedDistrictId(String(d.id))
+    }
+  }, [districts, form.district, selectedDistrictId])
+
+  useEffect(() => {
+    if (selectedProvinceId) {
+      api.get(`/locations/districts?provinceId=${selectedProvinceId}`).then(({ data }) => {
+        if (data.success) {
+          setDistricts(data.data)
+          setMunicipalities([])
+        }
+      }).catch(() => {})
+    } else {
+      setDistricts([])
+      setMunicipalities([])
+    }
+  }, [selectedProvinceId])
+
+  useEffect(() => {
+    if (selectedDistrictId) {
+      api.get(`/locations/municipalities?districtId=${selectedDistrictId}`).then(({ data }) => {
+        if (data.success) setMunicipalities(data.data)
+      }).catch(() => {})
+    } else {
+      setMunicipalities([])
+    }
+  }, [selectedDistrictId])
 
   const [aiResult, setAiResult] = useState(null)
   const [analyzing, setAnalyzing] = useState(false)
@@ -51,6 +104,25 @@ export default function CreateReport() {
     if (errors[name]) {
       setErrors((prev) => ({ ...prev, [name]: '' }))
     }
+  }
+
+  const handleProvinceChange = (e) => {
+    const id = e.target.value
+    setSelectedProvinceId(id)
+    const name = id ? provinces.find((p) => p.id === Number(id))?.name : ''
+    setForm((prev) => ({ ...prev, province: name, district: '', municipality: '' }))
+    setSelectedDistrictId('')
+  }
+
+  const handleDistrictChange = (e) => {
+    const id = e.target.value
+    setSelectedDistrictId(id)
+    const name = id ? districts.find((d) => d.id === Number(id))?.name : ''
+    setForm((prev) => ({ ...prev, district: name, municipality: '' }))
+  }
+
+  const handleMunicipalityChange = (e) => {
+    setForm((prev) => ({ ...prev, municipality: e.target.value }))
   }
 
   const handleFileSelect = async (file) => {
@@ -120,6 +192,8 @@ export default function CreateReport() {
         images: images.map(({ url, publicId }) => ({ url, publicId })),
       }
 
+      if (form.province) payload.province = form.province
+      if (form.district) payload.district = form.district
       if (form.municipality) payload.municipality = form.municipality
       if (form.locationName.trim()) payload.locationName = form.locationName.trim()
 
@@ -137,7 +211,7 @@ export default function CreateReport() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
+    <div className="mx-auto max-w-6xl space-y-6">
       <div className="flex items-center gap-4">
         <Link
           to="/citizen/dashboard"
@@ -153,180 +227,211 @@ export default function CreateReport() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6" noValidate>
-        <Card>
-          <h2 className="mb-5 text-lg font-semibold text-secondary">Issue Details</h2>
-          <div className="space-y-5">
-            <FormField label="Title" error={errors.title} required>
-              <Input
-                name="title"
-                value={form.title}
-                onChange={handleChange}
-                placeholder="e.g. Large pothole on main road"
-                maxLength={150}
-                error={errors.title}
-              />
-            </FormField>
+      <form onSubmit={handleSubmit} noValidate>
+        <div className="grid gap-6 lg:grid-cols-2">
+          {/* Left column — Issue Details + Photos */}
+          <div className="space-y-6">
+            <Card>
+              <h2 className="mb-5 text-lg font-semibold text-secondary">Issue Details</h2>
+              <div className="space-y-5">
+                <FormField label="Title" error={errors.title} required>
+                  <Input
+                    name="title"
+                    value={form.title}
+                    onChange={handleChange}
+                    placeholder="e.g. Large pothole on main road"
+                    maxLength={150}
+                    error={errors.title}
+                  />
+                </FormField>
 
-            <FormField label="Description" error={errors.description} required>
-              <Textarea
-                name="description"
-                value={form.description}
-                onChange={handleChange}
-                placeholder="Describe the issue in detail — size, danger level, nearby landmarks..."
-                rows={5}
-                maxLength={2000}
-                error={errors.description}
-              />
-            </FormField>
+                <FormField label="Description" error={errors.description} required>
+                  <Textarea
+                    name="description"
+                    value={form.description}
+                    onChange={handleChange}
+                    placeholder="Describe the issue in detail — size, danger level, nearby landmarks..."
+                    rows={5}
+                    maxLength={2000}
+                    error={errors.description}
+                  />
+                </FormField>
 
-            <div className="grid gap-5 sm:grid-cols-2">
-              <FormField label="Category" error={errors.category} required>
-                <Select
-                  name="category"
-                  value={form.category}
-                  onChange={handleChange}
-                  error={errors.category}
-                >
-                  <option value="">Select category</option>
-                  {REPORT_CATEGORIES.map((cat) => (
-                    <option key={cat.value} value={cat.value}>
-                      {cat.label}
-                    </option>
-                  ))}
-                </Select>
-              </FormField>
+                <div className="grid gap-5 sm:grid-cols-2">
+                  <FormField label="Category" error={errors.category} required>
+                    <Select
+                      name="category"
+                      value={form.category}
+                      onChange={handleChange}
+                      error={errors.category}
+                    >
+                      <option value="">Select category</option>
+                      {REPORT_CATEGORIES.map((cat) => (
+                        <option key={cat.value} value={cat.value}>
+                          {cat.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormField>
 
-              <FormField label="Severity">
-                <Select name="severity" value={form.severity} onChange={handleChange}>
-                  {SEVERITY_LEVELS.map((sev) => (
-                    <option key={sev.value} value={sev.value}>
-                      {sev.label}
-                    </option>
-                  ))}
-                </Select>
-              </FormField>
-            </div>
-          </div>
-        </Card>
-
-        <Card>
-          <h2 className="mb-5 text-lg font-semibold text-secondary">Location</h2>
-          <div className="space-y-5">
-            <FormField label="Location name" hint="Optional — street name or landmark">
-              <Input
-                name="locationName"
-                value={form.locationName}
-                onChange={handleChange}
-                placeholder="e.g. Near Baneshwor Chowk"
-                maxLength={200}
-              />
-            </FormField>
-
-            <FormField label="Municipality">
-              <Select
-                name="municipality"
-                value={form.municipality}
-                onChange={handleChange}
-              >
-                <option value="">Select municipality</option>
-                {NEPAL_MUNICIPALITIES.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
-                ))}
-              </Select>
-            </FormField>
-
-            <FormField label="Pin on map" error={errors.location} required>
-              <LocationPicker
-                value={location}
-                onChange={(coords) => {
-                  setLocation(coords)
-                  if (errors.location) {
-                    setErrors((prev) => ({ ...prev, location: '' }))
-                  }
-                }}
-                error={errors.location}
-              />
-            </FormField>
-          </div>
-        </Card>
-
-        <Card>
-          <h2 className="mb-5 text-lg font-semibold text-secondary">Photos</h2>
-          <ImageUploader
-            images={images}
-            onChange={setImages}
-            onFileSelect={handleFileSelect}
-          />
-          {errors.images && (
-            <p className="mt-2 text-sm text-danger">{errors.images}</p>
-          )}
-
-          {analyzing && (
-            <div className="mt-3 flex items-center gap-2 text-sm text-muted">
-              <Scan className="h-4 w-4 animate-pulse" />
-              Analyzing image with AI...
-            </div>
-          )}
-
-          {aiResult && !analyzing && (
-            <div className="mt-3">
-              {aiResult.damage_detected ? (
-                <div className="rounded-xl border border-border bg-background p-4">
-                  <div className="mb-3 flex items-center gap-2 text-sm font-medium text-danger">
-                    <XCircle className="h-4 w-4" />
-                    AI Detected Damage
-                  </div>
-                  <div className="space-y-2">
-                    {aiResult.detections.map((d, i) => (
-                      <div key={i} className="flex items-center justify-between rounded-lg bg-white px-4 py-2 text-sm">
-                        <span className="font-medium text-secondary capitalize">
-                          {d.type.replace(/_/g, ' ')}
-                        </span>
-                        <span className="text-muted">
-                          {(d.confidence * 100).toFixed(1)}% confidence
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                  <FormField label="Severity">
+                    <Select name="severity" value={form.severity} onChange={handleChange}>
+                      {SEVERITY_LEVELS.map((sev) => (
+                        <option key={sev.value} value={sev.value}>
+                          {sev.label}
+                        </option>
+                      ))}
+                    </Select>
+                  </FormField>
                 </div>
-              ) : (
-                <div className="flex items-center gap-2 text-sm text-accent">
-                  <CheckCircle2 className="h-4 w-4" />
-                  No damage detected in image
+              </div>
+            </Card>
+
+            <Card>
+              <h2 className="mb-5 text-lg font-semibold text-secondary">Photos</h2>
+              <ImageUploader
+                images={images}
+                onChange={setImages}
+                onFileSelect={handleFileSelect}
+              />
+              {errors.images && (
+                <p className="mt-2 text-sm text-danger">{errors.images}</p>
+              )}
+
+              {analyzing && (
+                <div className="mt-3 flex items-center gap-2 text-sm text-muted">
+                  <Scan className="h-4 w-4 animate-pulse" />
+                  Analyzing image with AI...
                 </div>
               )}
-            </div>
-          )}
 
-          {aiResult?.annotated_image && (
-            <div className="mt-3 overflow-hidden rounded-xl border border-border">
-              <img
-                src={`data:image/jpeg;base64,${aiResult.annotated_image}`}
-                alt="AI Analysis"
-                className="w-full object-contain"
-              />
-            </div>
-          )}
-        </Card>
+              {aiResult && !analyzing && (
+                <div className="mt-3">
+                  {aiResult.damage_detected ? (
+                    <div className="rounded-xl border border-border bg-background p-4">
+                      <div className="mb-3 flex items-center gap-2 text-sm font-medium text-danger">
+                        <XCircle className="h-4 w-4" />
+                        AI Detected Damage
+                      </div>
+                      <div className="space-y-2">
+                        {aiResult.detections.map((d, i) => (
+                          <div key={i} className="flex items-center justify-between rounded-lg bg-white px-4 py-2 text-sm">
+                            <span className="font-medium text-secondary capitalize">
+                              {d.type.replace(/_/g, ' ')}
+                            </span>
+                            <span className="text-muted">
+                              {(d.confidence * 100).toFixed(1)}% confidence
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 text-sm text-accent">
+                      <CheckCircle2 className="h-4 w-4" />
+                      No damage detected in image
+                    </div>
+                  )}
+                </div>
+              )}
 
-        <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-          <Link to="/citizen/dashboard">
-            <Button type="button" variant="outline" className="w-full sm:w-auto">
-              Cancel
-            </Button>
-          </Link>
+              {aiResult?.annotated_image && (
+                <div className="mt-3 overflow-hidden rounded-xl border border-border">
+                  <img
+                    src={`data:image/jpeg;base64,${aiResult.annotated_image}`}
+                    alt="AI Analysis"
+                    className="w-full object-contain"
+                  />
+                </div>
+              )}
+            </Card>
+          </div>
+
+          {/* Right column — Location */}
+          <div className="space-y-6">
+            <Card>
+              <h2 className="mb-5 text-lg font-semibold text-secondary">Location</h2>
+              <div className="space-y-5">
+                <FormField label="Location name" hint="Optional — street name or landmark">
+                  <Input
+                    name="locationName"
+                    value={form.locationName}
+                    onChange={handleChange}
+                    placeholder="e.g. Near Baneshwor Chowk"
+                    maxLength={200}
+                  />
+                </FormField>
+
+                <FormField label="Province">
+                  <Select
+                    value={selectedProvinceId}
+                    onChange={handleProvinceChange}
+                  >
+                    <option value="">Select province</option>
+                    {provinces.map((p) => (
+                      <option key={p.id} value={p.id}>{p.name}</option>
+                    ))}
+                  </Select>
+                </FormField>
+
+                <FormField label="District">
+                  <Select
+                    value={selectedDistrictId}
+                    onChange={handleDistrictChange}
+                    disabled={!selectedProvinceId}
+                  >
+                    <option value="">Select district</option>
+                    {districts.map((d) => (
+                      <option key={d.id} value={d.id}>{d.name}</option>
+                    ))}
+                  </Select>
+                </FormField>
+
+                <FormField label="Municipality">
+                  <Select
+                    value={form.municipality}
+                    onChange={handleMunicipalityChange}
+                    disabled={!selectedDistrictId}
+                  >
+                    <option value="">Select municipality</option>
+                    {municipalities.map((m) => (
+                      <option key={m.id} value={m.name}>{m.name}</option>
+                    ))}
+                  </Select>
+                </FormField>
+
+                <FormField label="Pin on map" error={errors.location} required>
+                  <LocationPicker
+                    value={location}
+                    onChange={(coords) => {
+                      setLocation(coords)
+                      if (errors.location) {
+                        setErrors((prev) => ({ ...prev, location: '' }))
+                      }
+                    }}
+                    error={errors.location}
+                  />
+                </FormField>
+              </div>
+            </Card>
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center mt-6">
           <Button
             type="submit"
             size="lg"
             isLoading={isSubmitting}
             leftIcon={!isSubmitting && <Send className="h-4 w-4" />}
-            className="w-full sm:w-auto"
+            className="w-full sm:w-auto min-w-[200px]"
           >
             Submit Report
           </Button>
+          <Link to="/citizen/dashboard" className="w-full sm:w-auto">
+            <Button type="button" variant="outline" className="w-full sm:w-auto min-w-[200px]">
+              Cancel
+            </Button>
+          </Link>
         </div>
       </form>
     </div>

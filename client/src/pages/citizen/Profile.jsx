@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { Camera, Mail, MapPin, Phone, Save, User } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
@@ -6,11 +6,10 @@ import Card, { CardHeader } from '../../components/common/Card'
 import { FormField, Input, Select } from '../../components/common/Input'
 import { useAuth } from '../../hooks/useAuth'
 import { authService } from '../../services/authService'
-import { NEPAL_MUNICIPALITIES } from '../../utils/constants'
 import { formatDate } from '../../utils/formatters'
+import api from '../../api/axios'
 import {
   getApiErrorMessage,
-  validatePhone,
   validateRequired,
 } from '../../utils/validators'
 
@@ -21,11 +20,48 @@ export default function Profile() {
   const [form, setForm] = useState({
     fullName: user?.fullName || '',
     phone: user?.phone || '',
+    province: user?.province || '',
+    district: user?.district || '',
     municipality: user?.municipality || '',
   })
   const [errors, setErrors] = useState({})
   const [isSaving, setIsSaving] = useState(false)
   const [isUploadingPhoto, setIsUploadingPhoto] = useState(false)
+  const [provinces, setProvinces] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [municipalities, setMunicipalities] = useState([])
+  const [selectedProvinceId, setSelectedProvinceId] = useState('')
+  const [selectedDistrictId, setSelectedDistrictId] = useState('')
+
+  useEffect(() => {
+    api.get('/locations/provinces').then(({ data }) => {
+      if (data.success) setProvinces(data.data)
+    }).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (user?.province) {
+      const p = provinces.find((p) => p.name === user.province)
+      if (p) {
+        setSelectedProvinceId(String(p.id))
+        api.get(`/locations/districts?provinceId=${p.id}`).then(({ data }) => {
+          if (data.success) {
+            setDistricts(data.data)
+            const d = data.data.find((d) => d.name === user.district)
+            if (d) setSelectedDistrictId(String(d.id))
+          }
+        }).catch(() => {})
+      }
+    }
+  }, [user, provinces])
+
+  useEffect(() => {
+    if (selectedDistrictId) {
+      api.get(`/locations/municipalities?districtId=${selectedDistrictId}`).then(({ data }) => {
+        if (data.success) setMunicipalities(data.data)
+      }).catch(() => {})
+    }
+  }, [selectedDistrictId])
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -35,10 +71,32 @@ export default function Profile() {
     }
   }
 
+  const handleProvinceChange = (e) => {
+    const id = e.target.value
+    setSelectedProvinceId(id)
+    const name = id ? provinces.find((p) => p.id === Number(id))?.name : ''
+    setForm((prev) => ({ ...prev, province: name, district: '', municipality: '' }))
+    setSelectedDistrictId('')
+    setMunicipalities([])
+    if (!id) setDistricts([])
+  }
+
+  const handleDistrictChange = (e) => {
+    const id = e.target.value
+    setSelectedDistrictId(id)
+    const name = id ? districts.find((d) => d.id === Number(id))?.name : ''
+    setForm((prev) => ({ ...prev, district: name, municipality: '' }))
+    if (!id) setMunicipalities([])
+  }
+
+  const handleMunicipalityChange = (e) => {
+    setForm((prev) => ({ ...prev, municipality: e.target.value }))
+  }
+
   const validate = () => {
     const newErrors = {
       fullName: validateRequired(form.fullName, 'Full name'),
-      phone: validatePhone(form.phone),
+      phone: validateRequired(form.phone, 'Phone number'),
     }
     setErrors(newErrors)
     return !Object.values(newErrors).some(Boolean)
@@ -53,6 +111,8 @@ export default function Profile() {
       const payload = {
         fullName: form.fullName.trim(),
         phone: form.phone.trim() || null,
+        province: form.province || null,
+        district: form.district || null,
         municipality: form.municipality || null,
       }
 
@@ -197,7 +257,7 @@ export default function Profile() {
           <FormField
             label="Phone number"
             error={errors.phone}
-            hint="Optional — include country code"
+            required
           >
             <div className="relative">
               <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
@@ -212,20 +272,51 @@ export default function Profile() {
             </div>
           </FormField>
 
+          <FormField label="Province">
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+              <Select
+                value={selectedProvinceId}
+                onChange={handleProvinceChange}
+                className="pl-9"
+              >
+                <option value="">Select province</option>
+                {provinces.map((p) => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </Select>
+            </div>
+          </FormField>
+
+          <FormField label="District">
+            <div className="relative">
+              <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+              <Select
+                value={selectedDistrictId}
+                onChange={handleDistrictChange}
+                disabled={!selectedProvinceId}
+                className="pl-9"
+              >
+                <option value="">Select district</option>
+                {districts.map((d) => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </Select>
+            </div>
+          </FormField>
+
           <FormField label="Municipality">
             <div className="relative">
               <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
               <Select
-                name="municipality"
                 value={form.municipality}
-                onChange={handleChange}
+                onChange={handleMunicipalityChange}
+                disabled={!selectedDistrictId}
                 className="pl-9"
               >
                 <option value="">Select municipality</option>
-                {NEPAL_MUNICIPALITIES.map((m) => (
-                  <option key={m} value={m}>
-                    {m}
-                  </option>
+                {municipalities.map((m) => (
+                  <option key={m.id} value={m.name}>{m.name}</option>
                 ))}
               </Select>
             </div>

@@ -23,6 +23,8 @@ const publicLinks = [
   { to: '/contact', label: 'Contact' },
 ]
 
+const adminExcludedPaths = ['/', '/about', '/reports', '/contact']
+
 const citizenLinks = [
   { to: '/citizen/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/citizen/reports', label: 'My Reports' },
@@ -94,6 +96,9 @@ export default function Navbar() {
 
   const roleLinks = isAuthenticated ? getRoleLinks(user?.role) : []
   const profilePath = isAuthenticated ? getProfilePath(user?.role) : '/profile'
+  const visibleLinks = user?.role === 'admin'
+    ? publicLinks.filter(l => !adminExcludedPaths.includes(l.to))
+    : publicLinks
 
   useEffect(() => {
     if (!isAuthenticated) return
@@ -152,7 +157,7 @@ export default function Navbar() {
 
         {/* Desktop Navigation */}
         <div className="hidden items-center gap-1 lg:flex">
-          {publicLinks.map((link) => (
+          {visibleLinks.map((link) => (
             <NavItem key={link.to} to={link.to} label={link.label} />
           ))}
           {roleLinks.map((link) => (
@@ -172,9 +177,7 @@ export default function Navbar() {
               >
                 <Bell className="h-5 w-5" />
                 {unreadCount > 0 && (
-                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-danger px-1 text-[10px] font-bold text-white ring-2 ring-white">
-                    {unreadCount > 9 ? '9+' : unreadCount}
-                  </span>
+                  <span className="absolute right-0.5 top-0.5 h-2.5 w-2.5 rounded-full bg-danger ring-2 ring-white" />
                 )}
               </button>
 
@@ -277,7 +280,7 @@ export default function Navbar() {
             className="overflow-hidden border-t border-border/50 lg:hidden"
           >
             <div className="space-y-1 px-4 py-4">
-              {publicLinks.map((link) => (
+              {visibleLinks.map((link) => (
                 <NavItem
                   key={link.to}
                   to={link.to}

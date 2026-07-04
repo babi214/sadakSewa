@@ -10,12 +10,9 @@ import ImageUploader from '../../components/report/ImageUploader'
 import LocationPicker from '../../components/report/LocationPicker'
 import { reportService } from '../../services/reportService'
 import { getReportCoordinates } from '../../utils/leafletSetup'
-import {
-  NEPAL_MUNICIPALITIES,
-  REPORT_CATEGORIES,
-  SEVERITY_LEVELS,
-} from '../../utils/constants'
+import { REPORT_CATEGORIES, SEVERITY_LEVELS } from '../../utils/constants'
 import { getApiErrorMessage, validateRequired } from '../../utils/validators'
+import api from '../../api/axios'
 
 export default function EditReport() {
   const { id } = useParams()
@@ -27,6 +24,55 @@ export default function EditReport() {
   const [errors, setErrors] = useState({})
   const [loading, setLoading] = useState(true)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [provinces, setProvinces] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [municipalities, setMunicipalities] = useState([])
+  const [selectedProvinceId, setSelectedProvinceId] = useState('')
+  const [selectedDistrictId, setSelectedDistrictId] = useState('')
+
+  useEffect(() => {
+    api.get('/locations/provinces').then(({ data }) => {
+      if (data.success) setProvinces(data.data)
+    }).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (selectedProvinceId) {
+      api.get(`/locations/districts?provinceId=${selectedProvinceId}`).then(({ data }) => {
+        if (data.success) {
+          setDistricts(data.data)
+          setMunicipalities([])
+        }
+      }).catch(() => {})
+    } else {
+      setDistricts([])
+      setMunicipalities([])
+    }
+  }, [selectedProvinceId])
+
+  useEffect(() => {
+    if (selectedDistrictId) {
+      api.get(`/locations/municipalities?districtId=${selectedDistrictId}`).then(({ data }) => {
+        if (data.success) setMunicipalities(data.data)
+      }).catch(() => {})
+    } else {
+      setMunicipalities([])
+    }
+  }, [selectedDistrictId])
+
+  useEffect(() => {
+    if (provinces.length && form?.province && !selectedProvinceId) {
+      const p = provinces.find((p) => p.name === form.province)
+      if (p) setSelectedProvinceId(String(p.id))
+    }
+  }, [provinces, form?.province, selectedProvinceId])
+
+  useEffect(() => {
+    if (districts.length && form?.district && !selectedDistrictId) {
+      const d = districts.find((d) => d.name === form.district)
+      if (d) setSelectedDistrictId(String(d.id))
+    }
+  }, [districts, form?.district, selectedDistrictId])
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -39,6 +85,8 @@ export default function EditReport() {
             description: report.description || '',
             category: report.category || '',
             severity: report.severity || 'medium',
+            province: report.province || '',
+            district: report.district || '',
             municipality: report.municipality || '',
             locationName: report.locationName || '',
           })
@@ -60,6 +108,25 @@ export default function EditReport() {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: '' }))
+  }
+
+  const handleProvinceChange = (e) => {
+    const id = e.target.value
+    setSelectedProvinceId(id)
+    const name = id ? provinces.find((p) => p.id === Number(id))?.name : ''
+    setForm((prev) => ({ ...prev, province: name, district: '', municipality: '' }))
+    setSelectedDistrictId('')
+  }
+
+  const handleDistrictChange = (e) => {
+    const id = e.target.value
+    setSelectedDistrictId(id)
+    const name = id ? districts.find((d) => d.id === Number(id))?.name : ''
+    setForm((prev) => ({ ...prev, district: name, municipality: '' }))
+  }
+
+  const handleMunicipalityChange = (e) => {
+    setForm((prev) => ({ ...prev, municipality: e.target.value }))
   }
 
   const validate = () => {
@@ -84,6 +151,8 @@ export default function EditReport() {
         description: form.description.trim(),
         category: form.category,
         severity: form.severity,
+        province: form.province || '',
+        district: form.district || '',
         municipality: form.municipality || '',
         locationName: form.locationName.trim(),
         longitude: location.lng,
@@ -162,11 +231,27 @@ export default function EditReport() {
             <FormField label="Location name">
               <Input name="locationName" value={form.locationName} onChange={handleChange} maxLength={200} />
             </FormField>
+            <FormField label="Province">
+              <Select value={selectedProvinceId} onChange={handleProvinceChange}>
+                <option value="">Select province</option>
+                {provinces.map((p) => (
+                  <option key={p.id} value={p.id}>{p.name}</option>
+                ))}
+              </Select>
+            </FormField>
+            <FormField label="District">
+              <Select value={selectedDistrictId} onChange={handleDistrictChange} disabled={!selectedProvinceId}>
+                <option value="">Select district</option>
+                {districts.map((d) => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </Select>
+            </FormField>
             <FormField label="Municipality">
-              <Select name="municipality" value={form.municipality} onChange={handleChange}>
+              <Select value={form.municipality} onChange={handleMunicipalityChange} disabled={!selectedDistrictId}>
                 <option value="">Select municipality</option>
-                {NEPAL_MUNICIPALITIES.map((m) => (
-                  <option key={m} value={m}>{m}</option>
+                {municipalities.map((m) => (
+                  <option key={m.id} value={m.name}>{m.name}</option>
                 ))}
               </Select>
             </FormField>

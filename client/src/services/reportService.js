@@ -66,6 +66,11 @@ export const reportService = {
     return data
   },
 
+  getAvailableWorkers: async (id) => {
+    const { data } = await api.get(`/reports/${id}/available-workers`)
+    return data
+  },
+
   assignWorker: async (id, workerId) => {
     const { data } = await api.patch(`/reports/${id}/assign`, { workerId })
     return data

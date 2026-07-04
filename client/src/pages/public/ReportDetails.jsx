@@ -153,10 +153,10 @@ export default function ReportDetails() {
   const canManage = isOwner && report?.status === 'pending'
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-5xl px-4 py-4 sm:px-6 lg:px-8">
       <Link
         to="/reports"
-        className="mb-6 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-secondary"
+        className="mb-4 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-secondary"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to reports
@@ -164,20 +164,20 @@ export default function ReportDetails() {
 
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <div className="flex flex-wrap items-center gap-2">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-1.5">
               <StatusBadge status={report.status} />
               <CategoryBadge category={report.category} />
               <SeverityBadge severity={report.severity} />
             </div>
-            <h1 className="mt-3 text-2xl font-bold text-secondary sm:text-3xl">
+            <h1 className="mt-2 text-xl font-bold text-secondary sm:text-2xl">
               {report.title}
             </h1>
-            <p className="mt-2 text-muted">{report.description}</p>
+            <p className="mt-1 text-sm text-muted line-clamp-3">{report.description}</p>
           </div>
 
-          <div className="flex shrink-0 flex-wrap gap-2">
+          <div className="flex shrink-0 flex-wrap gap-1.5">
             <Button
               variant={hasUpvoted ? 'accent' : 'outline'}
               onClick={handleUpvote}
@@ -209,23 +209,23 @@ export default function ReportDetails() {
 
         {/* Images */}
         {images.length > 0 && (
-          <Card padding="sm" className="mt-8 overflow-hidden">
-            <div className="aspect-video overflow-hidden rounded-xl bg-background">
+          <Card padding="sm" className="mt-4 overflow-hidden">
+            <div className="flex items-center justify-center overflow-hidden rounded-xl bg-black/5 max-h-80">
               <img
                 src={images[activeImage]?.url || images[activeImage]}
                 alt={report.title}
-                className="h-full w-full object-cover"
+                className="max-h-80 w-full object-contain"
               />
             </div>
             {images.length > 1 && (
-              <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+              <div className="mt-2 flex gap-2 overflow-x-auto pb-1">
                 {images.map((img, index) => (
                   <button
                     key={img.publicId || index}
                     type="button"
                     onClick={() => setActiveImage(index)}
                     className={[
-                      'h-16 w-16 shrink-0 overflow-hidden rounded-lg border-2 transition-all',
+                      'h-14 w-14 shrink-0 overflow-hidden rounded-lg border-2 transition-all',
                       activeImage === index
                         ? 'border-primary ring-2 ring-primary/20'
                         : 'border-transparent opacity-70 hover:opacity-100',
@@ -243,23 +243,23 @@ export default function ReportDetails() {
           </Card>
         )}
 
-        <div className="mt-8 grid gap-6 lg:grid-cols-3">
+        <div className="mt-4 grid gap-4 lg:grid-cols-3">
           {/* Main column */}
-          <div className="space-y-6 lg:col-span-2">
+          <div className="space-y-4 lg:col-span-2">
             {/* Map */}
             {coords && (
               <Card>
                 <CardHeader title="Location" subtitle={report.locationName || 'Issue location on map'} />
-                <div className="mt-4">
+                <div className="mt-3">
                   <ReportMap
                     lat={coords.lat}
                     lng={coords.lng}
-                    height="h-80"
+                    height="h-52"
                     popup={report.locationName || report.title}
                   />
                 </div>
                 {(report.locationName || report.municipality) && (
-                  <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted">
+                  <div className="mt-3 flex flex-wrap gap-4 text-sm text-muted">
                     {report.locationName && (
                       <span className="flex items-center gap-1.5">
                         <MapPin className="h-4 w-4 text-primary" />
@@ -278,7 +278,7 @@ export default function ReportDetails() {
             <Card>
               <CardHeader title="Status History" subtitle="Timeline of report activity" />
               {!isAuthenticated ? (
-                <div className="mt-4 rounded-xl bg-background px-4 py-6 text-center">
+                <div className="mt-3 rounded-xl bg-background px-4 py-4 text-center">
                   <p className="text-sm text-muted">
                     <Link to="/login" state={{ from: { pathname: `/reports/${id}` } }} className="font-medium text-primary hover:underline">
                       Log in
@@ -287,7 +287,7 @@ export default function ReportDetails() {
                   </p>
                 </div>
               ) : (
-                <div className="mt-4">
+                <div className="mt-3">
                   <StatusHistory history={history} loading={historyLoading} />
                 </div>
               )}
@@ -295,11 +295,11 @@ export default function ReportDetails() {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="space-y-4">
             <Card>
               <CardHeader title="Report Info" />
-              <dl className="mt-4 space-y-4">
-                <div className="flex items-start gap-3">
+              <dl className="mt-3 space-y-3">
+                <div className="flex items-start gap-2.5">
                   <User className="mt-0.5 h-4 w-4 text-muted" />
                   <div>
                     <dt className="text-xs text-muted">Reported by</dt>
@@ -308,7 +308,7 @@ export default function ReportDetails() {
                     </dd>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-2.5">
                   <Calendar className="mt-0.5 h-4 w-4 text-muted" />
                   <div>
                     <dt className="text-xs text-muted">Submitted</dt>
@@ -317,7 +317,7 @@ export default function ReportDetails() {
                     </dd>
                   </div>
                 </div>
-                <div className="flex items-start gap-3">
+                <div className="flex items-start gap-2.5">
                   <MapPin className="mt-0.5 h-4 w-4 text-muted" />
                   <div>
                     <dt className="text-xs text-muted">Category</dt>
@@ -327,7 +327,7 @@ export default function ReportDetails() {
                   </div>
                 </div>
                 {report.assignedWorker && (
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-2.5">
                     <User className="mt-0.5 h-4 w-4 text-muted" />
                     <div>
                       <dt className="text-xs text-muted">Assigned worker</dt>
@@ -338,7 +338,7 @@ export default function ReportDetails() {
                   </div>
                 )}
                 {report.resolvedAt && (
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-2.5">
                     <Calendar className="mt-0.5 h-4 w-4 text-muted" />
                     <div>
                       <dt className="text-xs text-muted">Resolved</dt>
