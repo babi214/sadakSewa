@@ -15,6 +15,16 @@ const getAllUsers = async (req, res) => {
       ];
     }
 
+    if (req.query.province) {
+      filter.province = { $regex: req.query.province, $options: "i" };
+    }
+    if (req.query.district) {
+      filter.district = { $regex: req.query.district, $options: "i" };
+    }
+    if (req.query.municipality) {
+      filter.municipality = { $regex: req.query.municipality, $options: "i" };
+    }
+
     const users = await User.find(filter)
       .select("-password")
       .sort({ createdAt: -1 });

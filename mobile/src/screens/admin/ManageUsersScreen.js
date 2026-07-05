@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react'
-import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity, Alert } from 'react-native'
-import { ChevronDown, ChevronRight, Mail, MapPin, Phone, Shield, Search, Users, CheckCircle2, XCircle } from 'lucide-react-native'
+import React, { useState, useCallback, useEffect } from 'react'
+import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity, Alert, Modal } from 'react-native'
+import { ChevronDown, ChevronRight, Mail, MapPin, Phone, Shield, Search, Users, CheckCircle2, XCircle, X } from 'lucide-react-native'
 import { useFocusEffect } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
@@ -10,7 +10,8 @@ import EnhancedHeader from '../../components/EnhancedHeader'
 import { Input } from '../../components/Input'
 import { SkeletonList } from '../../components/SkeletonLoader'
 import { userService } from '../../services/userService'
-import { COLORS, RADIUS } from '../../constants'
+import { locationService } from '../../services/locationService'
+import { COLORS, RADIUS, SPACING } from '../../constants'
 
 const ROLES = ['citizen', 'worker', 'admin']
 
@@ -22,10 +23,64 @@ export default function ManageUsersScreen({ navigation }) {
   const [updatingUser, setUpdatingUser] = useState(null)
   const [expandedId, setExpandedId] = useState(null)
 
+  const [provinces, setProvinces] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [municipalities, setMunicipalities] = useState([])
+  const [provinceFilter, setProvinceFilter] = useState('')
+  const [districtFilter, setDistrictFilter] = useState('')
+  const [municipalityFilter, setMunicipalityFilter] = useState('')
+  const [roleFilter, setRoleFilter] = useState('')
+  const [pickerModal, setPickerModal] = useState({ visible: false, type: '', data: [] })
+
+  useEffect(() => {
+    locationService.getProvinces().then(res => setProvinces(res.data || [])).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (provinceFilter) {
+      const province = provinces.find(p => p.name === provinceFilter)
+      locationService.getDistricts(province?.id).then(res => setDistricts(res.data || [])).catch(() => {})
+    } else {
+      setDistricts([])
+    }
+    setDistrictFilter('')
+    setMunicipalityFilter('')
+    setMunicipalities([])
+  }, [provinceFilter])
+
+  useEffect(() => {
+    if (districtFilter) {
+      const district = districts.find(d => d.name === districtFilter)
+      locationService.getMunicipalities(district?.id).then(res => setMunicipalities(res.data || [])).catch(() => {})
+    } else {
+      setMunicipalities([])
+    }
+    setMunicipalityFilter('')
+  }, [districtFilter])
+
+  const openPicker = (type, data) => setPickerModal({ visible: true, type, data })
+
+  const selectPicker = (value) => {
+    if (pickerModal.type === 'province') setProvinceFilter(value)
+    else if (pickerModal.type === 'district') setDistrictFilter(value)
+    else if (pickerModal.type === 'municipality') setMunicipalityFilter(value)
+    setPickerModal({ visible: false, type: '', data: [] })
+  }
+
+  const clearLocation = (type) => {
+    if (type === 'province') { setProvinceFilter(''); setDistrictFilter(''); setMunicipalityFilter('') }
+    else if (type === 'district') { setDistrictFilter(''); setMunicipalityFilter('') }
+    else if (type === 'municipality') setMunicipalityFilter('')
+  }
+
   const fetchUsers = useCallback(async (isRefresh = false) => {
     try {
       const params = {}
       if (search.trim()) params.search = search.trim()
+      if (roleFilter) params.role = roleFilter
+      if (provinceFilter) params.province = provinceFilter
+      if (districtFilter) params.district = districtFilter
+      if (municipalityFilter) params.municipality = municipalityFilter
       const res = await userService.getAllUsers(params)
       setUsers(res?.users || res?.data || [])
     } catch {
@@ -34,9 +89,17 @@ export default function ManageUsersScreen({ navigation }) {
       setLoading(false)
       setRefreshing(false)
     }
-  }, [search])
+  }, [search, roleFilter, provinceFilter, districtFilter, municipalityFilter])
 
-  useFocusEffect(useCallback(() => { setLoading(true); fetchUsers() }, [search]))
+  useFocusEffect(useCallback(() => { setLoading(true); fetchUsers() }, [search, roleFilter, provinceFilter, districtFilter, municipalityFilter]))
+
+  const handleClearFilter = () => {
+    setSearch('')
+    setRoleFilter('')
+    setProvinceFilter('')
+    setDistrictFilter('')
+    setMunicipalityFilter('')
+  }
 
   const onRefresh = () => { setRefreshing(true); fetchUsers(true) }
 
@@ -169,6 +232,88 @@ export default function ManageUsersScreen({ navigation }) {
         </View>
       </View>
 
+      <View style={styles.roleFilterRow}>
+        {['', 'citizen', 'worker', 'admin'].map(r => (
+          <TouchableOpacity key={r || 'all'}
+            style={[styles.roleChip, roleFilter === r && styles.roleChipActive]}
+            onPress={() => setRoleFilter(r)}
+          >
+            <Text style={[styles.roleChipText, roleFilter === r && { color: COLORS.primary }]}>
+              {r ? r.charAt(0).toUpperCase() + r.slice(1) : 'All'}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <View style={styles.locationFilterRow}>
+        <TouchableOpacity style={styles.locationChip} onPress={() => openPicker('province', provinces)}>
+          <Text style={styles.locationChipText} numberOfLines={1}>
+            {provinceFilter || 'Province'}
+          </Text>
+          {provinceFilter ? (
+            <TouchableOpacity onPress={() => clearLocation('province')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <X size={14} color={COLORS.muted} />
+            </TouchableOpacity>
+          ) : <ChevronDown size={14} color={COLORS.muted} />}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.locationChip, !provinceFilter && styles.locationChipDisabled]}
+          onPress={() => provinceFilter && openPicker('district', districts)}
+        >
+          <Text style={styles.locationChipText} numberOfLines={1}>
+            {districtFilter || 'District'}
+          </Text>
+          {districtFilter ? (
+            <TouchableOpacity onPress={() => clearLocation('district')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <X size={14} color={COLORS.muted} />
+            </TouchableOpacity>
+          ) : <ChevronDown size={14} color={COLORS.muted} />}
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.locationChip, !districtFilter && styles.locationChipDisabled]}
+          onPress={() => districtFilter && openPicker('municipality', municipalities)}
+        >
+          <Text style={styles.locationChipText} numberOfLines={1}>
+            {municipalityFilter || 'Municipality'}
+          </Text>
+          {municipalityFilter ? (
+            <TouchableOpacity onPress={() => clearLocation('municipality')} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <X size={14} color={COLORS.muted} />
+            </TouchableOpacity>
+          ) : <ChevronDown size={14} color={COLORS.muted} />}
+        </TouchableOpacity>
+      </View>
+
+      <TouchableOpacity style={styles.clearBtn} onPress={handleClearFilter}>
+        <Text style={styles.clearBtnText}>Clear Filters</Text>
+      </TouchableOpacity>
+
+      <Modal visible={pickerModal.visible} transparent animationType="slide">
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>
+                {pickerModal.type === 'province' ? 'Select Province' : pickerModal.type === 'district' ? 'Select District' : 'Select Municipality'}
+              </Text>
+              <TouchableOpacity onPress={() => setPickerModal({ visible: false, type: '', data: [] })}>
+                <X size={20} color={COLORS.secondary} />
+              </TouchableOpacity>
+            </View>
+            <FlatList
+              data={pickerModal.data}
+              keyExtractor={item => String(item.id)}
+              renderItem={({ item }) => (
+                <TouchableOpacity style={styles.modalItem} onPress={() => selectPicker(item.name)}>
+                  <Text style={styles.modalItemText}>{item.name}</Text>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        </View>
+      </Modal>
+
       {loading && !refreshing ? (
         <View style={styles.list}><SkeletonList count={4} /></View>
       ) : (
@@ -194,6 +339,47 @@ export default function ManageUsersScreen({ navigation }) {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: COLORS.background },
   searchRow: { paddingHorizontal: 16, paddingBottom: 8 },
+  roleFilterRow: {
+    flexDirection: 'row', gap: 6, paddingHorizontal: 16, paddingBottom: 8,
+  },
+  locationFilterRow: {
+    flexDirection: 'row', gap: 8, paddingHorizontal: 16, paddingBottom: 12,
+  },
+  locationChip: {
+    flex: 1, flexDirection: 'row', alignItems: 'center', gap: 4,
+    backgroundColor: COLORS.surface, borderRadius: RADIUS.lg,
+    paddingHorizontal: 10, paddingVertical: 8,
+    borderWidth: 1, borderColor: COLORS.border,
+  },
+  locationChipDisabled: { opacity: 0.4 },
+  locationChipText: { flex: 1, fontSize: 12, color: COLORS.secondary },
+  modalOverlay: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: COLORS.background,
+    borderTopLeftRadius: 20, borderTopRightRadius: 20,
+    maxHeight: '60%', paddingBottom: 24,
+  },
+  modalHeader: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 16, paddingVertical: 14,
+    borderBottomWidth: 1, borderBottomColor: COLORS.border,
+  },
+  modalTitle: { fontSize: 16, fontWeight: '700', color: COLORS.secondary },
+  clearBtn: {
+    marginHorizontal: 16, marginBottom: 12,
+    backgroundColor: COLORS.surface, borderRadius: RADIUS.lg,
+    paddingVertical: 10, alignItems: 'center',
+    borderWidth: 1, borderColor: COLORS.border,
+  },
+  clearBtnText: { fontSize: 14, fontWeight: '600', color: COLORS.secondary },
+  modalItem: {
+    paddingHorizontal: 16, paddingVertical: 14,
+    borderBottomWidth: 1, borderBottomColor: COLORS.border,
+  },
+  modalItemText: { fontSize: 14, color: COLORS.secondary },
   searchBox: {
     flexDirection: 'row', alignItems: 'center', gap: 8,
     backgroundColor: COLORS.surface, borderRadius: RADIUS.lg,

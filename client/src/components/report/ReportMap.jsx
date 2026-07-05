@@ -23,7 +23,7 @@ export default function ReportMap({
   const hasMarker = Boolean(lat && lng)
 
   return (
-    <div className={`overflow-hidden rounded-xl border border-border ${className}`}>
+    <div className={`overflow-hidden rounded-xl border border-border ${className}`} style={{ position: 'relative', zIndex: 0 }}>
       <MapContainer
         center={[center.lat, center.lng]}
         zoom={zoom}

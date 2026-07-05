@@ -61,8 +61,8 @@ export const reportService = {
     return data
   },
 
-  updateReportStatus: async (id, status) => {
-    const { data } = await api.patch(`/reports/${id}/status`, { status })
+  updateReportStatus: async (id, status, rejectionReason) => {
+    const { data } = await api.patch(`/reports/${id}/status`, { status, rejectionReason })
     return data
   },
 
@@ -78,6 +78,21 @@ export const reportService = {
 
   updateReport: async (id, reportData) => {
     const { data } = await api.put(`/reports/${id}`, reportData)
+    return data
+  },
+
+  getFlaggedReports: async () => {
+    const { data } = await api.get('/reports/flagged')
+    return data
+  },
+
+  clearFlag: async (id) => {
+    const { data } = await api.patch(`/reports/${id}/clear-flag`)
+    return data
+  },
+
+  flagReport: async (id, reason, customReason) => {
+    const { data } = await api.post(`/reports/${id}/flag`, { reason, customReason })
     return data
   },
 }

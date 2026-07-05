@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { FileText, UserPlus } from 'lucide-react'
+import { AlertCircle, FileText, UserPlus } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
 import Card from '../../components/common/Card'
@@ -82,11 +82,11 @@ export default function ManageReports() {
     }
   }
 
-  const handleStatusUpdate = async (status) => {
+  const handleStatusUpdate = async (status, rejectionReason) => {
     if (!statusReport) return
     setStatusLoading(true)
     try {
-      const response = await reportService.updateReportStatus(statusReport._id, status)
+      const response = await reportService.updateReportStatus(statusReport._id, status, rejectionReason)
       if (response.success) {
         toast.success('Status updated')
         setStatusReport(null)
@@ -140,6 +140,12 @@ export default function ManageReports() {
                       <StatusBadge status={report.status} />
                       <CategoryBadge category={report.category} />
                       <SeverityBadge severity={report.severity} />
+                      {report.flagged && (
+                        <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700">
+                          <AlertCircle className="h-3 w-3" />
+                          Flagged
+                        </span>
+                      )}
                     </div>
                     <h3 className="mt-2 font-semibold text-secondary">{report.title}</h3>
                     <p className="mt-1 line-clamp-2 text-sm text-muted">{report.description}</p>

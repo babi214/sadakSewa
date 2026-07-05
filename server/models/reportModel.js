@@ -165,6 +165,46 @@ const reportSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    rejectedAt: {
+      type: Date,
+      default: null,
+    },
+    rejectionReason: {
+      type: String,
+      default: null,
+      maxlength: 500,
+    },
+    flagged: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    flaggedReason: {
+      type: String,
+      default: null,
+    },
+    userFlags: [
+      {
+        user: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        reason: {
+          type: String,
+          enum: ["fake", "duplicate", "inappropriate", "wrong_location", "other"],
+          required: true,
+        },
+        customReason: {
+          type: String,
+          default: null,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

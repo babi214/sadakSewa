@@ -2,13 +2,17 @@ import { useCallback, useEffect, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
+  AlertCircle,
   ArrowLeft,
   Calendar,
+  Flag,
   MapPin,
   Pencil,
+  ShieldCheck,
   ThumbsUp,
   Trash2,
   User,
+  UserPlus,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
@@ -16,8 +20,10 @@ import Card, { CardHeader } from '../../components/common/Card'
 import ConfirmModal from '../../components/common/ConfirmModal'
 import { ReportCardSkeleton } from '../../components/common/Skeleton'
 import { CategoryBadge, SeverityBadge, StatusBadge } from '../../components/common/Badge'
+import AssignWorkerModal from '../../components/report/AssignWorkerModal'
 import ReportMap from '../../components/report/ReportMap'
 import StatusHistory from '../../components/report/StatusHistory'
+import UpdateStatusModal from '../../components/report/UpdateStatusModal'
 import { useAuth } from '../../hooks/useAuth'
 import { reportService } from '../../services/reportService'
 import { getReportCoordinates } from '../../utils/leafletSetup'
@@ -38,6 +44,14 @@ export default function ReportDetails() {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [activeImage, setActiveImage] = useState(0)
   const [notFound, setNotFound] = useState(false)
+  const [flagOpen, setFlagOpen] = useState(false)
+  const [flagReason, setFlagReason] = useState('')
+  const [flagCustom, setFlagCustom] = useState('')
+  const [flagLoading, setFlagLoading] = useState(false)
+  const [statusReport, setStatusReport] = useState(null)
+  const [statusLoading, setStatusLoading] = useState(false)
+  const [assignReport, setAssignReport] = useState(null)
+  const [assignLoading, setAssignLoading] = useState(false)
 
   const fetchReport = useCallback(async () => {
     try {
@@ -148,19 +162,78 @@ export default function ReportDetails() {
   const images = report.images || []
   const upvoteCount = report.upvoteCount ?? report.upvotes?.length ?? 0
 
+  const handleFlag = async () => {
+    if (!flagReason) return
+    setFlagLoading(true)
+    try {
+      const response = await reportService.flagReport(id, flagReason, flagCustom)
+      if (response.success) {
+        toast.success(response.message)
+        setFlagOpen(false)
+        setFlagReason('')
+        setFlagCustom('')
+        fetchReport()
+      }
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, 'Failed to report'))
+    } finally {
+      setFlagLoading(false)
+    }
+  }
+
+  const handleStatusUpdate = async (status, rejectionReason) => {
+    if (!report) return
+    setStatusLoading(true)
+    try {
+      const response = await reportService.updateReportStatus(report._id, status, rejectionReason)
+      if (response.success) {
+        toast.success('Status updated')
+        setStatusReport(null)
+        fetchReport()
+        fetchHistory()
+      }
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, 'Failed to update status'))
+    } finally {
+      setStatusLoading(false)
+    }
+  }
+
+  const handleAssign = async (workerId) => {
+    if (!assignReport) return
+    setAssignLoading(true)
+    try {
+      const response = await reportService.assignWorker(assignReport._id, workerId)
+      if (response.success) {
+        toast.success('Worker assigned successfully')
+        setAssignReport(null)
+        fetchReport()
+      }
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, 'Failed to assign worker'))
+    } finally {
+      setAssignLoading(false)
+    }
+  }
+
+  const hasFlagged = report?.userFlags?.some(
+    (f) => String(f.user?._id || f.user) === String(user?._id)
+  )
+
   const isOwner =
     String(report.reportedBy?._id || report.reportedBy) === String(user?._id)
   const canManage = isOwner && report?.status === 'pending'
+  const canDelete = isOwner && (report?.status === 'pending' || report?.status === 'rejected')
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-4 sm:px-6 lg:px-8">
-      <Link
-        to="/reports"
+      <button
+        onClick={() => navigate(-1)}
         className="mb-4 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-secondary"
       >
         <ArrowLeft className="h-4 w-4" />
-        Back to reports
-      </Link>
+        Back
+      </button>
 
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
         {/* Header */}
@@ -188,21 +261,41 @@ export default function ReportDetails() {
               {upvoteCount} {upvoteCount === 1 ? 'Upvote' : 'Upvotes'}
             </Button>
             {canManage && (
-              <>
-                <Link to={`/citizen/reports/${id}/edit`}>
-                  <Button variant="outline" size="sm" leftIcon={<Pencil className="h-4 w-4" />}>
-                    Edit
-                  </Button>
-                </Link>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  leftIcon={<Trash2 className="h-4 w-4" />}
-                  onClick={() => setDeleteOpen(true)}
-                >
-                  Delete
+              <Link to={`/citizen/reports/${id}/edit`}>
+                <Button variant="outline" size="sm" leftIcon={<Pencil className="h-4 w-4" />}>
+                  Edit
                 </Button>
-              </>
+              </Link>
+            )}
+            {canDelete && (
+              <Button
+                variant="danger"
+                size="sm"
+                leftIcon={<Trash2 className="h-4 w-4" />}
+                onClick={() => setDeleteOpen(true)}
+              >
+                Delete
+              </Button>
+            )}
+            {user?.role === 'admin' && report?.status === 'pending' && (
+              <Button
+                variant="warning"
+                size="sm"
+                leftIcon={<ShieldCheck className="h-4 w-4" />}
+                onClick={() => setStatusReport(report)}
+              >
+                Review
+              </Button>
+            )}
+            {user?.role === 'admin' && report?.status === 'verified' && (
+              <Button
+                variant="outline"
+                size="sm"
+                leftIcon={<UserPlus className="h-4 w-4" />}
+                onClick={() => setAssignReport(report)}
+              >
+                Assign Worker
+              </Button>
             )}
           </div>
         </div>
@@ -337,6 +430,17 @@ export default function ReportDetails() {
                     </div>
                   </div>
                 )}
+                {report.rejectionReason && report.status === 'rejected' && (
+                  <div className="flex items-start gap-2.5">
+                    <AlertCircle className="mt-0.5 h-4 w-4 text-danger" />
+                    <div>
+                      <dt className="text-xs text-danger">Rejected</dt>
+                      <dd className="text-sm font-medium text-secondary">
+                        {report.rejectionReason}
+                      </dd>
+                    </div>
+                  </div>
+                )}
                 {report.resolvedAt && (
                   <div className="flex items-start gap-2.5">
                     <Calendar className="mt-0.5 h-4 w-4 text-muted" />
@@ -350,6 +454,61 @@ export default function ReportDetails() {
                 )}
               </dl>
             </Card>
+
+            {isAuthenticated && !isOwner && !hasFlagged && user?.role !== 'admin' && (
+              <Card>
+                <Button
+                  variant="danger"
+                  outline
+                  className="w-full"
+                  size="sm"
+                  leftIcon={<Flag className="h-4 w-4" />}
+                  onClick={() => setFlagOpen(true)}
+                >
+                  Report this issue
+                </Button>
+              </Card>
+            )}
+
+            {isAuthenticated && hasFlagged && user?.role !== 'admin' && (
+              <Card className="bg-red-50 border-red-200">
+                <p className="text-center text-xs text-red-600">
+                  You reported this issue
+                </p>
+              </Card>
+            )}
+
+            {user?.role === 'admin' && (
+              <Card className="bg-primary/5 border-primary/20">
+                <p className="text-xs font-medium text-secondary">Admin Actions</p>
+                <div className="mt-3 flex flex-col gap-2">
+                  {report?.status === 'pending' && (
+                    <Button
+                      size="sm"
+                      leftIcon={<ShieldCheck className="h-4 w-4" />}
+                      onClick={() => setStatusReport(report)}
+                    >
+                      Review Report
+                    </Button>
+                  )}
+                  {report?.status === 'verified' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      leftIcon={<UserPlus className="h-4 w-4" />}
+                      onClick={() => setAssignReport(report)}
+                    >
+                      Assign Worker
+                    </Button>
+                  )}
+                  <Link to={`/admin/flagged-reports`}>
+                    <Button variant="ghost" size="sm" className="w-full">
+                      Back to Flagged
+                    </Button>
+                  </Link>
+                </div>
+              </Card>
+            )}
 
             {!isAuthenticated && (
               <Card className="bg-primary/5 border-primary/20">
@@ -373,6 +532,105 @@ export default function ReportDetails() {
         description={`Are you sure you want to delete "${report.title}"? This cannot be undone.`}
         confirmLabel="Delete"
         isLoading={deleteLoading}
+      />
+
+      {/* Flag Report Modal */}
+      {flagOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <h3 className="text-lg font-semibold text-secondary">Report this issue</h3>
+            <p className="mt-1 text-sm text-muted">Why are you reporting this report?</p>
+
+            <div className="mt-4 space-y-2">
+              {['fake', 'duplicate', 'inappropriate', 'wrong_location'].map((r) => (
+                <label
+                  key={r}
+                  className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition ${
+                    flagReason === r
+                      ? 'border-red-400 bg-red-50'
+                      : 'border-border hover:border-red-200'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="flagReason"
+                    value={r}
+                    checked={flagReason === r}
+                    onChange={(e) => setFlagReason(e.target.value)}
+                    className="h-4 w-4 text-red-600"
+                  />
+                  <span className="text-sm capitalize text-secondary">{r.replace(/_/g, ' ')}</span>
+                </label>
+              ))}
+              <label
+                className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition ${
+                  flagReason === 'other'
+                    ? 'border-red-400 bg-red-50'
+                    : 'border-border hover:border-red-200'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="flagReason"
+                  value="other"
+                  checked={flagReason === 'other'}
+                  onChange={(e) => setFlagReason(e.target.value)}
+                  className="h-4 w-4 text-red-600"
+                />
+                <span className="text-sm text-secondary">Other</span>
+              </label>
+              {flagReason === 'other' && (
+                <input
+                  type="text"
+                  placeholder="Describe the issue..."
+                  value={flagCustom}
+                  onChange={(e) => setFlagCustom(e.target.value)}
+                  className="mt-1 w-full rounded-lg border border-border px-3 py-2 text-sm outline-none focus:border-red-400"
+                />
+              )}
+            </div>
+
+            <div className="mt-6 flex gap-3">
+              <Button
+                variant="ghost"
+                className="flex-1"
+                onClick={() => {
+                  setFlagOpen(false)
+                  setFlagReason('')
+                  setFlagCustom('')
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="danger"
+                className="flex-1"
+                onClick={handleFlag}
+                isLoading={flagLoading}
+                disabled={!flagReason}
+              >
+                Submit Report
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <UpdateStatusModal
+        isOpen={Boolean(statusReport)}
+        onClose={() => setStatusReport(null)}
+        report={statusReport}
+        onSubmit={handleStatusUpdate}
+        isLoading={statusLoading}
+        allowedStatuses={['verified', 'rejected']}
+      />
+
+      <AssignWorkerModal
+        isOpen={Boolean(assignReport)}
+        onClose={() => setAssignReport(null)}
+        report={assignReport}
+        onSubmit={handleAssign}
+        isLoading={assignLoading}
       />
     </div>
   )

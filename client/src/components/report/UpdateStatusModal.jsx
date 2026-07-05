@@ -19,10 +19,18 @@ export default function UpdateStatusModal({
   }, [allowedStatuses, report?.status])
 
   const [status, setStatus] = useState(options[0] || '')
+  const [rejectionReason, setRejectionReason] = useState('')
 
   useEffect(() => {
     setStatus(options[0] || '')
+    setRejectionReason('')
   }, [options])
+
+  const handleSubmit = () => {
+    onSubmit(status, rejectionReason)
+  }
+
+  const isRejected = status === 'rejected'
 
   return (
     <Modal
@@ -33,15 +41,33 @@ export default function UpdateStatusModal({
       size="sm"
     >
       {options.length > 0 ? (
-        <FormField label="New status">
-          <Select value={status} onChange={(e) => setStatus(e.target.value)}>
-            {options.map((s) => (
-              <option key={s} value={s}>
-                {formatStatus(s)}
-              </option>
-            ))}
-          </Select>
-        </FormField>
+        <>
+          <FormField label="New status">
+            <Select value={status} onChange={(e) => { setStatus(e.target.value); setRejectionReason('') }}>
+              {options.map((s) => (
+                <option key={s} value={s}>
+                  {formatStatus(s)}
+                </option>
+              ))}
+            </Select>
+          </FormField>
+
+          {isRejected && (
+            <FormField label="Rejection reason" required>
+              <textarea
+                value={rejectionReason}
+                onChange={(e) => setRejectionReason(e.target.value)}
+                placeholder="Explain why this report is being rejected..."
+                className="w-full rounded-lg border border-border px-3 py-2 text-sm outline-none transition-colors focus:border-red-400"
+                rows={3}
+                maxLength={500}
+              />
+              {rejectionReason.length > 400 && (
+                <p className="mt-1 text-xs text-muted">{rejectionReason.length}/500</p>
+              )}
+            </FormField>
+          )}
+        </>
       ) : (
         <p className="text-sm text-muted">No status changes are available for this report.</p>
       )}
@@ -51,9 +77,9 @@ export default function UpdateStatusModal({
           Cancel
         </Button>
         <Button
-          onClick={() => onSubmit(status)}
+          onClick={handleSubmit}
           isLoading={isLoading}
-          disabled={!status || status === report?.status || options.length === 0}
+          disabled={!status || status === report?.status || options.length === 0 || (isRejected && !rejectionReason.trim())}
         >
           Update Status
         </Button>

@@ -1,849 +1,7452 @@
 const provinces = [
-  { id: 1, name: 'Koshi Pradesh' },
-  { id: 2, name: 'Madhesh Pradesh' },
-  { id: 3, name: 'Bagmati Pradesh' },
-  { id: 4, name: 'Gandaki Pradesh' },
-  { id: 5, name: 'Lumbini Pradesh' },
-  { id: 6, name: 'Karnali Pradesh' },
-  { id: 7, name: 'Sudurpashchim Pradesh' },
-]
+  {
+    "id": 1,
+    "name": "Koshi Province",
+    "area_sq_km": "25906",
+    "website": "https://koshi.gov.np/",
+    "headquarter": "Biratnagar"
+  },
+  {
+    "id": 2,
+    "name": "Madhesh Province",
+    "area_sq_km": "9661",
+    "website": "https://madhesh.gov.np/",
+    "headquarter": "Janakpur"
+  },
+  {
+    "id": 3,
+    "name": "Bagmati Province",
+    "area_sq_km": "20300",
+    "website": "https://ocmcm.bagamati.gov.np/",
+    "headquarter": "Hetauda"
+  },
+  {
+    "id": 4,
+    "name": "Gandaki Province",
+    "area_sq_km": "21856",
+    "website": "https://gandaki.gov.np/",
+    "headquarter": "Pokhara"
+  },
+  {
+    "id": 5,
+    "name": "Lumbini Province",
+    "area_sq_km": "19707",
+    "website": "https://ocmcm.lumbini.gov.np/",
+    "headquarter": "Deukhuri"
+  },
+  {
+    "id": 6,
+    "name": "Karnali Province",
+    "area_sq_km": "30213",
+    "website": "https://karnali.gov.np/",
+    "headquarter": "Birendranagar"
+  },
+  {
+    "id": 7,
+    "name": "Sudurpaschim Province",
+    "area_sq_km": "19539",
+    "website": "https://sudurpashchim.gov.np/",
+    "headquarter": "Godawari"
+  }
+];
 
 const districts = [
-  { id: 1, name: 'Taplejung', provinceId: 1 },
-  { id: 2, name: 'Panchthar', provinceId: 1 },
-  { id: 3, name: 'Ilam', provinceId: 1 },
-  { id: 4, name: 'Jhapa', provinceId: 1 },
-  { id: 5, name: 'Morang', provinceId: 1 },
-  { id: 6, name: 'Sunsari', provinceId: 1 },
-  { id: 7, name: 'Dhankuta', provinceId: 1 },
-  { id: 8, name: 'Sankhuwasabha', provinceId: 1 },
-  { id: 9, name: 'Bhojpur', provinceId: 1 },
-  { id: 10, name: 'Solukhumbu', provinceId: 1 },
-  { id: 11, name: 'Okhaldhunga', provinceId: 1 },
-  { id: 12, name: 'Khotang', provinceId: 1 },
-  { id: 13, name: 'Udayapur', provinceId: 1 },
-  { id: 14, name: 'Terhathum', provinceId: 1 },
-  { id: 15, name: 'Saptari', provinceId: 2 },
-  { id: 16, name: 'Siraha', provinceId: 2 },
-  { id: 17, name: 'Dhanusha', provinceId: 2 },
-  { id: 18, name: 'Mahottari', provinceId: 2 },
-  { id: 19, name: 'Sarlahi', provinceId: 2 },
-  { id: 20, name: 'Rautahat', provinceId: 2 },
-  { id: 21, name: 'Bara', provinceId: 2 },
-  { id: 22, name: 'Parsa', provinceId: 2 },
-  { id: 23, name: 'Dolakha', provinceId: 3 },
-  { id: 24, name: 'Sindhupalchok', provinceId: 3 },
-  { id: 25, name: 'Rasuwa', provinceId: 3 },
-  { id: 26, name: 'Dhading', provinceId: 3 },
-  { id: 27, name: 'Nuwakot', provinceId: 3 },
-  { id: 28, name: 'Kathmandu', provinceId: 3 },
-  { id: 29, name: 'Lalitpur', provinceId: 3 },
-  { id: 30, name: 'Bhaktapur', provinceId: 3 },
-  { id: 31, name: 'Kavrepalanchok', provinceId: 3 },
-  { id: 32, name: 'Ramechhap', provinceId: 3 },
-  { id: 33, name: 'Sindhuli', provinceId: 3 },
-  { id: 34, name: 'Makawanpur', provinceId: 3 },
-  { id: 35, name: 'Chitwan', provinceId: 3 },
-  { id: 36, name: 'Gorkha', provinceId: 4 },
-  { id: 37, name: 'Lamjung', provinceId: 4 },
-  { id: 38, name: 'Tanahun', provinceId: 4 },
-  { id: 39, name: 'Kaski', provinceId: 4 },
-  { id: 40, name: 'Manang', provinceId: 4 },
-  { id: 41, name: 'Mustang', provinceId: 4 },
-  { id: 42, name: 'Myagdi', provinceId: 4 },
-  { id: 43, name: 'Parbat', provinceId: 4 },
-  { id: 44, name: 'Syangja', provinceId: 4 },
-  { id: 45, name: 'Baglung', provinceId: 4 },
-  { id: 46, name: 'Nawalparasi East', provinceId: 4 },
-  { id: 47, name: 'Rupandehi', provinceId: 5 },
-  { id: 48, name: 'Kapilvastu', provinceId: 5 },
-  { id: 49, name: 'Palpa', provinceId: 5 },
-  { id: 50, name: 'Arghakhanchi', provinceId: 5 },
-  { id: 51, name: 'Gulmi', provinceId: 5 },
-  { id: 52, name: 'Nawalparasi West', provinceId: 5 },
-  { id: 53, name: 'Rukum East', provinceId: 5 },
-  { id: 54, name: 'Rolpa', provinceId: 5 },
-  { id: 55, name: 'Pyuthan', provinceId: 5 },
-  { id: 56, name: 'Dang', provinceId: 5 },
-  { id: 57, name: 'Banke', provinceId: 5 },
-  { id: 58, name: 'Bardiya', provinceId: 5 },
-  { id: 59, name: 'Rukum West', provinceId: 6 },
-  { id: 60, name: 'Salyan', provinceId: 6 },
-  { id: 61, name: 'Dolpa', provinceId: 6 },
-  { id: 62, name: 'Jumla', provinceId: 6 },
-  { id: 63, name: 'Mugu', provinceId: 6 },
-  { id: 64, name: 'Humla', provinceId: 6 },
-  { id: 65, name: 'Kalikot', provinceId: 6 },
-  { id: 66, name: 'Jajarkot', provinceId: 6 },
-  { id: 67, name: 'Dailekh', provinceId: 6 },
-  { id: 68, name: 'Surkhet', provinceId: 6 },
-  { id: 69, name: 'Bajura', provinceId: 7 },
-  { id: 70, name: 'Bajhang', provinceId: 7 },
-  { id: 71, name: 'Doti', provinceId: 7 },
-  { id: 72, name: 'Achham', provinceId: 7 },
-  { id: 73, name: 'Dadeldhura', provinceId: 7 },
-  { id: 74, name: 'Kanchanpur', provinceId: 7 },
-  { id: 75, name: 'Kailali', provinceId: 7 },
-  { id: 76, name: 'Baitadi', provinceId: 7 },
-  { id: 77, name: 'Darchula', provinceId: 7 }
-]
+  {
+    "id": 1,
+    "province_id": 1,
+    "name": "Bhojpur",
+    "area_sq_km": "1507",
+    "website": "https://www.ddcbhojpur.gov.np",
+    "headquarter": "Bhojpur"
+  },
+  {
+    "id": 2,
+    "province_id": 1,
+    "name": "Dhankuta",
+    "area_sq_km": "892",
+    "website": "https://www.ddcdhankuta.gov.np",
+    "headquarter": "Dhankuta"
+  },
+  {
+    "id": 3,
+    "province_id": 1,
+    "name": "Ilam",
+    "area_sq_km": "1703",
+    "website": "https://www.ddcilam.gov.np",
+    "headquarter": "Ilam"
+  },
+  {
+    "id": 4,
+    "province_id": 1,
+    "name": "Jhapa",
+    "area_sq_km": "1606",
+    "website": "https://www.ddcjhapa.gov.np",
+    "headquarter": "Bhadrapur"
+  },
+  {
+    "id": 5,
+    "province_id": 1,
+    "name": "Khotang",
+    "area_sq_km": "1591",
+    "website": "https://www.dcckhotang.gov.np",
+    "headquarter": "Diktel"
+  },
+  {
+    "id": 6,
+    "province_id": 1,
+    "name": "Morang",
+    "area_sq_km": "1855",
+    "website": "https://www.ddcmorang.gov.np",
+    "headquarter": "Biratnagar"
+  },
+  {
+    "id": 7,
+    "province_id": 1,
+    "name": "Okhaldhunga",
+    "area_sq_km": "1074",
+    "website": "https://www.dccokhaldhunga.gov.np/en",
+    "headquarter": "Siddhicharan"
+  },
+  {
+    "id": 8,
+    "province_id": 1,
+    "name": "Pachthar",
+    "area_sq_km": "1241",
+    "website": "https://www.ddcpanchthar.gov.np",
+    "headquarter": "Phidim"
+  },
+  {
+    "id": 9,
+    "province_id": 1,
+    "name": "Sankhuwasabha",
+    "area_sq_km": "3480",
+    "website": "https://www.ddcsankhuwasabha.gov.np",
+    "headquarter": "Khandbari"
+  },
+  {
+    "id": 10,
+    "province_id": 1,
+    "name": "Solukhumbu",
+    "area_sq_km": "3312",
+    "website": "https://www.ddcsolukhumbu.gov.np",
+    "headquarter": "Salleri"
+  },
+  {
+    "id": 11,
+    "province_id": 1,
+    "name": "Sunsari",
+    "area_sq_km": "1257",
+    "website": "https://www.ddcsunsari.gov.np",
+    "headquarter": "Inaruwa"
+  },
+  {
+    "id": 12,
+    "province_id": 1,
+    "name": "Taplejung",
+    "area_sq_km": "3646",
+    "website": "https://www.ddctaplejung.gov.np",
+    "headquarter": "Taplejung"
+  },
+  {
+    "id": 13,
+    "province_id": 1,
+    "name": "Terhathum",
+    "area_sq_km": "679",
+    "website": "https://www.ddctehrathum.gov.np",
+    "headquarter": "Myanglung"
+  },
+  {
+    "id": 14,
+    "province_id": 1,
+    "name": "Udayapur",
+    "area_sq_km": "2063",
+    "website": "https://www.ddcudayapur.gov.np",
+    "headquarter": "Gaighat"
+  },
+  {
+    "id": 15,
+    "province_id": 2,
+    "name": "Parsa",
+    "area_sq_km": "1353",
+    "website": "https://dccparsa.gov.np/",
+    "headquarter": "Birgunj"
+  },
+  {
+    "id": 16,
+    "province_id": 2,
+    "name": "Bara",
+    "area_sq_km": "1190",
+    "website": "https://dccbara.gov.np/",
+    "headquarter": "Kalaiya"
+  },
+  {
+    "id": 17,
+    "province_id": 2,
+    "name": "Rautahat",
+    "area_sq_km": "1126",
+    "website": "https://dccrautahat.gov.np/",
+    "headquarter": "Gaur"
+  },
+  {
+    "id": 18,
+    "province_id": 2,
+    "name": "Sarlahi",
+    "area_sq_km": "1259",
+    "website": "https://dccsarlahi.gov.np/",
+    "headquarter": "Malangawa"
+  },
+  {
+    "id": 19,
+    "province_id": 2,
+    "name": "Siraha",
+    "area_sq_km": "1188",
+    "website": "https://dccsiraha.gov.np/",
+    "headquarter": "Siraha"
+  },
+  {
+    "id": 20,
+    "province_id": 2,
+    "name": "Dhanusha",
+    "area_sq_km": "1180",
+    "website": "https://dccdhanusha.gov.np/",
+    "headquarter": "Janakpur"
+  },
+  {
+    "id": 21,
+    "province_id": 2,
+    "name": "Saptari",
+    "area_sq_km": "1363",
+    "website": "https://dccsaptari.gov.np/",
+    "headquarter": "Rajbiraj"
+  },
+  {
+    "id": 22,
+    "province_id": 2,
+    "name": "Mahottari",
+    "area_sq_km": "1002",
+    "website": "https://dccmahottari.gov.np/",
+    "headquarter": "Jaleshwar"
+  },
+  {
+    "id": 23,
+    "province_id": 3,
+    "name": "Bhaktapur",
+    "area_sq_km": "119",
+    "website": "https://dccbhaktapur.gov.np/",
+    "headquarter": "Bhaktapur"
+  },
+  {
+    "id": 24,
+    "province_id": 3,
+    "name": "Chitwan",
+    "area_sq_km": "2218",
+    "website": "https://dccchitwan.gov.np/",
+    "headquarter": "Bharatpur"
+  },
+  {
+    "id": 25,
+    "province_id": 3,
+    "name": "Dhading",
+    "area_sq_km": "1926",
+    "website": "https://dccdhading.gov.np/",
+    "headquarter": "Nilkantha"
+  },
+  {
+    "id": 26,
+    "province_id": 3,
+    "name": "Dolakha",
+    "area_sq_km": "2191",
+    "website": "https://dccdolakha.gov.np/",
+    "headquarter": "Bhimeshwar"
+  },
+  {
+    "id": 27,
+    "province_id": 3,
+    "name": "Kathmandu",
+    "area_sq_km": "395",
+    "website": "https://dccktm.gov.np/",
+    "headquarter": "Kathmandu"
+  },
+  {
+    "id": 28,
+    "province_id": 3,
+    "name": "Kavrepalanchok",
+    "area_sq_km": "1396",
+    "website": "https://dcckavre.gov.np/",
+    "headquarter": "Dhulikhel"
+  },
+  {
+    "id": 29,
+    "province_id": 3,
+    "name": "Lalitpur",
+    "area_sq_km": "385",
+    "website": "https://dcclalitpur.gov.np/",
+    "headquarter": "Lalitpur"
+  },
+  {
+    "id": 30,
+    "province_id": 3,
+    "name": "Makwanpur",
+    "area_sq_km": "2426",
+    "website": "https://dccmakwanpur.gov.np/",
+    "headquarter": "Hetauda"
+  },
+  {
+    "id": 31,
+    "province_id": 3,
+    "name": "Nuwakot",
+    "area_sq_km": "1121",
+    "website": "https://dccnuwakot.gov.np/",
+    "headquarter": "Bidur"
+  },
+  {
+    "id": 32,
+    "province_id": 3,
+    "name": "Ramechap",
+    "area_sq_km": "1546",
+    "website": "https://dccramechhap.gov.np/",
+    "headquarter": "Manthali"
+  },
+  {
+    "id": 33,
+    "province_id": 3,
+    "name": "Rasuwa",
+    "area_sq_km": "1544",
+    "website": "https://dccrasuwa.gov.np/",
+    "headquarter": "Dhunche"
+  },
+  {
+    "id": 34,
+    "province_id": 3,
+    "name": "Sindhuli",
+    "area_sq_km": "2491",
+    "website": "https://dccsindhuli.gov.np/",
+    "headquarter": "Kamalamai"
+  },
+  {
+    "id": 35,
+    "province_id": 3,
+    "name": "Sindhupalchok",
+    "area_sq_km": "2542",
+    "website": "https://dccsindhupalchowk.gov.np/",
+    "headquarter": "Chautara"
+  },
+  {
+    "id": 36,
+    "province_id": 4,
+    "name": "Baglung",
+    "area_sq_km": "1784",
+    "website": "https://dccbaglung.gov.np/",
+    "headquarter": "Baglung"
+  },
+  {
+    "id": 37,
+    "province_id": 4,
+    "name": "Gorkha",
+    "area_sq_km": "3610",
+    "website": "https://dccgorkha.gov.np/",
+    "headquarter": "Gorkha"
+  },
+  {
+    "id": 38,
+    "province_id": 4,
+    "name": "Kaski",
+    "area_sq_km": "2017",
+    "website": "https://dcckaski.gov.np/",
+    "headquarter": "Pokhara"
+  },
+  {
+    "id": 39,
+    "province_id": 4,
+    "name": "Lamjung",
+    "area_sq_km": "1692",
+    "website": "https://dcclamjung.gov.np/",
+    "headquarter": "Besisahar"
+  },
+  {
+    "id": 40,
+    "province_id": 4,
+    "name": "Manang",
+    "area_sq_km": "2246",
+    "website": "https://dccmanang.gov.np/",
+    "headquarter": "Chame"
+  },
+  {
+    "id": 41,
+    "province_id": 4,
+    "name": "Mustang",
+    "area_sq_km": "3573",
+    "website": "https://dccmustang.gov.np/",
+    "headquarter": "Jomsom"
+  },
+  {
+    "id": 42,
+    "province_id": 4,
+    "name": "Myagdi",
+    "area_sq_km": "2297",
+    "website": "https://dccmyagdi.gov.np/",
+    "headquarter": "Beni"
+  },
+  {
+    "id": 43,
+    "province_id": 4,
+    "name": "Nawalpur",
+    "area_sq_km": "1043.1",
+    "website": "https://dccnawalparasi.gov.np/",
+    "headquarter": "Kawasoti"
+  },
+  {
+    "id": 44,
+    "province_id": 4,
+    "name": "Parwat",
+    "area_sq_km": "494",
+    "website": "https://dccparbat.gov.np/",
+    "headquarter": "Kusma"
+  },
+  {
+    "id": 45,
+    "province_id": 4,
+    "name": "Syangja",
+    "area_sq_km": "1164",
+    "website": "https://dccsyangja.gov.np/",
+    "headquarter": "Putalibazar"
+  },
+  {
+    "id": 46,
+    "province_id": 4,
+    "name": "Tanahun",
+    "area_sq_km": "1546",
+    "website": "https://dcctanahun.gov.np/",
+    "headquarter": "Damauli"
+  },
+  {
+    "id": 47,
+    "province_id": 5,
+    "name": "Kapilvastu",
+    "area_sq_km": "1738",
+    "website": "https://dcckapilvastu.gov.np/",
+    "headquarter": "Taulihawa"
+  },
+  {
+    "id": 48,
+    "province_id": 5,
+    "name": "Parasi",
+    "area_sq_km": "634.88",
+    "website": "https://dccnawalparasi.gov.np/",
+    "headquarter": "Ramgram"
+  },
+  {
+    "id": 49,
+    "province_id": 5,
+    "name": "Rupandehi",
+    "area_sq_km": "1360",
+    "website": "https://dccrupandehi.gov.np/",
+    "headquarter": "Siddharthanagar"
+  },
+  {
+    "id": 50,
+    "province_id": 5,
+    "name": "Arghakhanchi",
+    "area_sq_km": "1193",
+    "website": "https://dccargakhanchi.gov.np/",
+    "headquarter": "Sandhikharka"
+  },
+  {
+    "id": 51,
+    "province_id": 5,
+    "name": "Gulmi",
+    "area_sq_km": "1149",
+    "website": "https://dccgulmi.gov.np/",
+    "headquarter": "Tamghas"
+  },
+  {
+    "id": 52,
+    "province_id": 5,
+    "name": "Palpa",
+    "area_sq_km": "1373",
+    "website": "https://dccpalpa.gov.np/",
+    "headquarter": "Tansen"
+  },
+  {
+    "id": 53,
+    "province_id": 5,
+    "name": "Dang",
+    "area_sq_km": "2955",
+    "website": "https://dccdang.gov.np/",
+    "headquarter": "Ghorahi"
+  },
+  {
+    "id": 54,
+    "province_id": 5,
+    "name": "Pyuthan",
+    "area_sq_km": "1309",
+    "website": "https://dccpyuthan.gov.np/",
+    "headquarter": "Pyuthan"
+  },
+  {
+    "id": 55,
+    "province_id": 5,
+    "name": "Rolpa",
+    "area_sq_km": "1879",
+    "website": "https://dccrolpa.gov.np/",
+    "headquarter": "Liwang"
+  },
+  {
+    "id": 56,
+    "province_id": 5,
+    "name": "Eastern Rukum",
+    "area_sq_km": "1161.13",
+    "website": "https://dccrukum.gov.np/",
+    "headquarter": "Rukumkot"
+  },
+  {
+    "id": 57,
+    "province_id": 5,
+    "name": "Banke",
+    "area_sq_km": "2337",
+    "website": "https://dccbanke.gov.np/",
+    "headquarter": "Nepalganj"
+  },
+  {
+    "id": 58,
+    "province_id": 5,
+    "name": "Bardiya",
+    "area_sq_km": "2025",
+    "website": "https://dccbardiya.gov.np/",
+    "headquarter": "Gulariya"
+  },
+  {
+    "id": 59,
+    "province_id": 6,
+    "name": "Western Rukum",
+    "area_sq_km": "1213.49",
+    "website": "https://dccrukum.gov.np/",
+    "headquarter": "Musikot"
+  },
+  {
+    "id": 60,
+    "province_id": 6,
+    "name": "Salyan",
+    "area_sq_km": "1462",
+    "website": "https://dccsalyan.gov.np/",
+    "headquarter": "Salyan"
+  },
+  {
+    "id": 61,
+    "province_id": 6,
+    "name": "Dolpa",
+    "area_sq_km": "7889",
+    "website": "https://dccdolpa.gov.np/",
+    "headquarter": "Dunai"
+  },
+  {
+    "id": 62,
+    "province_id": 6,
+    "name": "Humla",
+    "area_sq_km": "5655",
+    "website": "https://dcchumla.gov.np/",
+    "headquarter": "Simikot"
+  },
+  {
+    "id": 63,
+    "province_id": 6,
+    "name": "Jumla",
+    "area_sq_km": "2531",
+    "website": "https://dccjumla.gov.np/",
+    "headquarter": "Chandannath"
+  },
+  {
+    "id": 64,
+    "province_id": 6,
+    "name": "Kalikot",
+    "area_sq_km": "1741",
+    "website": "https://dcckalikot.gov.np/",
+    "headquarter": "Manma"
+  },
+  {
+    "id": 65,
+    "province_id": 6,
+    "name": "Mugu",
+    "area_sq_km": "3535",
+    "website": "https://dccmugu.gov.np/",
+    "headquarter": "Gamgadhi"
+  },
+  {
+    "id": 66,
+    "province_id": 6,
+    "name": "Surkhet",
+    "area_sq_km": "2451",
+    "website": "https://dccsurkhet.gov.np/",
+    "headquarter": "Birendranagar"
+  },
+  {
+    "id": 67,
+    "province_id": 6,
+    "name": "Dailekh",
+    "area_sq_km": "1502",
+    "website": "https://dccdailekh.gov.np/",
+    "headquarter": "Dailekh"
+  },
+  {
+    "id": 68,
+    "province_id": 6,
+    "name": "Jajarkot",
+    "area_sq_km": "2230",
+    "website": "https://dccjajarkot.gov.np/",
+    "headquarter": "Khalanga"
+  },
+  {
+    "id": 69,
+    "province_id": 7,
+    "name": "Darchula",
+    "area_sq_km": "2344.61",
+    "website": "https://ddcdarchula.gov.np/",
+    "headquarter": "Darchula"
+  },
+  {
+    "id": 70,
+    "province_id": 7,
+    "name": "Bajhang",
+    "area_sq_km": "3394.21",
+    "website": "https://dccbajhang.gov.np/",
+    "headquarter": "Jayaprithvi"
+  },
+  {
+    "id": 71,
+    "province_id": 7,
+    "name": "Bajura",
+    "area_sq_km": "2300.34",
+    "website": "https://dccbajura.gov.np/",
+    "headquarter": "Badimalika"
+  },
+  {
+    "id": 72,
+    "province_id": 7,
+    "name": "Baitadi",
+    "area_sq_km": "1496.04",
+    "website": "https://dccbaitadi.gov.np/",
+    "headquarter": "Dasharathchand"
+  },
+  {
+    "id": 73,
+    "province_id": 7,
+    "name": "Doti",
+    "area_sq_km": "2295.71",
+    "website": "https://dccdoti.gov.np/",
+    "headquarter": "Dipayal Silgadhi"
+  },
+  {
+    "id": 74,
+    "province_id": 7,
+    "name": "Acham",
+    "area_sq_km": "1692",
+    "website": "https://dccacham.gov.np/",
+    "headquarter": "Mangalsen"
+  },
+  {
+    "id": 75,
+    "province_id": 7,
+    "name": "Dadeldhura",
+    "area_sq_km": "1506.09",
+    "website": "https://dccdadeldhura.gov.np/",
+    "headquarter": "Amargadhi"
+  },
+  {
+    "id": 76,
+    "province_id": 7,
+    "name": "Kanchanpur",
+    "area_sq_km": "1222.31",
+    "website": "https://dcckanchanpur.gov.np/",
+    "headquarter": "Bheemdatta"
+  },
+  {
+    "id": 77,
+    "province_id": 7,
+    "name": "Kailali",
+    "area_sq_km": "3292.35",
+    "website": "https://dcckailali.gov.np/",
+    "headquarter": "Dhangadhi"
+  }
+];
 
 const municipalities = [
-  { id: 1, name: 'Phungling', districtId: 1 },
-  { id: 2, name: 'Aathrai Tribeni Rural Municipality', districtId: 1 },
-  { id: 3, name: 'Phaktanglung Rural Municipality', districtId: 1 },
-  { id: 4, name: 'Meringden Rural Municipality', districtId: 1 },
-  { id: 5, name: 'Mikkwa Khola Rural Municipality', districtId: 1 },
-  { id: 6, name: 'Maiwakhola Rural Municipality', districtId: 1 },
-  { id: 7, name: 'Sidingwa Rural Municipality', districtId: 1 },
-  { id: 8, name: 'Pathibhara Yangwarak Rural Municipality', districtId: 1 },
-  { id: 9, name: 'Siringa Rural Municipality', districtId: 1 },
-  { id: 10, name: 'Phidim', districtId: 2 },
-  { id: 11, name: 'Phalgulanda', districtId: 2 },
-  { id: 12, name: 'Hilihang Rural Municipality', districtId: 2 },
-  { id: 13, name: 'Kummayak Rural Municipality', districtId: 2 },
-  { id: 14, name: 'Tumbewa Rural Municipality', districtId: 2 },
-  { id: 15, name: 'Yangwarak Rural Municipality', districtId: 2 },
-  { id: 16, name: 'Miklajung Rural Municipality', districtId: 2 },
-  { id: 17, name: 'Phalelung Rural Municipality', districtId: 2 },
-  { id: 18, name: 'Ilam', districtId: 3 },
-  { id: 19, name: 'Suryodaya', districtId: 3 },
-  { id: 20, name: 'Deumai', districtId: 3 },
-  { id: 21, name: 'Mai', districtId: 3 },
-  { id: 22, name: 'Phakphokthum Rural Municipality', districtId: 3 },
-  { id: 23, name: 'Chulachuli Rural Municipality', districtId: 3 },
-  { id: 24, name: 'Maijogmai Rural Municipality', districtId: 3 },
-  { id: 25, name: 'Rong Rural Municipality', districtId: 3 },
-  { id: 26, name: 'Sandakpur Rural Municipality', districtId: 3 },
-  { id: 27, name: 'Mangalbare (Unconfirmed Local Level Name/Old VDC Name) Rural Municipality', districtId: 3 },
-  { id: 28, name: 'Mechinagar', districtId: 4 },
-  { id: 29, name: 'Damak', districtId: 4 },
-  { id: 30, name: 'Bhadrapur', districtId: 4 },
-  { id: 31, name: 'Birtamod', districtId: 4 },
-  { id: 32, name: 'Shivasatakshi', districtId: 4 },
-  { id: 33, name: 'Kankai', districtId: 4 },
-  { id: 34, name: 'Kamal', districtId: 4 },
-  { id: 35, name: 'Gauradaha', districtId: 4 },
-  { id: 36, name: 'Arjundhara', districtId: 4 },
-  { id: 37, name: 'Haldibari', districtId: 4 },
-  { id: 38, name: 'Kachankawal Rural Municipality', districtId: 4 },
-  { id: 39, name: 'Barhadashi Rural Municipality', districtId: 4 },
-  { id: 40, name: 'Jhiljhile Rural Municipality', districtId: 4 },
-  { id: 41, name: 'Gauriganj Rural Municipality', districtId: 4 },
-  { id: 42, name: 'Jhapa Rural Municipality Rural Municipality', districtId: 4 },
-  { id: 43, name: 'Biratnagar', districtId: 5 },
-  { id: 44, name: 'Sundar Haraicha', districtId: 5 },
-  { id: 45, name: 'Belbari', districtId: 5 },
-  { id: 46, name: 'Pathari-Shanischare', districtId: 5 },
-  { id: 47, name: 'Rangeli', districtId: 5 },
-  { id: 48, name: 'Letang-Bhogateni', districtId: 5 },
-  { id: 49, name: 'Urlabari', districtId: 5 },
-  { id: 50, name: 'Sunbarshi', districtId: 5 },
-  { id: 51, name: 'Patarishinuwari (Old Name/Merged)', districtId: 5 },
-  { id: 52, name: 'Budhiganga Rural Municipality', districtId: 5 },
-  { id: 53, name: 'Kattari Rural Municipality', districtId: 5 },
-  { id: 54, name: 'Dhanpalthan Rural Municipality', districtId: 5 },
-  { id: 55, name: 'Jahada Rural Municipality', districtId: 5 },
-  { id: 56, name: 'Gramthan Rural Municipality', districtId: 5 },
-  { id: 57, name: 'Kanepokhari Rural Municipality', districtId: 5 },
-  { id: 58, name: 'Kerabari Rural Municipality', districtId: 5 },
-  { id: 59, name: 'Miklajung Rural Municipality', districtId: 5 },
-  { id: 60, name: 'Dharan', districtId: 6 },
-  { id: 61, name: 'Itahari', districtId: 6 },
-  { id: 62, name: 'Inaruwa', districtId: 6 },
-  { id: 63, name: 'Duhabi', districtId: 6 },
-  { id: 64, name: 'Ramdhuni-Bhasina', districtId: 6 },
-  { id: 65, name: 'Barahakshetra', districtId: 6 },
-  { id: 66, name: 'Koshi', districtId: 6 },
-  { id: 67, name: 'Gadhi Rural Municipality', districtId: 6 },
-  { id: 68, name: 'Dewanganj Rural Municipality', districtId: 6 },
-  { id: 69, name: 'Bhokaha Narsingh Rural Municipality', districtId: 6 },
-  { id: 70, name: 'Harinagar Rural Municipality', districtId: 6 },
-  { id: 71, name: 'Barju Rural Municipality', districtId: 6 },
-  { id: 72, name: 'Dhankuta', districtId: 7 },
-  { id: 73, name: 'Pakhribas', districtId: 7 },
-  { id: 74, name: 'Mahakali (Chhathar Mahakali)', districtId: 7 },
-  { id: 75, name: 'Chhathar Jorpati Rural Municipality', districtId: 7 },
-  { id: 76, name: 'Sangurigadhi Rural Municipality', districtId: 7 },
-  { id: 77, name: 'Chaubise Rural Municipality', districtId: 7 },
-  { id: 78, name: 'Sahidbhumi Rural Municipality', districtId: 7 },
-  { id: 79, name: 'Khandbari', districtId: 8 },
-  { id: 80, name: 'Dharmadevi', districtId: 8 },
-  { id: 81, name: 'Chainpur', districtId: 8 },
-  { id: 82, name: 'Madi', districtId: 8 },
-  { id: 83, name: 'Panchkhapan Rural Municipality', districtId: 8 },
-  { id: 84, name: 'Bhotkhola Rural Municipality', districtId: 8 },
-  { id: 85, name: 'Makalu Rural Municipality', districtId: 8 },
-  { id: 86, name: 'Chichila Rural Municipality', districtId: 8 },
-  { id: 87, name: 'Simring (Silichong) Rural Municipality', districtId: 8 },
-  { id: 88, name: 'Sabapokhari Rural Municipality', districtId: 8 },
-  { id: 89, name: 'Bhojpur', districtId: 9 },
-  { id: 90, name: 'Shadananda', districtId: 9 },
-  { id: 91, name: 'Tyamke Maiyum Rural Municipality', districtId: 9 },
-  { id: 92, name: 'Powadumgma Rural Municipality', districtId: 9 },
-  { id: 93, name: 'Arun Rural Municipality', districtId: 9 },
-  { id: 94, name: 'Hatuwagadhi Rural Municipality', districtId: 9 },
-  { id: 95, name: 'Amchok Rural Municipality', districtId: 9 },
-  { id: 96, name: 'Ramprasad Rai Rural Municipality', districtId: 9 },
-  { id: 97, name: 'Salpasili Chho Rural Municipality', districtId: 9 },
-  { id: 98, name: 'Solududhkunda', districtId: 10 },
-  { id: 99, name: 'Khumbu Pasanglhamu Rural Municipality', districtId: 10 },
-  { id: 100, name: 'Dudhkoshi Rural Municipality', districtId: 10 },
-  { id: 101, name: 'Thulung Dudhkoshi Rural Municipality', districtId: 10 },
-  { id: 102, name: 'Necha Salyan Rural Municipality', districtId: 10 },
-  { id: 103, name: 'Mahakulung Rural Municipality', districtId: 10 },
-  { id: 104, name: 'Likhu Pike Rural Municipality', districtId: 10 },
-  { id: 105, name: 'Sotang Rural Municipality', districtId: 10 },
-  { id: 106, name: 'Siddhicharan', districtId: 11 },
-  { id: 107, name: 'Manebhanjyang Rural Municipality', districtId: 11 },
-  { id: 108, name: 'Chishankhugadhi Rural Municipality', districtId: 11 },
-  { id: 109, name: 'Likhu Rural Municipality', districtId: 11 },
-  { id: 110, name: 'Molung Rural Municipality', districtId: 11 },
-  { id: 111, name: 'Sunkoshi Rural Municipality', districtId: 11 },
-  { id: 112, name: 'Likhu Rural Municipality Rural Municipality', districtId: 11 },
-  { id: 113, name: 'Champadevi Rural Municipality', districtId: 11 },
-  { id: 114, name: 'Diktel Rupakot Majhuwagadhi', districtId: 12 },
-  { id: 115, name: 'Halesi Tuwachung', districtId: 12 },
-  { id: 116, name: 'Khotehang Rural Municipality', districtId: 12 },
-  { id: 117, name: 'Diprung Chuichumma Rural Municipality', districtId: 12 },
-  { id: 118, name: 'Aiselukharka Rural Municipality', districtId: 12 },
-  { id: 119, name: 'undefined', districtId: 12 },
-  { id: 120, name: 'Triyuga', districtId: 13 },
-  { id: 121, name: 'Katari', districtId: 13 },
-  { id: 122, name: 'Beltar Bashaha (Chaudandigadhi)', districtId: 13 },
-  { id: 123, name: 'Belaka', districtId: 13 },
-  { id: 124, name: 'Rautamai Rural Municipality', districtId: 13 },
-  { id: 125, name: 'Limbuse (Tapli) Rural Municipality', districtId: 13 },
-  { id: 126, name: 'Udayapurgadhi Rural Municipality', districtId: 13 },
-  { id: 127, name: 'Sasurali (Sunkoshi) Rural Municipality', districtId: 13 },
-  { id: 128, name: 'Myanglung', districtId: 14 },
-  { id: 129, name: 'Laligurans', districtId: 14 },
-  { id: 130, name: 'Phedap Rural Municipality', districtId: 14 },
-  { id: 131, name: 'Athrai Rural Municipality', districtId: 14 },
-  { id: 132, name: 'Chhathar Rural Municipality', districtId: 14 },
-  { id: 133, name: 'Menchhayem Rural Municipality', districtId: 14 },
-  { id: 134, name: 'Rajbiraj', districtId: 15 },
-  { id: 135, name: 'Kanchanrup', districtId: 15 },
-  { id: 136, name: 'Saptakoshi', districtId: 15 },
-  { id: 137, name: 'Hanumannagar Kankalini', districtId: 15 },
-  { id: 138, name: 'Shambhunath', districtId: 15 },
-  { id: 139, name: 'Tilathi Koiladi', districtId: 15 },
-  { id: 140, name: 'Dakneshwari', districtId: 15 },
-  { id: 141, name: 'Agnisair Krishna Sawaran', districtId: 15 },
-  { id: 142, name: 'Bodebarsain', districtId: 15 },
-  { id: 143, name: 'Balan Bihul Rural Municipality', districtId: 15 },
-  { id: 144, name: 'Chhinnamasta Rural Municipality', districtId: 15 },
-  { id: 145, name: 'Mahadeva Rural Municipality', districtId: 15 },
-  { id: 146, name: 'Belhi Chapena Rural Municipality', districtId: 15 },
-  { id: 147, name: 'Tirhut Rural Municipality', districtId: 15 },
-  { id: 148, name: 'Rupni Rural Municipality', districtId: 15 },
-  { id: 149, name: 'Surunga (Kanchanrup) Rural Municipality', districtId: 15 },
-  { id: 150, name: 'Bishnupur Rural Municipality', districtId: 15 },
-  { id: 151, name: 'Sapahi (Bodebarsain) Rural Municipality', districtId: 15 },
-  { id: 152, name: 'Siraha', districtId: 16 },
-  { id: 153, name: 'Dhangadhimai', districtId: 16 },
-  { id: 154, name: 'Lahan', districtId: 16 },
-  { id: 155, name: 'Kalyanpur', districtId: 16 },
-  { id: 156, name: 'Sukhipur', districtId: 16 },
-  { id: 157, name: 'Golbazar', districtId: 16 },
-  { id: 158, name: 'Mirchaiya', districtId: 16 },
-  { id: 159, name: 'Karjanha', districtId: 16 },
-  { id: 160, name: 'Lagnagadi (Lahan)', districtId: 16 },
-  { id: 161, name: 'Bardibas Rural Municipality', districtId: 16 },
-  { id: 162, name: 'Laxmipur Patari Rural Municipality', districtId: 16 },
-  { id: 163, name: 'Navarajpur Rural Municipality', districtId: 16 },
-  { id: 164, name: 'Bishnupur Rural Municipality', districtId: 16 },
-  { id: 165, name: 'Arnma Rural Municipality', districtId: 16 },
-  { id: 166, name: 'Aurahi Rural Municipality', districtId: 16 },
-  { id: 167, name: 'Sakhuwanankarkatti Rural Municipality', districtId: 16 },
-  { id: 168, name: 'Naraha Rural Municipality', districtId: 16 },
-  { id: 169, name: 'Janakpurdham', districtId: 17 },
-  { id: 170, name: 'Dhanushadham', districtId: 17 },
-  { id: 171, name: 'Mithila', districtId: 17 },
-  { id: 172, name: 'Bateshwor', districtId: 17 },
-  { id: 173, name: 'Kshireshornath', districtId: 17 },
-  { id: 174, name: 'Kamala', districtId: 17 },
-  { id: 175, name: 'Shahidnagar', districtId: 17 },
-  { id: 176, name: 'Ganeshman Charnath', districtId: 17 },
-  { id: 177, name: 'Hanumannagar Kankalini', districtId: 17 },
-  { id: 178, name: 'Aurahi', districtId: 17 },
-  { id: 179, name: 'Mithila Bihari', districtId: 17 },
-  { id: 180, name: 'Bideha', districtId: 17 },
-  { id: 181, name: 'Janaknandini Rural Municipality', districtId: 17 },
-  { id: 182, name: 'Laxminiya Rural Municipality', districtId: 17 },
-  { id: 183, name: 'Mukhiyapatti Musaharniya Rural Municipality', districtId: 17 },
-  { id: 184, name: 'Aurahi Rural Municipality Rural Municipality', districtId: 17 },
-  { id: 185, name: 'Sabaila Rural Municipality', districtId: 17 },
-  { id: 186, name: 'Hansapur Rural Municipality', districtId: 17 },
-  { id: 187, name: 'Jaleshwor', districtId: 18 },
-  { id: 188, name: 'Matihani', districtId: 18 },
-  { id: 189, name: 'Bardibas', districtId: 18 },
-  { id: 190, name: 'Bhangaha', districtId: 18 },
-  { id: 191, name: 'Gaushala', districtId: 18 },
-  { id: 192, name: 'Aurahi', districtId: 18 },
-  { id: 193, name: 'Ramgopalpur', districtId: 18 },
-  { id: 194, name: 'Mahottari', districtId: 18 },
-  { id: 195, name: 'Manara Shiswa', districtId: 18 },
-  { id: 196, name: 'Sonama Rural Municipality', districtId: 18 },
-  { id: 197, name: 'Samsi Rural Municipality', districtId: 18 },
-  { id: 198, name: 'Loharpatti Rural Municipality', districtId: 18 },
-  { id: 199, name: 'Pipra Rural Municipality', districtId: 18 },
-  { id: 200, name: 'Gaushala Rural Municipality', districtId: 18 },
-  { id: 201, name: 'Mahottari Rural Municipality', districtId: 18 },
-  { id: 202, name: 'Malangwa', districtId: 19 },
-  { id: 203, name: 'Hariwan', districtId: 19 },
-  { id: 204, name: 'Lalbandi', districtId: 19 },
-  { id: 205, name: 'Ishwarpur', districtId: 19 },
-  { id: 206, name: 'Barahathwa', districtId: 19 },
-  { id: 207, name: 'Gaushala', districtId: 19 },
-  { id: 208, name: 'Kaudiya', districtId: 19 },
-  { id: 209, name: 'Balara', districtId: 19 },
-  { id: 210, name: 'Chandranagar', districtId: 19 },
-  { id: 211, name: 'Basbaria', districtId: 19 },
-  { id: 212, name: 'Godaita', districtId: 19 },
-  { id: 213, name: 'Haripurwa', districtId: 19 },
-  { id: 214, name: 'Kabilasi', districtId: 19 },
-  { id: 215, name: 'Dhankaul Rural Municipality', districtId: 19 },
-  { id: 216, name: 'Chakraghatta Rural Municipality', districtId: 19 },
-  { id: 217, name: 'Basbaria Rural Municipality', districtId: 19 },
-  { id: 218, name: 'Ramnagar Bahuarwa Rural Municipality', districtId: 19 },
-  { id: 219, name: 'Bishnu Rural Municipality', districtId: 19 },
-  { id: 220, name: 'Parsa Rural Municipality', districtId: 19 },
-  { id: 221, name: 'Brahmapuri Rural Municipality', districtId: 19 },
-  { id: 222, name: 'Gaur', districtId: 20 },
-  { id: 223, name: 'Chandrapur', districtId: 20 },
-  { id: 224, name: 'Garuda', districtId: 20 },
-  { id: 225, name: 'Katahariya', districtId: 20 },
-  { id: 226, name: 'Dewahi Gonahi', districtId: 20 },
-  { id: 227, name: 'Ishnath', districtId: 20 },
-  { id: 228, name: 'Baudhimai', districtId: 20 },
-  { id: 229, name: 'Rajdevi', districtId: 20 },
-  { id: 230, name: 'Madhavnarayan', districtId: 20 },
-  { id: 231, name: 'Gujara', districtId: 20 },
-  { id: 232, name: 'Fatuwa Vijaypur Rural Municipality', districtId: 20 },
-  { id: 233, name: 'Rautahat Rural Municipality', districtId: 20 },
-  { id: 234, name: 'Dewahi Rural Municipality', districtId: 20 },
-  { id: 235, name: 'Pratappur Rural Municipality', districtId: 20 },
-  { id: 236, name: 'Brindaban Rural Municipality', districtId: 20 },
-  { id: 237, name: 'Parsa Rural Municipality', districtId: 20 },
-  { id: 238, name: 'Jitpur Simara', districtId: 21 },
-  { id: 239, name: 'Kalaiya', districtId: 21 },
-  { id: 240, name: 'Kolhabi', districtId: 21 },
-  { id: 241, name: 'Nijgadh', districtId: 21 },
-  { id: 242, name: 'Simraungadh', districtId: 21 },
-  { id: 243, name: 'Mahagadhimai', districtId: 21 },
-  { id: 244, name: 'Parwanipur', districtId: 21 },
-  { id: 245, name: 'Adarsh Kotwal', districtId: 21 },
-  { id: 246, name: 'Karaiyamai', districtId: 21 },
-  { id: 247, name: 'Devtal Rural Municipality', districtId: 21 },
-  { id: 248, name: 'Feta Rural Municipality', districtId: 21 },
-  { id: 249, name: 'Suwarna Rural Municipality', districtId: 21 },
-  { id: 250, name: 'Parwanipur Rural Municipality', districtId: 21 },
-  { id: 251, name: 'Prasauni Rural Municipality', districtId: 21 },
-  { id: 252, name: 'Baragadhi Rural Municipality', districtId: 21 },
-  { id: 253, name: 'Pacharauta Rural Municipality', districtId: 21 },
-  { id: 254, name: 'Birgunj', districtId: 22 },
-  { id: 255, name: 'Pokhariya', districtId: 22 },
-  { id: 256, name: 'Parsagadhi', districtId: 22 },
-  { id: 257, name: 'Bahudarmai', districtId: 22 },
-  { id: 258, name: 'Jira Bhawani', districtId: 22 },
-  { id: 259, name: 'Sakhuwa Prasauni', districtId: 22 },
-  { id: 260, name: 'Thori Rural Municipality', districtId: 22 },
-  { id: 261, name: 'Kalikamai Rural Municipality', districtId: 22 },
-  { id: 262, name: 'Paterwa Sugauli Rural Municipality', districtId: 22 },
-  { id: 263, name: 'Chhipaharmai Rural Municipality', districtId: 22 },
-  { id: 264, name: 'Jagarnathpur Rural Municipality', districtId: 22 },
-  { id: 265, name: 'Bindabasini Rural Municipality', districtId: 22 },
-  { id: 266, name: 'Dhobini Rural Municipality', districtId: 22 },
-  { id: 267, name: 'Kamalamai', districtId: 23 },
-  { id: 268, name: 'Dudhauli', districtId: 23 },
-  { id: 269, name: 'Fikkal Rural Municipality', districtId: 23 },
-  { id: 270, name: 'Ghyanglekh Rural Municipality', districtId: 23 },
-  { id: 271, name: 'Tesrole Rural Municipality', districtId: 23 },
-  { id: 272, name: 'Marin Rural Municipality', districtId: 23 },
-  { id: 273, name: 'Golanchour Rural Municipality', districtId: 23 },
-  { id: 274, name: 'Sunkoshi Rural Municipality', districtId: 23 },
-  { id: 275, name: 'Tinpatan Rural Municipality', districtId: 23 },
-  { id: 276, name: 'Manthali', districtId: 24 },
-  { id: 277, name: 'Ramechhap', districtId: 24 },
-  { id: 278, name: 'Khandadevi Rural Municipality', districtId: 24 },
-  { id: 279, name: 'Umakuinda Rural Municipality', districtId: 24 },
-  { id: 280, name: 'Gokulganga Rural Municipality', districtId: 24 },
-  { id: 281, name: 'Doramba Rural Municipality', districtId: 24 },
-  { id: 282, name: 'Sunapati Rural Municipality', districtId: 24 },
-  { id: 283, name: 'Likhu Tamakoshi Rural Municipality', districtId: 24 },
-  { id: 284, name: 'Bhimeshwor', districtId: 25 },
-  { id: 285, name: 'Jiri', districtId: 25 },
-  { id: 286, name: 'Kalinchok Rural Municipality', districtId: 25 },
-  { id: 287, name: 'Melung Rural Municipality', districtId: 25 },
-  { id: 288, name: 'Baiteshwar Rural Municipality', districtId: 25 },
-  { id: 289, name: 'Sailung Rural Municipality', districtId: 25 },
-  { id: 290, name: 'Tamakoshi Rural Municipality', districtId: 25 },
-  { id: 291, name: 'Gaurishankar Rural Municipality', districtId: 25 },
-  { id: 292, name: 'Bigu Rural Municipality', districtId: 25 },
-  { id: 293, name: 'Chautara Sangachokgadhi', districtId: 26 },
-  { id: 294, name: 'Barhabise', districtId: 26 },
-  { id: 295, name: 'Bhotekoshi', districtId: 26 },
-  { id: 296, name: 'Melamchi', districtId: 26 },
-  { id: 297, name: 'Sunkoshi', districtId: 26 },
-  { id: 298, name: 'Tripurasundari Rural Municipality', districtId: 26 },
-  { id: 299, name: 'Indrawati Rural Municipality', districtId: 26 },
-  { id: 300, name: 'Jugal Rural Municipality', districtId: 26 },
-  { id: 301, name: 'Panchpokhari Thangpal Rural Municipality', districtId: 26 },
-  { id: 302, name: 'Balefi Rural Municipality', districtId: 26 },
-  { id: 303, name: 'Lisankhu Pakhar Rural Municipality', districtId: 26 },
-  { id: 304, name: 'Helambu Rural Municipality', districtId: 26 },
-  { id: 305, name: 'Dhulikhel', districtId: 27 },
-  { id: 306, name: 'Banepa', districtId: 27 },
-  { id: 307, name: 'Panauti', districtId: 27 },
-  { id: 308, name: 'Namobuddha', districtId: 27 },
-  { id: 309, name: 'Palanchok', districtId: 27 },
-  { id: 310, name: 'Mandandeupur', districtId: 27 },
-  { id: 311, name: 'Roshi Rural Municipality', districtId: 27 },
-  { id: 312, name: 'Temal Rural Municipality', districtId: 27 },
-  { id: 313, name: 'Bethanchok Rural Municipality', districtId: 27 },
-  { id: 314, name: 'Mahabharat Rural Municipality', districtId: 27 },
-  { id: 315, name: 'Khanikhola Rural Municipality', districtId: 27 },
-  { id: 316, name: 'Chaurideurali Rural Municipality', districtId: 27 },
-  { id: 317, name: 'Bhumlu Rural Municipality', districtId: 27 },
-  { id: 318, name: 'Lalitpur', districtId: 28 },
-  { id: 319, name: 'Godawari', districtId: 28 },
-  { id: 320, name: 'Mahalaxmi', districtId: 28 },
-  { id: 321, name: 'Konjyosom Rural Municipality', districtId: 28 },
-  { id: 322, name: 'Bagmati Rural Municipality', districtId: 28 },
-  { id: 323, name: 'Phulchoki Rural Municipality', districtId: 28 },
-  { id: 324, name: 'Kathmandu', districtId: 29 },
-  { id: 325, name: 'Kirtipur', districtId: 29 },
-  { id: 326, name: 'Chandragiri', districtId: 29 },
-  { id: 327, name: 'Nagarjun', districtId: 29 },
-  { id: 328, name: 'Tarakeshwor', districtId: 29 },
-  { id: 329, name: 'Gokarneshwar', districtId: 29 },
-  { id: 330, name: 'Budhanilkantha', districtId: 29 },
-  { id: 331, name: 'Tokha', districtId: 29 },
-  { id: 332, name: 'Kageshwari Manohara', districtId: 29 },
-  { id: 333, name: 'Shankharapur', districtId: 29 },
-  { id: 334, name: 'Dakshinkali', districtId: 29 },
-  { id: 335, name: 'Bhaktapur', districtId: 30 },
-  { id: 336, name: 'Madhyapur Thimi', districtId: 30 },
-  { id: 337, name: 'Changunarayan', districtId: 30 },
-  { id: 338, name: 'Suryabinayak', districtId: 30 },
-  { id: 339, name: 'Gosaikunda Rural Municipality', districtId: 31 },
-  { id: 340, name: 'Amachhodingmo Rural Municipality', districtId: 31 },
-  { id: 341, name: 'Uttargaya Rural Municipality', districtId: 31 },
-  { id: 342, name: 'Kalika Rural Municipality', districtId: 31 },
-  { id: 343, name: 'Naukunda Rural Municipality', districtId: 31 },
-  { id: 344, name: 'Bidur', districtId: 32 },
-  { id: 345, name: 'Belkotgadhi', districtId: 32 },
-  { id: 346, name: 'Kakani Rural Municipality', districtId: 32 },
-  { id: 347, name: 'Tadi Rural Municipality', districtId: 32 },
-  { id: 348, name: 'Shivapuri Rural Municipality', districtId: 32 },
-  { id: 349, name: 'Likhu Rural Municipality', districtId: 32 },
-  { id: 350, name: 'Myagang Rural Municipality', districtId: 32 },
-  { id: 351, name: 'Panchakanya Rural Municipality', districtId: 32 },
-  { id: 352, name: 'Suryagadhi Rural Municipality', districtId: 32 },
-  { id: 353, name: 'Tandrang Rural Municipality', districtId: 32 },
-  { id: 354, name: 'Dupcheshwar Rural Municipality', districtId: 32 },
-  { id: 355, name: 'Kispang Rural Municipality', districtId: 32 },
-  { id: 356, name: 'Uttargaya Rural Municipality', districtId: 33 },
-  { id: 357, name: 'Kalika Rural Municipality', districtId: 33 },
-  { id: 358, name: 'Gosaikunda Rural Municipality', districtId: 33 },
-  { id: 359, name: 'Aamachhodingmo Rural Municipality', districtId: 33 },
-  { id: 360, name: 'Temal Rural Municipality', districtId: 33 },
-  { id: 361, name: 'Dhunibeshi', districtId: 34 },
-  { id: 362, name: 'Nilkantha', districtId: 34 },
-  { id: 363, name: 'Khaniyabas Rural Municipality', districtId: 34 },
-  { id: 364, name: 'Galchhi Rural Municipality', districtId: 34 },
-  { id: 365, name: 'Gangajamuna Rural Municipality', districtId: 34 },
-  { id: 366, name: 'Jwalakhel Rural Municipality', districtId: 34 },
-  { id: 367, name: 'Thakre Rural Municipality', districtId: 34 },
-  { id: 368, name: 'Netravati Rural Municipality', districtId: 34 },
-  { id: 369, name: 'Rubi Valley Rural Municipality', districtId: 34 },
-  { id: 370, name: 'Siddhalek Rural Municipality', districtId: 34 },
-  { id: 371, name: 'Gajuri Rural Municipality', districtId: 34 },
-  { id: 372, name: 'Benighat Rorang Rural Municipality', districtId: 34 },
-  { id: 373, name: 'Ichchakamana Rural Municipality', districtId: 34 },
-  { id: 374, name: 'Tipling Rural Municipality', districtId: 34 },
-  { id: 375, name: 'Bharatpur', districtId: 35 },
-  { id: 376, name: 'Ratnanagar', districtId: 35 },
-  { id: 377, name: 'Kalika', districtId: 35 },
-  { id: 378, name: 'Khairahani', districtId: 35 },
-  { id: 379, name: 'Madi', districtId: 35 },
-  { id: 380, name: 'Rapti Rural Municipality', districtId: 35 },
-  { id: 381, name: 'Ichhakamana Rural Municipality', districtId: 35 },
-  { id: 382, name: 'Gorkha', districtId: 36 },
-  { id: 383, name: 'Palungtar', districtId: 36 },
-  { id: 384, name: 'Dharche Rural Municipality', districtId: 36 },
-  { id: 385, name: 'Chumanubri Rural Municipality', districtId: 36 },
-  { id: 386, name: 'Bhimsen Thapa Rural Municipality', districtId: 36 },
-  { id: 387, name: 'Aarughat Rural Municipality', districtId: 36 },
-  { id: 388, name: 'Siranchowk Rural Municipality', districtId: 36 },
-  { id: 389, name: 'Ajirkot Rural Municipality', districtId: 36 },
-  { id: 390, name: 'Shahid Lakhan Rural Municipality', districtId: 36 },
-  { id: 391, name: 'Gandaki Rural Municipality', districtId: 36 },
-  { id: 392, name: 'Sullikot Rural Municipality', districtId: 36 },
-  { id: 393, name: 'Besisahar', districtId: 37 },
-  { id: 394, name: 'Sundarbazar', districtId: 37 },
-  { id: 395, name: 'Rinas', districtId: 37 },
-  { id: 396, name: 'MadhyaNepal', districtId: 37 },
-  { id: 397, name: 'Dudhpokhari Rural Municipality', districtId: 37 },
-  { id: 398, name: 'Marsyangdi Rural Municipality', districtId: 37 },
-  { id: 399, name: 'Dordi Rural Municipality', districtId: 37 },
-  { id: 400, name: 'Kwholasothar Rural Municipality', districtId: 37 },
-  { id: 401, name: 'Byas', districtId: 38 },
-  { id: 402, name: 'Shuklagandaki', districtId: 38 },
-  { id: 403, name: 'Bhanu', districtId: 38 },
-  { id: 404, name: 'Bhirkot', districtId: 38 },
-  { id: 405, name: 'Devghat', districtId: 38 },
-  { id: 406, name: 'Rishing Rural Municipality', districtId: 38 },
-  { id: 407, name: 'Ghiring Rural Municipality', districtId: 38 },
-  { id: 408, name: 'Myagde Rural Municipality', districtId: 38 },
-  { id: 409, name: 'Bandipur Rural Municipality', districtId: 38 },
-  { id: 410, name: 'Aanbukhaireni Rural Municipality', districtId: 38 },
-  { id: 411, name: 'Pokhara', districtId: 39 },
-  { id: 412, name: 'Annapurna Rural Municipality', districtId: 39 },
-  { id: 413, name: 'Machhapuchchhre Rural Municipality', districtId: 39 },
-  { id: 414, name: 'Rupa Rural Municipality', districtId: 39 },
-  { id: 415, name: 'Madi Rural Municipality', districtId: 39 },
-  { id: 416, name: 'Kushma', districtId: 43 },
-  { id: 417, name: 'Phalewas', districtId: 43 },
-  { id: 418, name: 'Jaljala Rural Municipality', districtId: 43 },
-  { id: 419, name: 'Mahashila Rural Municipality', districtId: 43 },
-  { id: 420, name: 'Paiyun Rural Municipality', districtId: 43 },
-  { id: 421, name: 'Modi Rural Municipality', districtId: 43 },
-  { id: 422, name: 'Bihadi Rural Municipality', districtId: 43 },
-  { id: 423, name: 'Beni', districtId: 42 },
-  { id: 424, name: 'Dhaulagiri Rural Municipality', districtId: 42 },
-  { id: 425, name: 'Mangala Rural Municipality', districtId: 42 },
-  { id: 426, name: 'Malika Rural Municipality', districtId: 42 },
-  { id: 427, name: 'Raghuganga Rural Municipality', districtId: 42 },
-  { id: 428, name: 'Annapurna Rural Municipality', districtId: 42 },
-  { id: 429, name: 'Chame Rural Municipality', districtId: 40 },
-  { id: 430, name: 'Narpabhumi Rural Municipality', districtId: 40 },
-  { id: 431, name: 'Manang Ngisyang Rural Municipality', districtId: 40 },
-  { id: 432, name: 'Nason Rural Municipality', districtId: 40 },
-  { id: 433, name: 'Gharpajhong', districtId: 41 },
-  { id: 434, name: 'Thasang Rural Municipality', districtId: 41 },
-  { id: 435, name: 'Damodarkunda Himal Rural Municipality', districtId: 41 },
-  { id: 436, name: 'Lo-Ghekar Damodarkunda Rural Municipality', districtId: 41 },
-  { id: 437, name: 'Lomanthang Rural Municipality', districtId: 41 },
-  { id: 438, name: 'Putalibazar', districtId: 44 },
-  { id: 439, name: 'Bhirkot', districtId: 44 },
-  { id: 440, name: 'Galyang', districtId: 44 },
-  { id: 441, name: 'Chapakot', districtId: 44 },
-  { id: 442, name: 'Waling', districtId: 44 },
-  { id: 443, name: 'Phedikhola Rural Municipality', districtId: 44 },
-  { id: 444, name: 'Aandhikhola Rural Municipality', districtId: 44 },
-  { id: 445, name: 'Biruwa Rural Municipality', districtId: 44 },
-  { id: 446, name: 'Harinas Rural Municipality', districtId: 44 },
-  { id: 447, name: 'Arjunchaupari Rural Municipality', districtId: 44 },
-  { id: 448, name: 'Kaligandaki Rural Municipality', districtId: 44 },
-  { id: 449, name: 'Baglung', districtId: 45 },
-  { id: 450, name: 'Jaimini', districtId: 45 },
-  { id: 451, name: 'Dhorpatan', districtId: 45 },
-  { id: 452, name: 'Galkot', districtId: 45 },
-  { id: 453, name: 'Badigad Rural Municipality', districtId: 45 },
-  { id: 454, name: 'Kathinauala Rural Municipality', districtId: 45 },
-  { id: 455, name: 'Tarakhola Rural Municipality', districtId: 45 },
-  { id: 456, name: 'Nisikhola Rural Municipality', districtId: 45 },
-  { id: 457, name: 'Sare Rural Municipality', districtId: 45 },
-  { id: 458, name: 'Kathekhola Rural Municipality', districtId: 45 },
-  { id: 459, name: 'Kawassoti', districtId: 46 },
-  { id: 460, name: 'Madhyabindu', districtId: 46 },
-  { id: 461, name: 'Devchuli', districtId: 46 },
-  { id: 462, name: 'Gaindakot', districtId: 46 },
-  { id: 463, name: 'Bulingtar Rural Municipality', districtId: 46 },
-  { id: 464, name: 'Baudikali Rural Municipality', districtId: 46 },
-  { id: 465, name: 'Hupsekot Rural Municipality', districtId: 46 },
-  { id: 466, name: 'Binayi Tribeni Rural Municipality', districtId: 46 },
-  { id: 467, name: 'Butwal Sub-Metropolitan City', districtId: 47 },
-  { id: 468, name: 'Siddharthanagar Municipality', districtId: 47 },
-  { id: 469, name: 'Tilottama Municipality', districtId: 47 },
-  { id: 470, name: 'Devdaha Municipality', districtId: 47 },
-  { id: 471, name: 'Lumbini Sanskritik Municipality', districtId: 47 },
-  { id: 472, name: 'Sainamaina Municipality', districtId: 47 },
-  { id: 473, name: 'Gaidahawa Rural Municipality', districtId: 47 },
-  { id: 474, name: 'Kanchan Rural Municipality', districtId: 47 },
-  { id: 475, name: 'Kotahimai Rural Municipality', districtId: 47 },
-  { id: 476, name: 'Marchawari Rural Municipality', districtId: 47 },
-  { id: 477, name: 'Mayadevi Rural Municipality', districtId: 47 },
-  { id: 478, name: 'Omsatiya Rural Municipality', districtId: 47 },
-  { id: 479, name: 'Rohini Rural Municipality', districtId: 47 },
-  { id: 480, name: 'Sammarimai Rural Municipality', districtId: 47 },
-  { id: 481, name: 'Siyari Rural Municipality', districtId: 47 },
-  { id: 482, name: 'Suddodhan Rural Municipality', districtId: 47 },
-  { id: 483, name: 'Sandhikharka', districtId: 48 },
-  { id: 484, name: 'Shitganga', districtId: 48 },
-  { id: 485, name: 'Bhumikasthan', districtId: 48 },
-  { id: 486, name: 'Chhatradev Rural Municipality', districtId: 48 },
-  { id: 487, name: 'Panini Rural Municipality', districtId: 48 },
-  { id: 488, name: 'Malarani Rural Municipality', districtId: 48 },
-  { id: 489, name: 'Pyuthan', districtId: 49 },
-  { id: 490, name: 'Swargadwari', districtId: 49 },
-  { id: 491, name: 'Gaumukhi Rural Municipality', districtId: 49 },
-  { id: 492, name: 'Jhimruk Rural Municipality', districtId: 49 },
-  { id: 493, name: 'Mandavi Rural Municipality', districtId: 49 },
-  { id: 494, name: 'Airawati Rural Municipality', districtId: 49 },
-  { id: 495, name: 'Mallarani Rural Municipality', districtId: 49 },
-  { id: 496, name: 'Naubahini Rural Municipality', districtId: 49 },
-  { id: 497, name: 'Sarumarani Rural Municipality', districtId: 49 },
-  { id: 498, name: 'Resunga', districtId: 50 },
-  { id: 499, name: 'Musikot', districtId: 50 },
-  { id: 500, name: 'Satyawati Rural Municipality', districtId: 50 },
-  { id: 501, name: 'Chandrakot Rural Municipality', districtId: 50 },
-  { id: 502, name: 'Rupakot Rural Municipality', districtId: 50 },
-  { id: 503, name: 'Gulmi Durbar Rural Municipality', districtId: 50 },
-  { id: 504, name: 'Kaligandaki Rural Municipality', districtId: 50 },
-  { id: 505, name: 'Malika Rural Municipality', districtId: 50 },
-  { id: 506, name: 'Dhurkot Rural Municipality', districtId: 50 },
-  { id: 507, name: 'Isma Rural Municipality', districtId: 50 },
-  { id: 508, name: 'Chatrakot Rural Municipality', districtId: 50 },
-  { id: 509, name: 'Tansen', districtId: 51 },
-  { id: 510, name: 'Rampur', districtId: 51 },
-  { id: 511, name: 'Rambha Rural Municipality', districtId: 51 },
-  { id: 512, name: 'Purba Khola Rural Municipality', districtId: 51 },
-  { id: 513, name: 'Mathagadhi Rural Municipality', districtId: 51 },
-  { id: 514, name: 'Tinau Rural Municipality', districtId: 51 },
-  { id: 515, name: 'Nisdi Rural Municipality', districtId: 51 },
-  { id: 516, name: 'Satyawati Rural Municipality', districtId: 51 },
-  { id: 517, name: 'Bagnaskali Rural Municipality', districtId: 51 },
-  { id: 518, name: 'Ribdikot Rural Municipality', districtId: 51 },
-  { id: 519, name: 'Bardaghat', districtId: 52 },
-  { id: 520, name: 'Ramgram', districtId: 52 },
-  { id: 521, name: 'Sunwal', districtId: 52 },
-  { id: 522, name: 'Palhinandan Rural Municipality', districtId: 52 },
-  { id: 523, name: 'Pratappur Rural Municipality', districtId: 52 },
-  { id: 524, name: 'Sarawal Rural Municipality', districtId: 52 },
-  { id: 525, name: 'Susta Rural Municipality', districtId: 52 },
-  { id: 526, name: 'Bhume Rural Municipality', districtId: 53 },
-  { id: 527, name: 'Sisne Rural Municipality', districtId: 53 },
-  { id: 528, name: 'Putha Uttarganga Rural Municipality', districtId: 53 },
-  { id: 529, name: 'Butwal', districtId: 54 },
-  { id: 530, name: 'Siddharthanagar', districtId: 54 },
-  { id: 531, name: 'Tilottama', districtId: 54 },
-  { id: 532, name: 'Sainamaina', districtId: 54 },
-  { id: 533, name: 'Devdaha', districtId: 54 },
-  { id: 534, name: 'Lumbini Sanskritik', districtId: 54 },
-  { id: 535, name: 'Rohini Rural Municipality', districtId: 54 },
-  { id: 536, name: 'Omsatiya Rural Municipality', districtId: 54 },
-  { id: 537, name: 'Mayadevi Rural Municipality', districtId: 54 },
-  { id: 538, name: 'Kotahimai Rural Municipality', districtId: 54 },
-  { id: 539, name: 'Marchawari Rural Municipality', districtId: 54 },
-  { id: 540, name: 'Suddhodhan Rural Municipality', districtId: 54 },
-  { id: 541, name: 'Siyari Rural Municipality', districtId: 54 },
-  { id: 542, name: 'Gaidahawa Rural Municipality', districtId: 54 },
-  { id: 543, name: 'Kanchan Rural Municipality', districtId: 54 },
-  { id: 544, name: 'Ramroshan', districtId: 54 },
-  { id: 545, name: 'Rolpa', districtId: 54 },
-  { id: 546, name: 'Triveni Rural Municipality', districtId: 54 },
-  { id: 547, name: 'Paribartan Rural Municipality', districtId: 54 },
-  { id: 548, name: 'Madi Rural Municipality', districtId: 54 },
-  { id: 549, name: 'Gangadev Rural Municipality', districtId: 54 },
-  { id: 550, name: 'Sunchhahari Rural Municipality', districtId: 54 },
-  { id: 551, name: 'Thabang Rural Municipality', districtId: 54 },
-  { id: 552, name: 'Lungri Rural Municipality', districtId: 54 },
-  { id: 553, name: 'Rolpa Rural Municipality', districtId: 54 },
-  { id: 554, name: 'Suvarnawati Rural Municipality', districtId: 54 },
-  { id: 555, name: 'Kapilvastu', districtId: 55 },
-  { id: 556, name: 'Banganga', districtId: 55 },
-  { id: 557, name: 'Buddh भूमि', districtId: 55 },
-  { id: 558, name: 'Krishnanagar', districtId: 55 },
-  { id: 559, name: 'Maharajgunj', districtId: 55 },
-  { id: 560, name: 'Shivaraj', districtId: 55 },
-  { id: 561, name: 'Shuddhodhan Rural Municipality', districtId: 55 },
-  { id: 562, name: 'Yashodhara Rural Municipality', districtId: 55 },
-  { id: 563, name: 'Mayadevi Rural Municipality', districtId: 55 },
-  { id: 564, name: 'Vijaynagar Rural Municipality', districtId: 55 },
-  { id: 565, name: 'Ghorahi', districtId: 56 },
-  { id: 566, name: 'Tulsipur', districtId: 56 },
-  { id: 567, name: 'Lamahi', districtId: 56 },
-  { id: 568, name: 'Rapti', districtId: 56 },
-  { id: 569, name: 'Gadhawa', districtId: 56 },
-  { id: 570, name: 'Babai Rural Municipality', districtId: 56 },
-  { id: 571, name: 'Shantinagar Rural Municipality', districtId: 56 },
-  { id: 572, name: 'Dangisharan Rural Municipality', districtId: 56 },
-  { id: 573, name: 'Rajpur Rural Municipality', districtId: 56 },
-  { id: 574, name: 'Bangalachuli Rural Municipality', districtId: 56 },
-  { id: 575, name: 'Nepalgunj', districtId: 57 },
-  { id: 576, name: 'Kohalpur', districtId: 57 },
-  { id: 577, name: 'Rapti Sonari Rural Municipality', districtId: 57 },
-  { id: 578, name: 'Narainapur Rural Municipality', districtId: 57 },
-  { id: 579, name: 'Duduwa Rural Municipality', districtId: 57 },
-  { id: 580, name: 'Janaki Rural Municipality', districtId: 57 },
-  { id: 581, name: 'Khajura Rural Municipality', districtId: 57 },
-  { id: 582, name: 'Baijanath Rural Municipality', districtId: 57 },
-  { id: 583, name: 'Gulariya', districtId: 58 },
-  { id: 584, name: 'Madhuwan', districtId: 58 },
-  { id: 585, name: 'Rajapur', districtId: 58 },
-  { id: 586, name: 'Thakur Baba', districtId: 58 },
-  { id: 587, name: 'Badhaiyatal Rural Municipality', districtId: 58 },
-  { id: 588, name: 'Barbardiya Rural Municipality', districtId: 58 },
-  { id: 589, name: 'Geruwa Rural Municipality', districtId: 58 },
-  { id: 590, name: 'Birendranagar', districtId: 59 },
-  { id: 591, name: 'Bheriganga', districtId: 59 },
-  { id: 592, name: 'Gurbhakot', districtId: 59 },
-  { id: 593, name: 'Panchapuri', districtId: 59 },
-  { id: 594, name: 'Lekbesi', districtId: 59 },
-  { id: 595, name: 'Chingad Rural Municipality', districtId: 59 },
-  { id: 596, name: 'Barahatal Rural Municipality', districtId: 59 },
-  { id: 597, name: 'Chaukune Rural Municipality', districtId: 59 },
-  { id: 598, name: 'Simta Rural Municipality', districtId: 59 },
-  { id: 599, name: 'Musikot', districtId: 60 },
-  { id: 600, name: 'Aathbiskot', districtId: 60 },
-  { id: 601, name: 'Chaurjahari', districtId: 60 },
-  { id: 602, name: 'Bafikot Rural Municipality', districtId: 60 },
-  { id: 603, name: 'Triveni Rural Municipality', districtId: 60 },
-  { id: 604, name: 'Sanibheri Rural Municipality', districtId: 60 },
-  { id: 605, name: 'Thuli Bheri', districtId: 61 },
-  { id: 606, name: 'Dolpo Buddha Rural Municipality', districtId: 61 },
-  { id: 607, name: 'She Phoksundo Rural Municipality', districtId: 61 },
-  { id: 608, name: 'Chharka Tangsong Rural Municipality', districtId: 61 },
-  { id: 609, name: 'Kagkot Rural Municipality', districtId: 61 },
-  { id: 610, name: 'Mudkechula Rural Municipality', districtId: 61 },
-  { id: 611, name: 'Jagadulla Rural Municipality', districtId: 61 },
-  { id: 612, name: 'Tripurasundari Rural Municipality', districtId: 61 },
-  { id: 613, name: 'Chandannath', districtId: 62 },
-  { id: 614, name: 'Guthichaur Rural Municipality', districtId: 62 },
-  { id: 615, name: 'Tatopani Rural Municipality', districtId: 62 },
-  { id: 616, name: 'Sinja Rural Municipality', districtId: 62 },
-  { id: 617, name: 'Hima Rural Municipality', districtId: 62 },
-  { id: 618, name: 'Kankasundari Rural Municipality', districtId: 62 },
-  { id: 619, name: 'Tila Rural Municipality', districtId: 62 },
-  { id: 620, name: 'Patarasi Rural Municipality', districtId: 62 },
-  { id: 621, name: 'Chhayanath Rara', districtId: 63 },
-  { id: 622, name: 'Soru Rural Municipality', districtId: 63 },
-  { id: 623, name: 'Khatyad Rural Municipality', districtId: 63 },
-  { id: 624, name: 'Mugum Karmarong Rural Municipality', districtId: 63 },
-  { id: 625, name: 'Simkot Rural Municipality', districtId: 64 },
-  { id: 626, name: 'Namkha Rural Municipality', districtId: 64 },
-  { id: 627, name: 'Kharpunath Rural Municipality', districtId: 64 },
-  { id: 628, name: 'Satyang Rural Municipality', districtId: 64 },
-  { id: 629, name: 'Adanchuli Rural Municipality', districtId: 64 },
-  { id: 630, name: 'Chankheli Rural Municipality', districtId: 64 },
-  { id: 631, name: 'Tajakot Rural Municipality', districtId: 64 },
-  { id: 632, name: 'Khandachakra', districtId: 65 },
-  { id: 633, name: 'Raskot Rural Municipality', districtId: 65 },
-  { id: 634, name: 'Sannitriveni Rural Municipality', districtId: 65 },
-  { id: 635, name: 'Palata Rural Municipality', districtId: 65 },
-  { id: 636, name: 'Subhakalika Rural Municipality', districtId: 65 },
-  { id: 637, name: 'Narharinath Rural Municipality', districtId: 65 },
-  { id: 638, name: 'Mahabai Rural Municipality', districtId: 65 },
-  { id: 639, name: 'Tilagufa Rural Municipality', districtId: 65 },
-  { id: 640, name: 'Pachaljharana Rural Municipality', districtId: 65 },
-  { id: 641, name: 'Bheri', districtId: 66 },
-  { id: 642, name: 'Chhedagad', districtId: 66 },
-  { id: 643, name: 'Shivalaya', districtId: 66 },
-  { id: 644, name: 'Kuse Rural Municipality', districtId: 66 },
-  { id: 645, name: 'Junichande Rural Municipality', districtId: 66 },
-  { id: 646, name: 'Barekot Rural Municipality', districtId: 66 },
-  { id: 647, name: 'Limba Rural Municipality', districtId: 66 },
-  { id: 648, name: 'Dullu', districtId: 67 },
-  { id: 649, name: 'Dailekh', districtId: 67 },
-  { id: 650, name: 'Chamunda Bindrasaini Rural Municipality', districtId: 67 },
-  { id: 651, name: 'Naumule Rural Municipality', districtId: 67 },
-  { id: 652, name: 'Bhairabi Rural Municipality', districtId: 67 },
-  { id: 653, name: 'Mahabu Rural Municipality', districtId: 67 },
-  { id: 654, name: 'Guranse Rural Municipality', districtId: 67 },
-  { id: 655, name: 'Bhagawatimai Rural Municipality', districtId: 67 },
-  { id: 656, name: 'Thatikandh Rural Municipality', districtId: 67 },
-  { id: 657, name: 'Aathbis Rural Municipality', districtId: 67 },
-  { id: 658, name: 'Sharada', districtId: 68 },
-  { id: 659, name: 'Bangad Kupinde', districtId: 68 },
-  { id: 660, name: 'Bagchaur', districtId: 68 },
-  { id: 661, name: 'Kalimati Rural Municipality', districtId: 68 },
-  { id: 662, name: 'Kapurkot Rural Municipality', districtId: 68 },
-  { id: 663, name: 'Siddhakumakh Rural Municipality', districtId: 68 },
-  { id: 664, name: 'Triveni Rural Municipality', districtId: 68 },
-  { id: 665, name: 'Darma Rural Municipality', districtId: 68 },
-  { id: 666, name: 'Kumakh Rural Municipality', districtId: 68 },
-  { id: 667, name: 'Chatreshwari Rural Municipality', districtId: 68 },
-  { id: 668, name: 'Badimalika', districtId: 69 },
-  { id: 669, name: 'Triveni', districtId: 69 },
-  { id: 670, name: 'Budhiganga', districtId: 69 },
-  { id: 671, name: 'Budhinanda', districtId: 69 },
-  { id: 672, name: 'Himali Rural Municipality', districtId: 69 },
-  { id: 673, name: 'Gaumul Rural Municipality', districtId: 69 },
-  { id: 674, name: 'Swamikartik Khapar Rural Municipality', districtId: 69 },
-  { id: 675, name: 'Chhededaha Rural Municipality', districtId: 69 },
-  { id: 676, name: 'Jagannath Rural Municipality', districtId: 69 },
-  { id: 677, name: 'Shikhar', districtId: 70 },
-  { id: 678, name: 'Dipayal Silgadi', districtId: 70 },
-  { id: 679, name: 'Purbichauki', districtId: 70 },
-  { id: 680, name: 'Adarsh Rural Municipality', districtId: 70 },
-  { id: 681, name: 'Jorayal Rural Municipality', districtId: 70 },
-  { id: 682, name: 'Badikedar Rural Municipality', districtId: 70 },
-  { id: 683, name: 'Sayal Rural Municipality', districtId: 70 },
-  { id: 684, name: 'Purbichauki Rural Municipality', districtId: 70 },
-  { id: 685, name: 'K I Singh Rural Municipality', districtId: 70 },
-  { id: 686, name: 'Amargadhi', districtId: 71 },
-  { id: 687, name: 'Parashuram', districtId: 71 },
-  { id: 688, name: 'Alital Rural Municipality', districtId: 71 },
-  { id: 689, name: 'Ganyapdhura Rural Municipality', districtId: 71 },
-  { id: 690, name: 'Navadurga Rural Municipality', districtId: 71 },
-  { id: 691, name: 'Bhageshwar Rural Municipality', districtId: 71 },
-  { id: 692, name: 'Ajaymeru Rural Municipality', districtId: 71 },
-  { id: 693, name: 'Dhangadhi', districtId: 72 },
-  { id: 694, name: 'Godawari', districtId: 72 },
-  { id: 695, name: 'Lamki Chuha', districtId: 72 },
-  { id: 696, name: 'Tikapur', districtId: 72 },
-  { id: 697, name: 'Ghoda Ghodi', districtId: 72 },
-  { id: 698, name: 'Bhawani', districtId: 72 },
-  { id: 699, name: 'Gauriganga', districtId: 72 },
-  { id: 700, name: 'Bardagoriya Rural Municipality', districtId: 72 },
-  { id: 701, name: 'Mohanyal Rural Municipality', districtId: 72 },
-  { id: 702, name: 'Kailari Rural Municipality', districtId: 72 },
-  { id: 703, name: 'Janaki Rural Municipality', districtId: 72 },
-  { id: 704, name: 'Bhatkanda Rural Municipality', districtId: 72 },
-  { id: 705, name: 'Chure Rural Municipality', districtId: 72 },
-  { id: 706, name: 'Bhimdatta', districtId: 73 },
-  { id: 707, name: 'Shuklaphanta', districtId: 73 },
-  { id: 708, name: 'Bedkot', districtId: 73 },
-  { id: 709, name: 'Beldandi', districtId: 73 },
-  { id: 710, name: 'Mahakali Municipality', districtId: 73 },
-  { id: 711, name: 'Punarbash', districtId: 73 },
-  { id: 712, name: 'Belauri', districtId: 73 },
-  { id: 713, name: 'Laljhadi Rural Municipality', districtId: 73 },
-  { id: 714, name: 'Krishnapur Rural Municipality', districtId: 73 },
-  { id: 715, name: 'Mahakali', districtId: 74 },
-  { id: 716, name: 'Shailyashikhar', districtId: 74 },
-  { id: 717, name: 'Lekam Rural Municipality', districtId: 74 },
-  { id: 718, name: 'Duhun Rural Municipality', districtId: 74 },
-  { id: 719, name: 'Naugad Rural Municipality', districtId: 74 },
-  { id: 720, name: 'Malika Rural Municipality', districtId: 74 },
-  { id: 721, name: 'Api Himal Rural Municipality', districtId: 74 },
-  { id: 722, name: 'Marma Rural Municipality', districtId: 74 },
-  { id: 723, name: 'Byans Rural Municipality', districtId: 74 },
-  { id: 724, name: 'Jaya Prithvi', districtId: 75 },
-  { id: 725, name: 'Bajhang Municipality', districtId: 75 },
-  { id: 726, name: 'Bungal', districtId: 75 },
-  { id: 727, name: 'Kedarsyu', districtId: 75 },
-  { id: 728, name: 'Talakot Rural Municipality', districtId: 75 },
-  { id: 729, name: 'Biththadchir Rural Municipality', districtId: 75 },
-  { id: 730, name: 'Surma Rural Municipality', districtId: 75 },
-  { id: 731, name: 'Chhabis Pathibhera Rural Municipality', districtId: 75 },
-  { id: 732, name: 'Kanda Rural Municipality', districtId: 75 },
-  { id: 733, name: 'Masta Rural Municipality', districtId: 75 },
-  { id: 734, name: 'Thalara Rural Municipality', districtId: 75 },
-  { id: 735, name: 'Sayal Rural Municipality Rural Municipality', districtId: 75 },
-  { id: 736, name: 'Dasharathchand', districtId: 76 },
-  { id: 737, name: 'Patan', districtId: 76 },
-  { id: 738, name: 'Melouli', districtId: 76 },
-  { id: 739, name: 'Puchardi', districtId: 76 },
-  { id: 740, name: 'Sigas Rural Municipality', districtId: 76 },
-  { id: 741, name: 'Surnaya Rural Municipality', districtId: 76 },
-  { id: 742, name: 'Dogadakedar Rural Municipality', districtId: 76 },
-  { id: 743, name: 'Pancheshwar Rural Municipality', districtId: 76 },
-  { id: 744, name: 'Shivanath Rural Municipality', districtId: 76 },
-  { id: 745, name: 'Dasharathchand Rural Municipality Rural Municipality', districtId: 76 },
-  { id: 746, name: 'Mangalsen', districtId: 77 },
-  { id: 747, name: 'Kamalbazar', districtId: 77 },
-  { id: 748, name: 'Safebagar', districtId: 77 },
-  { id: 749, name: 'Panchadewal Binayak', districtId: 77 },
-  { id: 750, name: 'Dhakari', districtId: 77 },
-  { id: 751, name: 'Ramaroshan Rural Municipality', districtId: 77 },
-  { id: 752, name: 'Bannigadi Jayagad Rural Municipality', districtId: 77 },
-  { id: 753, name: 'Chaurpati Rural Municipality', districtId: 77 },
-  { id: 754, name: 'Mellekh Rural Municipality', districtId: 77 },
-  { id: 755, name: 'Turmakhad Rural Municipality', districtId: 77 }
-]
+  {
+    "id": 1,
+    "district_id": 1,
+    "category_id": 3,
+    "name": "Shadanand",
+    "area_sq_km": "241.15",
+    "website": "http://www.shadanandamun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 2,
+    "district_id": 1,
+    "category_id": 3,
+    "name": "Bhojpur",
+    "area_sq_km": "159.51",
+    "website": "http://www.bhojpurmun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 3,
+    "district_id": 1,
+    "category_id": 4,
+    "name": "Hatuwagadhi",
+    "area_sq_km": "142.61",
+    "website": "http://www.hatuwagadhimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 4,
+    "district_id": 1,
+    "category_id": 4,
+    "name": "Ramprasad Rai",
+    "area_sq_km": "158.83",
+    "website": "http://www.ramprasadraimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 5,
+    "district_id": 1,
+    "category_id": 4,
+    "name": "Aamchok",
+    "area_sq_km": "184.89",
+    "website": "http://www.aamchowkmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 6,
+    "district_id": 1,
+    "category_id": 4,
+    "name": "Tyamke Maiyum",
+    "area_sq_km": "173.41",
+    "website": "http://www.tyamkemaiyummun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 7,
+    "district_id": 1,
+    "category_id": 4,
+    "name": "Arun",
+    "area_sq_km": "154.76",
+    "website": "http://www.arunmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 8,
+    "district_id": 1,
+    "category_id": 4,
+    "name": "Pauwadungma",
+    "area_sq_km": "118.86",
+    "website": "http://www.pauwadungmamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 9,
+    "district_id": 1,
+    "category_id": 4,
+    "name": "Salpasilichho",
+    "area_sq_km": "193.33",
+    "website": "http://www.salpasilichhomun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 10,
+    "district_id": 2,
+    "category_id": 3,
+    "name": "Dhankuta",
+    "area_sq_km": "111",
+    "website": "http://www.dhankutamun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 11,
+    "district_id": 2,
+    "category_id": 3,
+    "name": "Pakhribas",
+    "area_sq_km": "144.29",
+    "website": "https://pakhribasmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 12,
+    "district_id": 2,
+    "category_id": 3,
+    "name": "Mahalaxmi",
+    "area_sq_km": "129.39",
+    "website": "https://mahalaxmimundhankuta.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 13,
+    "district_id": 2,
+    "category_id": 4,
+    "name": "Sangurigadhi",
+    "area_sq_km": "166.44",
+    "website": "https://sangurigadhimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 14,
+    "district_id": 2,
+    "category_id": 4,
+    "name": "Chaubise",
+    "area_sq_km": "147.6",
+    "website": "https://choubisemun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 15,
+    "district_id": 2,
+    "category_id": 4,
+    "name": "Sahidbhumi",
+    "area_sq_km": "99.55",
+    "website": "https://shahidbhumimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 16,
+    "district_id": 2,
+    "category_id": 4,
+    "name": "Chhathar Jorpati",
+    "area_sq_km": "102.83",
+    "website": "https://chhatharjorpatimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 17,
+    "district_id": 3,
+    "category_id": 3,
+    "name": "Suryodaya",
+    "area_sq_km": "252.52",
+    "website": "http://www.suryodayamun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 18,
+    "district_id": 3,
+    "category_id": 3,
+    "name": "Ilam",
+    "area_sq_km": "173.32",
+    "website": "http://www.ilammun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 19,
+    "district_id": 3,
+    "category_id": 3,
+    "name": "Deumai",
+    "area_sq_km": "191.63",
+    "website": "http://www.deumaimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 20,
+    "district_id": 3,
+    "category_id": 4,
+    "name": "Maijogmai",
+    "area_sq_km": "172.41",
+    "website": "http://www.maijogmaimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 21,
+    "district_id": 3,
+    "category_id": 4,
+    "name": "Phakphokthum",
+    "area_sq_km": "108.79",
+    "website": "फाकफोकथुम",
+    "wards": "7"
+  },
+  {
+    "id": 22,
+    "district_id": 3,
+    "category_id": 3,
+    "name": "Mai",
+    "area_sq_km": "246.11",
+    "website": "http://www.maimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 23,
+    "district_id": 3,
+    "category_id": 4,
+    "name": "Chulachuli",
+    "area_sq_km": "108.46",
+    "website": "http://www.chulachulimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 24,
+    "district_id": 3,
+    "category_id": 4,
+    "name": "Rong",
+    "area_sq_km": "155.06",
+    "website": "http://www.rongmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 25,
+    "district_id": 3,
+    "category_id": 4,
+    "name": "Mangsebung",
+    "area_sq_km": "142.41",
+    "website": "http://www.mansebungmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 26,
+    "district_id": 3,
+    "category_id": 4,
+    "name": "Sandakpur",
+    "area_sq_km": "156.01",
+    "website": "http://www.sandakpurmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 27,
+    "district_id": 4,
+    "category_id": 3,
+    "name": "Mechinagar",
+    "area_sq_km": "192.85",
+    "website": "http://www.mechinagarmun.gov.np/",
+    "wards": "15"
+  },
+  {
+    "id": 28,
+    "district_id": 4,
+    "category_id": 3,
+    "name": "Birtamod",
+    "area_sq_km": "78.24",
+    "website": "http://www.birtamodmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 29,
+    "district_id": 4,
+    "category_id": 3,
+    "name": "Damak",
+    "area_sq_km": "70.76",
+    "website": "http://www.damakmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 30,
+    "district_id": 4,
+    "category_id": 3,
+    "name": "Bhadrapur",
+    "area_sq_km": "93.35",
+    "website": "http://www.bhadrapurmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 31,
+    "district_id": 4,
+    "category_id": 3,
+    "name": "Shivasatakshi",
+    "area_sq_km": "145.87",
+    "website": "http://www.shivasatakshimun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 32,
+    "district_id": 4,
+    "category_id": 3,
+    "name": "Arjundhara",
+    "area_sq_km": "109.86",
+    "website": "http://www.arjundharamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 33,
+    "district_id": 4,
+    "category_id": 3,
+    "name": "Gauradaha",
+    "area_sq_km": "149.86",
+    "website": "http://www.gauradahamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 34,
+    "district_id": 4,
+    "category_id": 3,
+    "name": "Kankai",
+    "area_sq_km": "80.98",
+    "website": "http://www.kankaimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 35,
+    "district_id": 4,
+    "category_id": 4,
+    "name": "Kamal",
+    "area_sq_km": "104.57",
+    "website": "http://www.kamalmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 36,
+    "district_id": 4,
+    "category_id": 4,
+    "name": "Buddha Shanti",
+    "area_sq_km": "79.78",
+    "website": "http://www.buddhashantimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 37,
+    "district_id": 4,
+    "category_id": 4,
+    "name": "Kachankawal",
+    "area_sq_km": "109.45",
+    "website": "http://www.kachankawalmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 38,
+    "district_id": 4,
+    "category_id": 4,
+    "name": "Jhapa",
+    "area_sq_km": "94.12",
+    "website": "http://www.jhapamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 39,
+    "district_id": 4,
+    "category_id": 4,
+    "name": "Barhadashi",
+    "area_sq_km": "88.44",
+    "website": "http://www.bahradashimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 40,
+    "district_id": 4,
+    "category_id": 4,
+    "name": "Gaurigunj",
+    "area_sq_km": "101.35",
+    "website": "http://www.gaurigunjmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 41,
+    "district_id": 4,
+    "category_id": 4,
+    "name": "Haldibari",
+    "area_sq_km": "117.34",
+    "website": "http://www.haldibarimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 42,
+    "district_id": 5,
+    "category_id": 3,
+    "name": "Diktel Rupakot Majhuwagadhi",
+    "area_sq_km": "246.51",
+    "website": "http://www.rupakotmajhuwagadhimun.gov.np/",
+    "wards": "15"
+  },
+  {
+    "id": 43,
+    "district_id": 5,
+    "category_id": 3,
+    "name": "Halesi Tuwachung",
+    "area_sq_km": "280.17",
+    "website": "http://www.halesituwachungmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 44,
+    "district_id": 5,
+    "category_id": 4,
+    "name": "Khotehang",
+    "area_sq_km": "164.09",
+    "website": "http://www.khotehangmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 45,
+    "district_id": 5,
+    "category_id": 4,
+    "name": "Diprung Chuichumma",
+    "area_sq_km": "136.48",
+    "website": "http://www.diprungmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 46,
+    "district_id": 5,
+    "category_id": 4,
+    "name": "Aiselukharka",
+    "area_sq_km": "125.93",
+    "website": "http://www.aiselukharkamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 47,
+    "district_id": 5,
+    "category_id": 4,
+    "name": "Jantedhunga",
+    "area_sq_km": "128.62",
+    "website": "http://www.jantedhungamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 48,
+    "district_id": 5,
+    "category_id": 4,
+    "name": "Kepilasgadhi",
+    "area_sq_km": "191.28",
+    "website": "http://www.kepilasgadhimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 49,
+    "district_id": 5,
+    "category_id": 4,
+    "name": "Barahpokhari",
+    "area_sq_km": "141.6",
+    "website": "http://www.barahapokharimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 50,
+    "district_id": 5,
+    "category_id": 4,
+    "name": "Rawa Besi",
+    "area_sq_km": "97.44",
+    "website": "http://www.lamidandamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 51,
+    "district_id": 5,
+    "category_id": 4,
+    "name": "Sakela",
+    "area_sq_km": "79.99",
+    "website": "http://www.sakelamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 52,
+    "district_id": 6,
+    "category_id": 3,
+    "name": "Sundar Haraicha",
+    "area_sq_km": "110.16",
+    "website": "http://www.sundarharaichamun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 53,
+    "district_id": 6,
+    "category_id": 3,
+    "name": "Belbari",
+    "area_sq_km": "132.79",
+    "website": "http://www.belbarimun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 54,
+    "district_id": 6,
+    "category_id": 3,
+    "name": "Pathari Shanischare",
+    "area_sq_km": "79.81",
+    "website": "http://www.patharishanishcharemun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 55,
+    "district_id": 6,
+    "category_id": 3,
+    "name": "Ratuwamai",
+    "area_sq_km": "142.15",
+    "website": "http://www.ratuwamaimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 56,
+    "district_id": 6,
+    "category_id": 3,
+    "name": "Urlabari",
+    "area_sq_km": "74.62",
+    "website": "http://www.urlabarimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 57,
+    "district_id": 6,
+    "category_id": 3,
+    "name": "Rangeli",
+    "area_sq_km": "111.78",
+    "website": "http://www.rangelimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 58,
+    "district_id": 6,
+    "category_id": 3,
+    "name": "Sunawarshi",
+    "area_sq_km": "106.4",
+    "website": "http://www.sunawarshimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 59,
+    "district_id": 6,
+    "category_id": 3,
+    "name": "Letang",
+    "area_sq_km": "119.23",
+    "website": "http://www.letangmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 60,
+    "district_id": 6,
+    "category_id": 1,
+    "name": "Biratnagar",
+    "area_sq_km": "77",
+    "website": "http://www.biratnagarmun.gov.np/",
+    "wards": "19"
+  },
+  {
+    "id": 61,
+    "district_id": 6,
+    "category_id": 4,
+    "name": "Jahada",
+    "area_sq_km": "62.38",
+    "website": "http://www.jahadamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 62,
+    "district_id": 6,
+    "category_id": 4,
+    "name": "Budi Ganga",
+    "area_sq_km": "56.41",
+    "website": "https://budhigangamunmorang.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 63,
+    "district_id": 6,
+    "category_id": 4,
+    "name": "Katahari",
+    "area_sq_km": "51.59",
+    "website": "http://www.kataharimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 64,
+    "district_id": 6,
+    "category_id": 4,
+    "name": "Dhanpalthan",
+    "area_sq_km": "70.26",
+    "website": "http://www.dhanapalthanmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 65,
+    "district_id": 6,
+    "category_id": 4,
+    "name": "Kanepokhari",
+    "area_sq_km": "82.83",
+    "website": "http://www.kanepokharimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 66,
+    "district_id": 6,
+    "category_id": 4,
+    "name": "Gramthan",
+    "area_sq_km": "71.84",
+    "website": "http://www.gramthanmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 67,
+    "district_id": 6,
+    "category_id": 4,
+    "name": "Kerabari",
+    "area_sq_km": "219.83",
+    "website": "http://www.kerabarimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 68,
+    "district_id": 6,
+    "category_id": 4,
+    "name": "Miklajung",
+    "area_sq_km": "157.98",
+    "website": "http://www.miklajungmunmorang.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 69,
+    "district_id": 7,
+    "category_id": 3,
+    "name": "Siddhicharan",
+    "area_sq_km": "167.88",
+    "website": "http://www.siddhicharanmun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 70,
+    "district_id": 7,
+    "category_id": 4,
+    "name": "Khiji Demba",
+    "area_sq_km": "179.77",
+    "website": "http://www.khijidembamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 71,
+    "district_id": 7,
+    "category_id": 4,
+    "name": "Chisankhugadhi",
+    "area_sq_km": "126.91",
+    "website": "http://www.chishankhugadhimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 72,
+    "district_id": 7,
+    "category_id": 4,
+    "name": "Molung",
+    "area_sq_km": "112",
+    "website": "http://www.molungmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 73,
+    "district_id": 7,
+    "category_id": 4,
+    "name": "Sunkoshi",
+    "area_sq_km": "143.75",
+    "website": "http://www.sunkoshimunokhaldhunga.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 74,
+    "district_id": 7,
+    "category_id": 4,
+    "name": "Champadevi",
+    "area_sq_km": "126.91",
+    "website": "http://www.champadevimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 75,
+    "district_id": 7,
+    "category_id": 4,
+    "name": "Manebhanjyang",
+    "area_sq_km": "146.61",
+    "website": "http://www.manebhanjyangmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 76,
+    "district_id": 7,
+    "category_id": 4,
+    "name": "Likhu",
+    "area_sq_km": "88.03",
+    "website": "https://likhumunokhaldhunga.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 77,
+    "district_id": 8,
+    "category_id": 3,
+    "name": "Phidim",
+    "area_sq_km": "192.5",
+    "website": "http://www.phidimmun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 78,
+    "district_id": 8,
+    "category_id": 4,
+    "name": "Miklajung",
+    "area_sq_km": "166.61",
+    "website": "http://www.miklajungmunpanchthar.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 79,
+    "district_id": 8,
+    "category_id": 4,
+    "name": "Phalgunanda",
+    "area_sq_km": "107.53",
+    "website": "http://www.phalgunandamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 80,
+    "district_id": 8,
+    "category_id": 4,
+    "name": "Hilihang",
+    "area_sq_km": "123.01",
+    "website": "http://www.hilihangmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 81,
+    "district_id": 8,
+    "category_id": 4,
+    "name": "Phalelung",
+    "area_sq_km": "207.14",
+    "website": "http://www.phalelungmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 82,
+    "district_id": 8,
+    "category_id": 4,
+    "name": "Yangwarak",
+    "area_sq_km": "208.63",
+    "website": "http://www.yangwarakmunpanchthar.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 83,
+    "district_id": 8,
+    "category_id": 4,
+    "name": "Kummayak",
+    "area_sq_km": "129.3",
+    "website": "http://www.kummayakmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 84,
+    "district_id": 8,
+    "category_id": 4,
+    "name": "Tumbewa",
+    "area_sq_km": "117.34",
+    "website": "http://www.tumwewamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 85,
+    "district_id": 9,
+    "category_id": 3,
+    "name": "Khandbari",
+    "area_sq_km": "122.78",
+    "website": "http://www.khandbarimun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 86,
+    "district_id": 9,
+    "category_id": 3,
+    "name": "Chainpur",
+    "area_sq_km": "223.69",
+    "website": "http://www.chainpurmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 87,
+    "district_id": 9,
+    "category_id": 3,
+    "name": "Dharmadevi",
+    "area_sq_km": "132.82",
+    "website": "http://www.dharmadevimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 88,
+    "district_id": 9,
+    "category_id": 3,
+    "name": "Panchkhapan",
+    "area_sq_km": "148.03",
+    "website": "http://www.panchkhapanmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 89,
+    "district_id": 9,
+    "category_id": 3,
+    "name": "Madi",
+    "area_sq_km": "110.1",
+    "website": "http://www.madimunsankhuwasabha.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 90,
+    "district_id": 9,
+    "category_id": 4,
+    "name": "Makalu",
+    "area_sq_km": "519.45",
+    "website": "http://www.makalumun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 91,
+    "district_id": 9,
+    "category_id": 4,
+    "name": "Silichong",
+    "area_sq_km": "293.26",
+    "website": "http://www.silichongmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 92,
+    "district_id": 9,
+    "category_id": 4,
+    "name": "Sabhapokhari",
+    "area_sq_km": "222.08",
+    "website": "http://www.savapokharimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 93,
+    "district_id": 9,
+    "category_id": 4,
+    "name": "Chichila",
+    "area_sq_km": "88.63",
+    "website": "http://www.chichilamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 94,
+    "district_id": 9,
+    "category_id": 4,
+    "name": "BhotKhola",
+    "area_sq_km": "639.01",
+    "website": "http://www.bhotkholamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 95,
+    "district_id": 10,
+    "category_id": 3,
+    "name": "Solu Dudhkunda",
+    "area_sq_km": "538.09",
+    "website": "http://www.solududhkundamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 96,
+    "district_id": 10,
+    "category_id": 4,
+    "name": "Mapya Dudhkoshi",
+    "area_sq_km": "167.67",
+    "website": "http://www.dudhkoshimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 97,
+    "district_id": 10,
+    "category_id": 4,
+    "name": "Necha Salyan",
+    "area_sq_km": "94.49",
+    "website": "http://www.nechasalyanmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 98,
+    "district_id": 10,
+    "category_id": 4,
+    "name": "Thulung Dudhkoshi",
+    "area_sq_km": "144.6",
+    "website": "http://www.thulungdudhkoshimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 99,
+    "district_id": 10,
+    "category_id": 4,
+    "name": "Maha Kulung",
+    "area_sq_km": "648.05",
+    "website": "http://www.mahakulungmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 100,
+    "district_id": 10,
+    "category_id": 4,
+    "name": "Sotang",
+    "area_sq_km": "103",
+    "website": "http://www.sotangmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 101,
+    "district_id": 10,
+    "category_id": 4,
+    "name": "Khumbu PasangLhamu",
+    "area_sq_km": "1539.11",
+    "website": "http://www.khumbupasanglhamumun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 102,
+    "district_id": 10,
+    "category_id": 4,
+    "name": "Likhu Pike",
+    "area_sq_km": "124.38",
+    "website": "http://www.likhupikemun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 103,
+    "district_id": 11,
+    "category_id": 3,
+    "name": "BarahaKshetra",
+    "area_sq_km": "222.09",
+    "website": "http://www.barahamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 104,
+    "district_id": 11,
+    "category_id": 3,
+    "name": "Inaruwa",
+    "area_sq_km": "77.92",
+    "website": "http://www.inaruwamun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 105,
+    "district_id": 11,
+    "category_id": 3,
+    "name": "Duhabi",
+    "area_sq_km": "76.67",
+    "website": "http://www.duhabimun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 106,
+    "district_id": 11,
+    "category_id": 3,
+    "name": "Ramdhuni",
+    "area_sq_km": "91.69",
+    "website": "http://www.ramdhunimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 107,
+    "district_id": 11,
+    "category_id": 2,
+    "name": "Itahari",
+    "area_sq_km": "93.78",
+    "website": "http://www.itaharimun.gov.np/",
+    "wards": "20"
+  },
+  {
+    "id": 108,
+    "district_id": 11,
+    "category_id": 2,
+    "name": "Dharan",
+    "area_sq_km": "192.32",
+    "website": "http://www.dharan.gov.np/",
+    "wards": "20"
+  },
+  {
+    "id": 109,
+    "district_id": 11,
+    "category_id": 4,
+    "name": "Koshi",
+    "area_sq_km": "75.98",
+    "website": "http://www.koshimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 110,
+    "district_id": 11,
+    "category_id": 4,
+    "name": "Harinagar",
+    "area_sq_km": "52.29",
+    "website": "http://www.harinagaramun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 111,
+    "district_id": 11,
+    "category_id": 4,
+    "name": "Bhokraha Narsingh",
+    "area_sq_km": "63.37",
+    "website": "http://www.bhokrahamun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 112,
+    "district_id": 11,
+    "category_id": 4,
+    "name": "Dewangunj",
+    "area_sq_km": "53.56",
+    "website": "http://www.dewanganjmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 113,
+    "district_id": 11,
+    "category_id": 4,
+    "name": "Gadhi",
+    "area_sq_km": "67.7",
+    "website": "http://www.gadhimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 114,
+    "district_id": 11,
+    "category_id": 4,
+    "name": "Barju",
+    "area_sq_km": "69.43",
+    "website": "http://www.barjumun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 115,
+    "district_id": 12,
+    "category_id": 3,
+    "name": "Phungling",
+    "area_sq_km": "125.57",
+    "website": "http://www.phunglingmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 116,
+    "district_id": 12,
+    "category_id": 4,
+    "name": "Sirijangha",
+    "area_sq_km": "481.09",
+    "website": "http://www.sirijanghamun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 117,
+    "district_id": 12,
+    "category_id": 4,
+    "name": "Aathrai Triveni",
+    "area_sq_km": "88.83",
+    "website": "http://www.aathraitribenimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 118,
+    "district_id": 12,
+    "category_id": 4,
+    "name": "Pathibhara Yangwarak",
+    "area_sq_km": "93.76",
+    "website": "http://www.yangwarakmuntaplejung.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 119,
+    "district_id": 12,
+    "category_id": 4,
+    "name": "Meringden",
+    "area_sq_km": "210.33",
+    "website": "http://www.meringdenmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 120,
+    "district_id": 12,
+    "category_id": 4,
+    "name": "Sidingwa",
+    "area_sq_km": "206",
+    "website": "http://www.sidingbamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 121,
+    "district_id": 12,
+    "category_id": 4,
+    "name": "Phaktanglung",
+    "area_sq_km": "1858.51",
+    "website": "http://www.phaktanglungmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 122,
+    "district_id": 12,
+    "category_id": 4,
+    "name": "Maiwa Khola",
+    "area_sq_km": "138",
+    "website": "http://www.maiwakholamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 123,
+    "district_id": 12,
+    "category_id": 4,
+    "name": "Mikwa Khola",
+    "area_sq_km": "442.96",
+    "website": "http://www.mikwakholamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 124,
+    "district_id": 13,
+    "category_id": 3,
+    "name": "Myanglung",
+    "area_sq_km": "100.21",
+    "website": "http://www.myanglungmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 125,
+    "district_id": 13,
+    "category_id": 3,
+    "name": "Laligurans",
+    "area_sq_km": "90.27",
+    "website": "http://www.laliguransmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 126,
+    "district_id": 13,
+    "category_id": 4,
+    "name": "Aathrai",
+    "area_sq_km": "167.07",
+    "website": "http://www.aathraimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 127,
+    "district_id": 13,
+    "category_id": 4,
+    "name": "Phedap",
+    "area_sq_km": "110.83",
+    "website": "http://www.phedapmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 128,
+    "district_id": 13,
+    "category_id": 4,
+    "name": "Chhathar",
+    "area_sq_km": "133.93",
+    "website": "http://www.chhatharmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 129,
+    "district_id": 13,
+    "category_id": 4,
+    "name": "Menchayayem",
+    "area_sq_km": "70.09",
+    "website": "http://www.menchhayayemmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 130,
+    "district_id": 14,
+    "category_id": 3,
+    "name": "Triyuga",
+    "area_sq_km": "547.43",
+    "website": "http://www.triyugamun.gov.np/",
+    "wards": "16"
+  },
+  {
+    "id": 131,
+    "district_id": 14,
+    "category_id": 3,
+    "name": "Katari",
+    "area_sq_km": "424.89",
+    "website": "http://www.katarimun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 132,
+    "district_id": 14,
+    "category_id": 3,
+    "name": "Chaudandigadhi",
+    "area_sq_km": "283.78",
+    "website": "http://www.chaudandigadhimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 133,
+    "district_id": 14,
+    "category_id": 3,
+    "name": "Belaka",
+    "area_sq_km": "344.73",
+    "website": "http://www.belakamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 134,
+    "district_id": 14,
+    "category_id": 4,
+    "name": "Udayapurgadhi",
+    "area_sq_km": "269.51",
+    "website": "http://www.udayapurgadhimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 135,
+    "district_id": 14,
+    "category_id": 4,
+    "name": "Rautamai",
+    "area_sq_km": "204.08",
+    "website": "http://www.rautamaimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 136,
+    "district_id": 14,
+    "category_id": 4,
+    "name": "Tapli",
+    "area_sq_km": "119.11",
+    "website": "http://www.taplimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 137,
+    "district_id": 14,
+    "category_id": 4,
+    "name": "Limchungbung",
+    "area_sq_km": "106.8",
+    "website": "http://www.sunkoshimunudayapur.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 138,
+    "district_id": 15,
+    "category_id": 1,
+    "name": "Birgunj",
+    "area_sq_km": "132.07",
+    "website": "http://www.birgunjmun.gov.np/",
+    "wards": "32"
+  },
+  {
+    "id": 139,
+    "district_id": 15,
+    "category_id": 3,
+    "name": "Bahudarmai",
+    "area_sq_km": "31.55",
+    "website": "http://www.bahudarmaimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 140,
+    "district_id": 15,
+    "category_id": 3,
+    "name": "Parsagadhi",
+    "area_sq_km": "99.69",
+    "website": "http://www.parsagadhimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 141,
+    "district_id": 15,
+    "category_id": 3,
+    "name": "Pokhariya",
+    "area_sq_km": "32.47",
+    "website": "http://www.pokhariyamun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 142,
+    "district_id": 15,
+    "category_id": 4,
+    "name": "Bindabasini",
+    "area_sq_km": "26.04",
+    "website": "http://www.bindabasinimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 143,
+    "district_id": 15,
+    "category_id": 4,
+    "name": "Dhobini",
+    "area_sq_km": "24.41",
+    "website": "http://www.dhobinimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 144,
+    "district_id": 15,
+    "category_id": 4,
+    "name": "Chhipaharmai",
+    "area_sq_km": "24.9",
+    "website": "http://www.chhipaharmaimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 145,
+    "district_id": 15,
+    "category_id": 4,
+    "name": "Jagarnathpur",
+    "area_sq_km": "45.29",
+    "website": "http://www.jagarnathpurmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 146,
+    "district_id": 15,
+    "category_id": 4,
+    "name": "Jirabhawani",
+    "area_sq_km": "55.39",
+    "website": "http://www.jirabhawanimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 147,
+    "district_id": 15,
+    "category_id": 4,
+    "name": "Kalikamai",
+    "area_sq_km": "24.33",
+    "website": "http://www.kalikamaimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 148,
+    "district_id": 15,
+    "category_id": 4,
+    "name": "Pakaha Mainpur",
+    "area_sq_km": "21.26",
+    "website": "http://www.pakahamainpurmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 149,
+    "district_id": 15,
+    "category_id": 4,
+    "name": "Paterwa Sugauli",
+    "area_sq_km": "64.29",
+    "website": "http://www.paterwasugaulimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 150,
+    "district_id": 15,
+    "category_id": 4,
+    "name": "Sakhuwa Prasauni",
+    "area_sq_km": "74.27",
+    "website": "http://www.sakhuwaprasaunimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 151,
+    "district_id": 15,
+    "category_id": 4,
+    "name": "Thori",
+    "area_sq_km": "128.67",
+    "website": "http://www.thorimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 152,
+    "district_id": 16,
+    "category_id": 2,
+    "name": "Kalaiya",
+    "area_sq_km": "108.94",
+    "website": "http://www.kalaiyamun.gov.np/",
+    "wards": "27"
+  },
+  {
+    "id": 153,
+    "district_id": 16,
+    "category_id": 2,
+    "name": "Jitpur Simara",
+    "area_sq_km": "312.18",
+    "website": "http://www.jeetpursimaramun.gov.np/",
+    "wards": "24"
+  },
+  {
+    "id": 154,
+    "district_id": 16,
+    "category_id": 3,
+    "name": "Kolhabi",
+    "area_sq_km": "157.4",
+    "website": "http://www.kolhabimun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 155,
+    "district_id": 16,
+    "category_id": 3,
+    "name": "Nijgadh",
+    "area_sq_km": "289.43",
+    "website": "http://www.nijgadhmun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 156,
+    "district_id": 16,
+    "category_id": 3,
+    "name": "Mahagadhimai",
+    "area_sq_km": "55.32",
+    "website": "http://www.mahagadimaimun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 157,
+    "district_id": 16,
+    "category_id": 3,
+    "name": "Simaraungadh",
+    "area_sq_km": "42.65",
+    "website": "http://www.simraungadhmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 158,
+    "district_id": 16,
+    "category_id": 3,
+    "name": "Pacharauta",
+    "area_sq_km": "44.01",
+    "website": "http://www.pachrautamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 159,
+    "district_id": 16,
+    "category_id": 4,
+    "name": "Pheta",
+    "area_sq_km": "23.65",
+    "website": "http://www.phetamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 160,
+    "district_id": 16,
+    "category_id": 4,
+    "name": "Bishrampur",
+    "area_sq_km": "19.81",
+    "website": "http://www.bishrampurmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 161,
+    "district_id": 16,
+    "category_id": 4,
+    "name": "Prasauni",
+    "area_sq_km": "20.24",
+    "website": "http://www.prasaunimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 162,
+    "district_id": 16,
+    "category_id": 4,
+    "name": "Adarsh Kotwal",
+    "area_sq_km": "36.25",
+    "website": "http://www.aadarshakotwalmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 163,
+    "district_id": 16,
+    "category_id": 4,
+    "name": "Karaiyamai",
+    "area_sq_km": "47.69",
+    "website": "http://www.karaiyamaimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 164,
+    "district_id": 16,
+    "category_id": 4,
+    "name": "Devtal",
+    "area_sq_km": "23.31",
+    "website": "http://www.devtalmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 165,
+    "district_id": 16,
+    "category_id": 4,
+    "name": "Parwanipur",
+    "area_sq_km": "15.48",
+    "website": "http://www.parwanipurmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 166,
+    "district_id": 16,
+    "category_id": 4,
+    "name": "Baragadhi",
+    "area_sq_km": "39.29",
+    "website": "http://www.baragadhimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 167,
+    "district_id": 16,
+    "category_id": 4,
+    "name": "Suwarna",
+    "area_sq_km": "36.84",
+    "website": "http://www.suwarnamun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 168,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Baudhimai",
+    "area_sq_km": "35.343",
+    "website": "http://www.baudhimaimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 169,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Brindaban",
+    "area_sq_km": "95.4",
+    "website": "http://www.brindawanmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 170,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Chandrapur",
+    "area_sq_km": "249.96",
+    "website": "http://www.chandrapurmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 171,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Dewahi Gonahi",
+    "area_sq_km": "33.99",
+    "website": "http://www.dewahigonahimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 172,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Gadhimai",
+    "area_sq_km": "49.44",
+    "website": "http://www.gadhimaimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 173,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Guruda",
+    "area_sq_km": "44.46",
+    "website": "http://www.garudamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 174,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Gaur",
+    "area_sq_km": "21.53",
+    "website": "http://www.gaurmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 175,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Gujara",
+    "area_sq_km": "150.33",
+    "website": "http://www.gujaramun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 176,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Ishanath",
+    "area_sq_km": "35.17",
+    "website": "http://www.ishnathmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 177,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Katahariya",
+    "area_sq_km": "40.69",
+    "website": "http://www.katahariyamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 178,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Madhav Narayan",
+    "area_sq_km": "48.53",
+    "website": "http://www.madhavnarayanmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 179,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Maulapur",
+    "area_sq_km": "34.75",
+    "website": "http://www.maulapurmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 180,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Paroha",
+    "area_sq_km": "37.45",
+    "website": "http://www.parohamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 181,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Phatuwa Bijayapur",
+    "area_sq_km": "65.24",
+    "website": "http://www.phatuwabijaypurmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 182,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Rajdevi",
+    "area_sq_km": "28.21",
+    "website": "http://www.rajdevimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 183,
+    "district_id": 17,
+    "category_id": 3,
+    "name": "Rajpur",
+    "area_sq_km": "31.41",
+    "website": "https://rajpurmunrautahat.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 184,
+    "district_id": 17,
+    "category_id": 4,
+    "name": "Durga Bhagwati",
+    "area_sq_km": "19.8",
+    "website": "http://www.durgabhagawatimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 185,
+    "district_id": 17,
+    "category_id": 4,
+    "name": "Yamunamai",
+    "area_sq_km": "16.7",
+    "website": "http://www.yamunamaimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 186,
+    "district_id": 18,
+    "category_id": 3,
+    "name": "Bagmati",
+    "area_sq_km": "101.18",
+    "website": "http://www.bagmatimunsarlahi.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 187,
+    "district_id": 18,
+    "category_id": 3,
+    "name": "Balara",
+    "area_sq_km": "48.55",
+    "website": "http://www.balramun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 188,
+    "district_id": 18,
+    "category_id": 3,
+    "name": "Barahathwa",
+    "area_sq_km": "107.05",
+    "website": "http://www.barhathwamun.gov.np/",
+    "wards": "18"
+  },
+  {
+    "id": 189,
+    "district_id": 18,
+    "category_id": 3,
+    "name": "Godaita",
+    "area_sq_km": "48.62",
+    "website": "http://www.godaitamun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 190,
+    "district_id": 18,
+    "category_id": 3,
+    "name": "Hariwan",
+    "area_sq_km": "86.12",
+    "website": "http://www.harionmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 191,
+    "district_id": 18,
+    "category_id": 3,
+    "name": "Haripur",
+    "area_sq_km": "66.86",
+    "website": "http://www.haripurmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 192,
+    "district_id": 18,
+    "category_id": 3,
+    "name": "Haripurwa",
+    "area_sq_km": "30.5",
+    "website": "http://www.haripurwamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 193,
+    "district_id": 18,
+    "category_id": 3,
+    "name": "Ishowrpur",
+    "area_sq_km": "163.83",
+    "website": "http://www.ishworpurmun.gov.np/",
+    "wards": "15"
+  },
+  {
+    "id": 194,
+    "district_id": 18,
+    "category_id": 3,
+    "name": "Kabilasi",
+    "area_sq_km": "48.11",
+    "website": "http://www.kawilasimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 195,
+    "district_id": 18,
+    "category_id": 3,
+    "name": "Lalbandi",
+    "area_sq_km": "238.5",
+    "website": "http://www.lalbandimun.gov.np/",
+    "wards": "17"
+  },
+  {
+    "id": 196,
+    "district_id": 18,
+    "category_id": 3,
+    "name": "Malangawa",
+    "area_sq_km": "30.44",
+    "website": "http://www.malangwamun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 197,
+    "district_id": 18,
+    "category_id": 4,
+    "name": "Basbariya",
+    "area_sq_km": "29.42",
+    "website": "http://www.basbariyamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 198,
+    "district_id": 18,
+    "category_id": 4,
+    "name": "Bisnu",
+    "area_sq_km": "28.09",
+    "website": "http://www.bishnumun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 199,
+    "district_id": 18,
+    "category_id": 4,
+    "name": "Brahampuri",
+    "area_sq_km": "33.89",
+    "website": "http://www.brahmapurimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 200,
+    "district_id": 18,
+    "category_id": 4,
+    "name": "Chakraghatta",
+    "area_sq_km": "25.14",
+    "website": "http://www.chakraghattamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 201,
+    "district_id": 18,
+    "category_id": 4,
+    "name": "Chandranagar",
+    "area_sq_km": "47.5",
+    "website": "http://www.chandranagarmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 202,
+    "district_id": 18,
+    "category_id": 4,
+    "name": "Dhankaul",
+    "area_sq_km": "45.94",
+    "website": "http://www.dhankaulmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 203,
+    "district_id": 18,
+    "category_id": 4,
+    "name": "Kaudena",
+    "area_sq_km": "25.33",
+    "website": "http://www.kaudenamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 204,
+    "district_id": 18,
+    "category_id": 4,
+    "name": "Parsa",
+    "area_sq_km": "23.12",
+    "website": "http://www.parsamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 205,
+    "district_id": 18,
+    "category_id": 4,
+    "name": "Ramnagar",
+    "area_sq_km": "26.44",
+    "website": "http://www.ramnagarmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 206,
+    "district_id": 19,
+    "category_id": 3,
+    "name": "Lahan",
+    "area_sq_km": "167.17",
+    "website": "http://www.lahanmun.gov.np/",
+    "wards": "24"
+  },
+  {
+    "id": 207,
+    "district_id": 19,
+    "category_id": 3,
+    "name": "Dhangadhimai",
+    "area_sq_km": "159.51",
+    "website": "http://www.dhangadhimaimun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 208,
+    "district_id": 19,
+    "category_id": 3,
+    "name": "Siraha",
+    "area_sq_km": "94.2",
+    "website": "http://www.sirahamun.gov.np/",
+    "wards": "22"
+  },
+  {
+    "id": 209,
+    "district_id": 19,
+    "category_id": 3,
+    "name": "Golbazar",
+    "area_sq_km": "111.94",
+    "website": "http://www.golbazarmun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 210,
+    "district_id": 19,
+    "category_id": 3,
+    "name": "Mirchaiya",
+    "area_sq_km": "91.97",
+    "website": "http://www.mirchaiyamun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 211,
+    "district_id": 19,
+    "category_id": 3,
+    "name": "Kalyanpur",
+    "area_sq_km": "76.81",
+    "website": "http://www.kalyanpurmun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 212,
+    "district_id": 19,
+    "category_id": 3,
+    "name": "Karjanha",
+    "area_sq_km": "76.84",
+    "website": "http://www.karjanhamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 213,
+    "district_id": 19,
+    "category_id": 3,
+    "name": "Sukhipur",
+    "area_sq_km": "54.78",
+    "website": "http://www.sukhipurmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 214,
+    "district_id": 19,
+    "category_id": 4,
+    "name": "Bhagwanpur",
+    "area_sq_km": "33.03",
+    "website": "http://www.bhagwanpurmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 215,
+    "district_id": 19,
+    "category_id": 4,
+    "name": "Aurahi",
+    "area_sq_km": "35.87",
+    "website": "http://www.aurahimunsiraha.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 216,
+    "district_id": 19,
+    "category_id": 4,
+    "name": "Bishnupur",
+    "area_sq_km": "26.34",
+    "website": "http://www.bishnupurmunsiraha.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 217,
+    "district_id": 19,
+    "category_id": 4,
+    "name": "Bariyarpatti",
+    "area_sq_km": "37.72",
+    "website": "http://www.bariyapattimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 218,
+    "district_id": 19,
+    "category_id": 4,
+    "name": "Lakshmipur Patari",
+    "area_sq_km": "42.33",
+    "website": "http://www.laxmipurpatarimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 219,
+    "district_id": 19,
+    "category_id": 4,
+    "name": "Naraha",
+    "area_sq_km": "29.28",
+    "website": "http://www.narahamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 220,
+    "district_id": 19,
+    "category_id": 4,
+    "name": "SakhuwanankarKatti",
+    "area_sq_km": "32.84",
+    "website": "http://www.sakhuwanankarkattimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 221,
+    "district_id": 19,
+    "category_id": 4,
+    "name": "Arnama",
+    "area_sq_km": "37.76",
+    "website": "http://www.anarmamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 222,
+    "district_id": 19,
+    "category_id": 4,
+    "name": "Navarajpur",
+    "area_sq_km": "32.18",
+    "website": "http://www.nawarajpurmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 223,
+    "district_id": 20,
+    "category_id": 2,
+    "name": "Janakpurdham",
+    "area_sq_km": "91.97",
+    "website": "http://www.janakpurmun.gov.np/",
+    "wards": "25"
+  },
+  {
+    "id": 224,
+    "district_id": 20,
+    "category_id": 3,
+    "name": "Chhireshwarnath",
+    "area_sq_km": "50.85",
+    "website": "http://www.kshireshwornathmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 225,
+    "district_id": 20,
+    "category_id": 3,
+    "name": "Ganeshman Charnath",
+    "area_sq_km": "244.31",
+    "website": "http://www.ganeshmancharnathmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 226,
+    "district_id": 20,
+    "category_id": 3,
+    "name": "Dhanushadham",
+    "area_sq_km": "91.64",
+    "website": "http://www.dhanushadhammun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 227,
+    "district_id": 20,
+    "category_id": 3,
+    "name": "Nagarain",
+    "area_sq_km": "39",
+    "website": "http://www.nagrainmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 228,
+    "district_id": 20,
+    "category_id": 3,
+    "name": "Bideha",
+    "area_sq_km": "45.51",
+    "website": "http://www.bidehamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 229,
+    "district_id": 20,
+    "category_id": 3,
+    "name": "Mithila",
+    "area_sq_km": "187.93",
+    "website": "http://www.mithilamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 230,
+    "district_id": 20,
+    "category_id": 3,
+    "name": "Sahidnagar",
+    "area_sq_km": "57.37",
+    "website": "http://www.shahidnagarmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 231,
+    "district_id": 20,
+    "category_id": 3,
+    "name": "Sabaila",
+    "area_sq_km": "64.47",
+    "website": "http://www.sabailamun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 232,
+    "district_id": 20,
+    "category_id": 3,
+    "name": "Kamala",
+    "area_sq_km": "65.85",
+    "website": "http://www.kamalamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 233,
+    "district_id": 20,
+    "category_id": 3,
+    "name": "MithilaBihari",
+    "area_sq_km": "37.6",
+    "website": "http://www.mithilabiharimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 234,
+    "district_id": 20,
+    "category_id": 3,
+    "name": "Hansapur",
+    "area_sq_km": "48.71",
+    "website": "http://www.hansapurmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 235,
+    "district_id": 20,
+    "category_id": 4,
+    "name": "Janaknandani",
+    "area_sq_km": "27.62",
+    "website": "http://www.janaknandinimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 236,
+    "district_id": 20,
+    "category_id": 4,
+    "name": "Bateshwar",
+    "area_sq_km": "31.66",
+    "website": "http://www.bateshwormun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 237,
+    "district_id": 20,
+    "category_id": 4,
+    "name": "Mukhiyapatti Musharniya",
+    "area_sq_km": "26.84",
+    "website": "http://www.mukhiyapattimusaharmiyamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 238,
+    "district_id": 20,
+    "category_id": 4,
+    "name": "Lakshminya",
+    "area_sq_km": "30.66",
+    "website": "http://www.laxminiyamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 239,
+    "district_id": 20,
+    "category_id": 4,
+    "name": "Aaurahi",
+    "area_sq_km": "25.56",
+    "website": "http://www.aurahimundhanusha.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 240,
+    "district_id": 20,
+    "category_id": 4,
+    "name": "Dhanauji",
+    "area_sq_km": "22",
+    "website": "http://www.dhanaujimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 241,
+    "district_id": 21,
+    "category_id": 3,
+    "name": "Bodebarsain",
+    "area_sq_km": "58.93",
+    "website": "http://www.bodebarsainmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 242,
+    "district_id": 21,
+    "category_id": 3,
+    "name": "Dakneshwori",
+    "area_sq_km": "69.11",
+    "website": "http://www.dakneshworimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 243,
+    "district_id": 21,
+    "category_id": 3,
+    "name": "Hanumannagar Kankalini",
+    "area_sq_km": "118.19",
+    "website": "http://www.hanumannagarkankalinimun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 244,
+    "district_id": 21,
+    "category_id": 3,
+    "name": "Kanchanrup",
+    "area_sq_km": "117.34",
+    "website": "http://www.kanchanrupmun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 245,
+    "district_id": 21,
+    "category_id": 3,
+    "name": "Khadak",
+    "area_sq_km": "96.77",
+    "website": "http://www.khadakmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 246,
+    "district_id": 21,
+    "category_id": 3,
+    "name": "Shambhunath",
+    "area_sq_km": "108.71",
+    "website": "http://www.shambhunathmun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 247,
+    "district_id": 21,
+    "category_id": 3,
+    "name": "Saptakoshi",
+    "area_sq_km": "60.25",
+    "website": "http://www.saptakoshimun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 248,
+    "district_id": 21,
+    "category_id": 3,
+    "name": "Surunga",
+    "area_sq_km": "107.04",
+    "website": "http://www.surungamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 249,
+    "district_id": 21,
+    "category_id": 3,
+    "name": "Rajbiraj",
+    "area_sq_km": "55",
+    "website": "http://www.rajbirajmun.gov.np/",
+    "wards": "16"
+  },
+  {
+    "id": 250,
+    "district_id": 21,
+    "category_id": 4,
+    "name": "Agnisaira Krishnasavaran",
+    "area_sq_km": "103.08",
+    "website": "http://www.agnisairkrishnasawaranmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 251,
+    "district_id": 21,
+    "category_id": 4,
+    "name": "Balan-Bihul",
+    "area_sq_km": "33.04",
+    "website": "http://www.balanbihulmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 252,
+    "district_id": 21,
+    "category_id": 4,
+    "name": "Rajgadh",
+    "area_sq_km": "47.9",
+    "website": "http://www.rajgadhmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 253,
+    "district_id": 21,
+    "category_id": 4,
+    "name": "Bishnupur",
+    "area_sq_km": "37",
+    "website": "http://www.bishnupurmunsaptari.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 254,
+    "district_id": 21,
+    "category_id": 4,
+    "name": "Chhinnamasta",
+    "area_sq_km": "38.71",
+    "website": "http://www.chhinnamastamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 255,
+    "district_id": 21,
+    "category_id": 4,
+    "name": "Mahadeva",
+    "area_sq_km": "34.97",
+    "website": "http://www.mahadevamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 256,
+    "district_id": 21,
+    "category_id": 4,
+    "name": "Rupani",
+    "area_sq_km": "56.08",
+    "website": "http://www.rupanimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 257,
+    "district_id": 21,
+    "category_id": 4,
+    "name": "Tilathi Koiladi",
+    "area_sq_km": "32.91",
+    "website": "http://www.tilathikoiladimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 258,
+    "district_id": 21,
+    "category_id": 4,
+    "name": "Tirhut",
+    "area_sq_km": "37.81",
+    "website": "http://www.tirahutmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 259,
+    "district_id": 22,
+    "category_id": 3,
+    "name": "Aaurahi",
+    "area_sq_km": "35.76",
+    "website": "http://www.aurahimunmahottari.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 260,
+    "district_id": 22,
+    "category_id": 3,
+    "name": "Balawa",
+    "area_sq_km": "44.07",
+    "website": "http://www.balwamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 261,
+    "district_id": 22,
+    "category_id": 3,
+    "name": "Bardibas",
+    "area_sq_km": "315.57",
+    "website": "http://www.bardibasmun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 262,
+    "district_id": 22,
+    "category_id": 3,
+    "name": "Bhangaha",
+    "area_sq_km": "77.21",
+    "website": "http://www.bhagahamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 263,
+    "district_id": 22,
+    "category_id": 3,
+    "name": "Gaushala",
+    "area_sq_km": "144.73",
+    "website": "http://www.gaushalamun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 264,
+    "district_id": 22,
+    "category_id": 3,
+    "name": "Jaleshor",
+    "area_sq_km": "44.26",
+    "website": "http://www.jaleshwormun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 265,
+    "district_id": 22,
+    "category_id": 3,
+    "name": "Loharpatti",
+    "area_sq_km": "50.06",
+    "website": "http://www.loharpattimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 266,
+    "district_id": 22,
+    "category_id": 3,
+    "name": "Manara Shiswa",
+    "area_sq_km": "49.73",
+    "website": "http://www.manrashiswamun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 267,
+    "district_id": 22,
+    "category_id": 3,
+    "name": "Matihani",
+    "area_sq_km": "29.02",
+    "website": "http://www.matihanimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 268,
+    "district_id": 22,
+    "category_id": 3,
+    "name": "Ramgopalpur",
+    "area_sq_km": "39.54",
+    "website": "http://www.ramgopalpurmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 269,
+    "district_id": 22,
+    "category_id": 4,
+    "name": "Ekdara",
+    "area_sq_km": "24",
+    "website": "http://www.ekdaramun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 270,
+    "district_id": 22,
+    "category_id": 4,
+    "name": "Mahottari",
+    "area_sq_km": "28.08",
+    "website": "http://www.mahottarimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 271,
+    "district_id": 22,
+    "category_id": 4,
+    "name": "Pipara",
+    "area_sq_km": "39.98",
+    "website": "http://www.pipramun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 272,
+    "district_id": 22,
+    "category_id": 4,
+    "name": "Samsi",
+    "area_sq_km": "21.57",
+    "website": "http://www.samsimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 273,
+    "district_id": 22,
+    "category_id": 4,
+    "name": "Sonama",
+    "area_sq_km": "57.77",
+    "website": "http://www.sonmamun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 274,
+    "district_id": 23,
+    "category_id": 3,
+    "name": "Bhaktapur",
+    "area_sq_km": "6.89",
+    "website": "http://www.bhaktapurmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 275,
+    "district_id": 23,
+    "category_id": 3,
+    "name": "Changunarayan",
+    "area_sq_km": "62.98",
+    "website": "http://www.changunarayanmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 276,
+    "district_id": 23,
+    "category_id": 3,
+    "name": "Suryabinayak",
+    "area_sq_km": "42.45",
+    "website": "http://www.suryabinayakmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 277,
+    "district_id": 23,
+    "category_id": 3,
+    "name": "Madhyapur Thimi",
+    "area_sq_km": "11.47",
+    "website": "http://www.madhyapurthimimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 278,
+    "district_id": 24,
+    "category_id": 1,
+    "name": "Bharatpur",
+    "area_sq_km": "432.95",
+    "website": "http://www.bharatpurmun.gov.np/",
+    "wards": "29"
+  },
+  {
+    "id": 279,
+    "district_id": 24,
+    "category_id": 3,
+    "name": "Kalika",
+    "area_sq_km": "149.08",
+    "website": "http://www.kalikamunchitwan.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 280,
+    "district_id": 24,
+    "category_id": 3,
+    "name": "Khairhani",
+    "area_sq_km": "85.55",
+    "website": "http://www.khairhanimun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 281,
+    "district_id": 24,
+    "category_id": 3,
+    "name": "Madi",
+    "area_sq_km": "218.24",
+    "website": "http://www.madimunchitwan.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 282,
+    "district_id": 24,
+    "category_id": 3,
+    "name": "Ratnagar",
+    "area_sq_km": "68.68",
+    "website": "http://www.ratnanagarmun.gov.np/",
+    "wards": "16"
+  },
+  {
+    "id": 283,
+    "district_id": 24,
+    "category_id": 3,
+    "name": "Rapti",
+    "area_sq_km": "212.31",
+    "website": "http://www.raptimunchitwan.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 284,
+    "district_id": 24,
+    "category_id": 4,
+    "name": "Ichchhakamana",
+    "area_sq_km": "166.73",
+    "website": "http://www.ichchhakamanamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 285,
+    "district_id": 25,
+    "category_id": 3,
+    "name": "Dhunibeshi",
+    "area_sq_km": "96.3",
+    "website": "http://www.dhunibeshimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 286,
+    "district_id": 25,
+    "category_id": 3,
+    "name": "Nilkantha",
+    "area_sq_km": "197.7",
+    "website": "http://www.neelakanthamun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 287,
+    "district_id": 25,
+    "category_id": 4,
+    "name": "Khaniyabas",
+    "area_sq_km": "120.8",
+    "website": "http://www.khaniyabasmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 288,
+    "district_id": 25,
+    "category_id": 4,
+    "name": "Gajuri",
+    "area_sq_km": "138.66",
+    "website": "http://www.gajurimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 289,
+    "district_id": 25,
+    "category_id": 4,
+    "name": "Galchhi",
+    "area_sq_km": "129.08",
+    "website": "http://www.galchhimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 290,
+    "district_id": 25,
+    "category_id": 4,
+    "name": "Gangajamuna",
+    "area_sq_km": "152.72",
+    "website": "http://www.gangajamunamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 291,
+    "district_id": 25,
+    "category_id": 4,
+    "name": "Jwalamukhi",
+    "area_sq_km": "114.04",
+    "website": "http://www.jwalamukhimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 292,
+    "district_id": 25,
+    "category_id": 4,
+    "name": "Thakre",
+    "area_sq_km": "96.41",
+    "website": "http://www.thakremun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 293,
+    "district_id": 25,
+    "category_id": 4,
+    "name": "Netrawati Dabjong",
+    "area_sq_km": "181.78",
+    "website": "http://www.netrawatimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 294,
+    "district_id": 25,
+    "category_id": 4,
+    "name": "Benighat Rorang",
+    "area_sq_km": "206.52",
+    "website": "http://www.benighatrorangmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 295,
+    "district_id": 25,
+    "category_id": 4,
+    "name": "Rubi Valley",
+    "area_sq_km": "401.85",
+    "website": "http://www.rubivalleymun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 296,
+    "district_id": 25,
+    "category_id": 4,
+    "name": "Siddhalek",
+    "area_sq_km": "106.09",
+    "website": "http://www.siddhalekmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 297,
+    "district_id": 25,
+    "category_id": 4,
+    "name": "Tripurasundari",
+    "area_sq_km": "271.23",
+    "website": "http://www.tripurasundarimundhading.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 298,
+    "district_id": 26,
+    "category_id": 3,
+    "name": "Bhimeswor",
+    "area_sq_km": "132.5",
+    "website": "http://www.bhimeshwormun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 299,
+    "district_id": 26,
+    "category_id": 3,
+    "name": "Jiri",
+    "area_sq_km": "211.27",
+    "website": "http://www.jirimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 300,
+    "district_id": 26,
+    "category_id": 4,
+    "name": "Kalinchok",
+    "area_sq_km": "132.49",
+    "website": "http://www.kalinchowkmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 301,
+    "district_id": 26,
+    "category_id": 4,
+    "name": "Melung",
+    "area_sq_km": "86.54",
+    "website": "http://www.melungmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 302,
+    "district_id": 26,
+    "category_id": 4,
+    "name": "Bigu",
+    "area_sq_km": "663.2",
+    "website": "http://www.bigumun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 303,
+    "district_id": 26,
+    "category_id": 4,
+    "name": "Gaurishankar",
+    "area_sq_km": "681.39",
+    "website": "http://www.gaurishankarmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 304,
+    "district_id": 26,
+    "category_id": 4,
+    "name": "Baiteshowr",
+    "area_sq_km": "80.41",
+    "website": "http://www.baiteshwormun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 305,
+    "district_id": 26,
+    "category_id": 4,
+    "name": "Sailung",
+    "area_sq_km": "128.67",
+    "website": "http://www.shailungmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 306,
+    "district_id": 26,
+    "category_id": 4,
+    "name": "Tamakoshi",
+    "area_sq_km": "153.06",
+    "website": "http://www.tamakoshimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 307,
+    "district_id": 27,
+    "category_id": 1,
+    "name": "Kathmandu",
+    "area_sq_km": "49.45",
+    "website": "http://www.kathmandu.gov.np/",
+    "wards": "32"
+  },
+  {
+    "id": 308,
+    "district_id": 27,
+    "category_id": 3,
+    "name": "Gokarneshwar",
+    "area_sq_km": "58.5",
+    "website": "http://www.gokarneshwormun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 309,
+    "district_id": 27,
+    "category_id": 3,
+    "name": "Kirtipur",
+    "area_sq_km": "14.76",
+    "website": "http://www.kirtipurmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 310,
+    "district_id": 27,
+    "category_id": 3,
+    "name": "Kageshwari-Manohara",
+    "area_sq_km": "27.38",
+    "website": "http://www.kageshworimanoharamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 311,
+    "district_id": 27,
+    "category_id": 3,
+    "name": "Chandragiri",
+    "area_sq_km": "43.92",
+    "website": "http://www.chandragirimun.gov.np/",
+    "wards": "15"
+  },
+  {
+    "id": 312,
+    "district_id": 27,
+    "category_id": 3,
+    "name": "Tokha",
+    "area_sq_km": "17.11",
+    "website": "http://www.tokhamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 313,
+    "district_id": 27,
+    "category_id": 3,
+    "name": "Tarakeshwar",
+    "area_sq_km": "54.95",
+    "website": "http://www.tarakeshwormunkathmandu.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 314,
+    "district_id": 27,
+    "category_id": 3,
+    "name": "Dakshinkali",
+    "area_sq_km": "42.68",
+    "website": "http://www.dakshinkalimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 315,
+    "district_id": 27,
+    "category_id": 3,
+    "name": "Nagarjun",
+    "area_sq_km": "29.85",
+    "website": "http://www.nagarjunmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 316,
+    "district_id": 27,
+    "category_id": 3,
+    "name": "Budhalikantha",
+    "area_sq_km": "34.8",
+    "website": "http://www.budhanilkanthamun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 317,
+    "district_id": 27,
+    "category_id": 3,
+    "name": "Shankharapur",
+    "area_sq_km": "60.21",
+    "website": "http://www.shankharapurmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 318,
+    "district_id": 28,
+    "category_id": 3,
+    "name": "Dhulikhel",
+    "area_sq_km": "55",
+    "website": "http://www.dhulikhelmun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 319,
+    "district_id": 28,
+    "category_id": 3,
+    "name": "Namobuddha",
+    "area_sq_km": "102",
+    "website": "http://www.namobuddhamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 320,
+    "district_id": 28,
+    "category_id": 3,
+    "name": "Panauti",
+    "area_sq_km": "118",
+    "website": "http://www.panautimun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 321,
+    "district_id": 28,
+    "category_id": 3,
+    "name": "Panchkhal",
+    "area_sq_km": "103",
+    "website": "http://www.panchkhalmun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 322,
+    "district_id": 28,
+    "category_id": 3,
+    "name": "Banepa",
+    "area_sq_km": "55",
+    "website": "http://www.banepamun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 323,
+    "district_id": 28,
+    "category_id": 3,
+    "name": "Mandandeupur",
+    "area_sq_km": "89",
+    "website": "http://www.mandandeupurmun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 324,
+    "district_id": 28,
+    "category_id": 4,
+    "name": "Khani Khola",
+    "area_sq_km": "132",
+    "website": "http://www.khanikholamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 325,
+    "district_id": 28,
+    "category_id": 4,
+    "name": "Chauri Deurali",
+    "area_sq_km": "98",
+    "website": "http://www.chaurideuralimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 326,
+    "district_id": 28,
+    "category_id": 4,
+    "name": "Temal",
+    "area_sq_km": "89",
+    "website": "http://www.temalmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 327,
+    "district_id": 28,
+    "category_id": 4,
+    "name": "Bethanchok",
+    "area_sq_km": "101",
+    "website": "http://www.bethanchowkmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 328,
+    "district_id": 28,
+    "category_id": 4,
+    "name": "Bhumlu",
+    "area_sq_km": "91",
+    "website": "http://www.bhumlumun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 329,
+    "district_id": 28,
+    "category_id": 4,
+    "name": "Mahabharat",
+    "area_sq_km": "186",
+    "website": "http://www.mahabharatmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 330,
+    "district_id": 28,
+    "category_id": 4,
+    "name": "Roshi",
+    "area_sq_km": "176",
+    "website": "http://www.roshimun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 331,
+    "district_id": 29,
+    "category_id": 1,
+    "name": "Lalitpur",
+    "area_sq_km": "36.12",
+    "website": "http://www.lalitpurmun.gov.np/",
+    "wards": "29"
+  },
+  {
+    "id": 332,
+    "district_id": 29,
+    "category_id": 3,
+    "name": "Mahalaxmi",
+    "area_sq_km": "26.51",
+    "website": "http://www.mahalaxmimunlalitpur.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 333,
+    "district_id": 29,
+    "category_id": 3,
+    "name": "Godawari",
+    "area_sq_km": "96.11",
+    "website": "http://www.godawarimunlalitpur.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 334,
+    "district_id": 29,
+    "category_id": 4,
+    "name": "Konjyosom",
+    "area_sq_km": "44.16",
+    "website": "http://www.konjyosommun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 335,
+    "district_id": 29,
+    "category_id": 4,
+    "name": "Bagmati",
+    "area_sq_km": "111.49",
+    "website": "http://www.bagmatimunlalitpur.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 336,
+    "district_id": 29,
+    "category_id": 4,
+    "name": "Mahankal",
+    "area_sq_km": "82.44",
+    "website": "http://www.mahankalmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 337,
+    "district_id": 30,
+    "category_id": 2,
+    "name": "Hetauda",
+    "area_sq_km": "261.59",
+    "website": "http://www.hetaudamun.gov.np/",
+    "wards": "19"
+  },
+  {
+    "id": 338,
+    "district_id": 30,
+    "category_id": 3,
+    "name": "Thaha",
+    "area_sq_km": "191.12",
+    "website": "http://www.thahamun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 339,
+    "district_id": 30,
+    "category_id": 4,
+    "name": "Bhimphedi",
+    "area_sq_km": "245.27",
+    "website": "http://www.bhimphedimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 340,
+    "district_id": 30,
+    "category_id": 4,
+    "name": "Makawanpurgadhi",
+    "area_sq_km": "148.72",
+    "website": "http://www.makawanpurgadhimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 341,
+    "district_id": 30,
+    "category_id": 4,
+    "name": "Manahari",
+    "area_sq_km": "199.52",
+    "website": "http://www.manaharimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 342,
+    "district_id": 30,
+    "category_id": 4,
+    "name": "Raksirang",
+    "area_sq_km": "226.7",
+    "website": "http://www.raksirangmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 343,
+    "district_id": 30,
+    "category_id": 4,
+    "name": "Bakaiya",
+    "area_sq_km": "393.75",
+    "website": "http://www.bakaiyamun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 344,
+    "district_id": 30,
+    "category_id": 4,
+    "name": "Bagmati",
+    "area_sq_km": "311.79",
+    "website": "http://www.bagmatimunmakawanpur.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 345,
+    "district_id": 30,
+    "category_id": 4,
+    "name": "Kailash",
+    "area_sq_km": "204.48",
+    "website": "http://www.kailashmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 346,
+    "district_id": 30,
+    "category_id": 4,
+    "name": "Indrasarowar",
+    "area_sq_km": "97.34",
+    "website": "http://www.indrasarowarmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 347,
+    "district_id": 31,
+    "category_id": 3,
+    "name": "Bidur",
+    "area_sq_km": "130.01",
+    "website": "http://www.bidurmun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 348,
+    "district_id": 31,
+    "category_id": 3,
+    "name": "Belkotgadhi",
+    "area_sq_km": "155.6",
+    "website": "http://www.belkotgadhimun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 349,
+    "district_id": 31,
+    "category_id": 4,
+    "name": "Kakani",
+    "area_sq_km": "87.97",
+    "website": "http://www.kakanimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 350,
+    "district_id": 31,
+    "category_id": 4,
+    "name": "Panchakanya",
+    "area_sq_km": "53.47",
+    "website": "http://www.panchakanyamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 351,
+    "district_id": 31,
+    "category_id": 4,
+    "name": "Likhu",
+    "area_sq_km": "47.88",
+    "website": "http://www.likhumunnuwakot.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 352,
+    "district_id": 31,
+    "category_id": 4,
+    "name": "Dupcheshwar",
+    "area_sq_km": "131.62",
+    "website": "http://www.dupcheshwormun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 353,
+    "district_id": 31,
+    "category_id": 4,
+    "name": "Shivapuri",
+    "area_sq_km": "101.5",
+    "website": "http://www.shivapurimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 354,
+    "district_id": 31,
+    "category_id": 4,
+    "name": "Tadi",
+    "area_sq_km": "69.8",
+    "website": "http://www.tadimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 355,
+    "district_id": 31,
+    "category_id": 4,
+    "name": "Suryagadhi",
+    "area_sq_km": "49.09",
+    "website": "http://www.suryagadhimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 356,
+    "district_id": 31,
+    "category_id": 4,
+    "name": "Tarkeshwar",
+    "area_sq_km": "72.62",
+    "website": "http://www.tarakeshwormunnuwakot.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 357,
+    "district_id": 31,
+    "category_id": 4,
+    "name": "Kispang",
+    "area_sq_km": "82.57",
+    "website": "http://www.kispangmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 358,
+    "district_id": 31,
+    "category_id": 4,
+    "name": "Myagang",
+    "area_sq_km": "97.83",
+    "website": "http://www.meghangmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 359,
+    "district_id": 32,
+    "category_id": 3,
+    "name": "Manthali",
+    "area_sq_km": "211.78",
+    "website": "http://www.manthalimun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 360,
+    "district_id": 32,
+    "category_id": 3,
+    "name": "Ramechhap",
+    "area_sq_km": "202.45",
+    "website": "http://www.ramechhapmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 361,
+    "district_id": 32,
+    "category_id": 4,
+    "name": "Umakunda",
+    "area_sq_km": "451.99",
+    "website": "http://www.umakundamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 362,
+    "district_id": 32,
+    "category_id": 4,
+    "name": "Khandadevi",
+    "area_sq_km": "150.7",
+    "website": "http://www.khandadevimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 363,
+    "district_id": 32,
+    "category_id": 4,
+    "name": "Doramba",
+    "area_sq_km": "140.88",
+    "website": "http://www.dorambamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 364,
+    "district_id": 32,
+    "category_id": 4,
+    "name": "Gokulganga",
+    "area_sq_km": "198.4",
+    "website": "http://www.gokulgangamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 365,
+    "district_id": 32,
+    "category_id": 4,
+    "name": "LikhuTamakoshi",
+    "area_sq_km": "124.51",
+    "website": "http://www.likhumunramechhap.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 366,
+    "district_id": 32,
+    "category_id": 4,
+    "name": "Sunapati",
+    "area_sq_km": "86.98",
+    "website": "http://www.sunapatimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 367,
+    "district_id": 33,
+    "category_id": 4,
+    "name": "Kalika",
+    "area_sq_km": "192.54",
+    "website": "http://www.kalikamunrasuwa.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 368,
+    "district_id": 33,
+    "category_id": 4,
+    "name": "Gosaikunda",
+    "area_sq_km": "978.77",
+    "website": "http://www.gosaikundamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 369,
+    "district_id": 33,
+    "category_id": 4,
+    "name": "Naukunda",
+    "area_sq_km": "126.99",
+    "website": "http://www.naukundamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 370,
+    "district_id": 33,
+    "category_id": 4,
+    "name": "Parbatikunda",
+    "area_sq_km": "682.23",
+    "website": "http://www.parbatikundamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 371,
+    "district_id": 33,
+    "category_id": 4,
+    "name": "Uttargaya",
+    "area_sq_km": "104.51",
+    "website": "http://www.uttargayamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 372,
+    "district_id": 34,
+    "category_id": 3,
+    "name": "Kamalamai",
+    "area_sq_km": "428.57",
+    "website": "http://www.kamalamaimun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 373,
+    "district_id": 34,
+    "category_id": 3,
+    "name": "Dudhauli",
+    "area_sq_km": "390.39",
+    "website": "http://www.dudhaulimun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 374,
+    "district_id": 34,
+    "category_id": 4,
+    "name": "Sunkoshi",
+    "area_sq_km": "154.68",
+    "website": "http://www.sunkoshimunsindhuli.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 375,
+    "district_id": 34,
+    "category_id": 4,
+    "name": "Hariharpurgadhi",
+    "area_sq_km": "343.9",
+    "website": "http://www.hariharpurgadhimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 376,
+    "district_id": 34,
+    "category_id": 4,
+    "name": "Tinpatan",
+    "area_sq_km": "280.26",
+    "website": "http://www.tinpatanmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 377,
+    "district_id": 34,
+    "category_id": 4,
+    "name": "Marin",
+    "area_sq_km": "324.55",
+    "website": "http://www.marinmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 378,
+    "district_id": 34,
+    "category_id": 4,
+    "name": "Golanjor",
+    "area_sq_km": "184.13",
+    "website": "http://www.golanjormun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 379,
+    "district_id": 34,
+    "category_id": 4,
+    "name": "Phikkal",
+    "area_sq_km": "186.06",
+    "website": "http://www.phikkalmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 380,
+    "district_id": 34,
+    "category_id": 4,
+    "name": "Ghyanglekh",
+    "area_sq_km": "166.77",
+    "website": "http://www.ghyanglekhmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 381,
+    "district_id": 35,
+    "category_id": 3,
+    "name": "Chautara Sangachowkgadi",
+    "area_sq_km": "165.25",
+    "website": "http://www.chautarasangachowkgadhimun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 382,
+    "district_id": 35,
+    "category_id": 3,
+    "name": "Bahrabise",
+    "area_sq_km": "96.73",
+    "website": "http://www.bahrabisemun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 383,
+    "district_id": 35,
+    "category_id": 3,
+    "name": "Melamchi",
+    "area_sq_km": "158.17",
+    "website": "http://www.melamchimun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 384,
+    "district_id": 35,
+    "category_id": 4,
+    "name": "Balephi",
+    "area_sq_km": "61.6",
+    "website": "http://www.balephimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 385,
+    "district_id": 35,
+    "category_id": 4,
+    "name": "Sunkoshi",
+    "area_sq_km": "71.84",
+    "website": "http://www.sunkoshimunsindhupalchowk.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 386,
+    "district_id": 35,
+    "category_id": 4,
+    "name": "Indrawati",
+    "area_sq_km": "105.09",
+    "website": "http://www.indrawatimun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 387,
+    "district_id": 35,
+    "category_id": 4,
+    "name": "Jugal",
+    "area_sq_km": "273.62",
+    "website": "http://www.jugalmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 388,
+    "district_id": 35,
+    "category_id": 4,
+    "name": "Panchpokhari",
+    "area_sq_km": "187.29",
+    "website": "http://www.panchpokharithangpalmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 389,
+    "district_id": 35,
+    "category_id": 4,
+    "name": "Bhotekoshi",
+    "area_sq_km": "278.31",
+    "website": "http://www.bhotekoshimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 390,
+    "district_id": 35,
+    "category_id": 4,
+    "name": "Lisankhu",
+    "area_sq_km": "98.61",
+    "website": "http://www.lisankhupakharmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 391,
+    "district_id": 35,
+    "category_id": 4,
+    "name": "Helambu",
+    "area_sq_km": "287.26",
+    "website": "http://www.helambumun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 392,
+    "district_id": 35,
+    "category_id": 4,
+    "name": "Tripurasundari",
+    "area_sq_km": "94.28",
+    "website": "http://www.tripurasundarimunsindhupalchowk.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 393,
+    "district_id": 36,
+    "category_id": 3,
+    "name": "Baglung",
+    "area_sq_km": "98.01",
+    "website": "http://www.baglungmun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 394,
+    "district_id": 36,
+    "category_id": 3,
+    "name": "Dhorpatan",
+    "area_sq_km": "222.85",
+    "website": "http://www.dhorpatanmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 395,
+    "district_id": 36,
+    "category_id": 3,
+    "name": "Galkot",
+    "area_sq_km": "194.39",
+    "website": "http://www.galkotmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 396,
+    "district_id": 36,
+    "category_id": 3,
+    "name": "Jaimuni",
+    "area_sq_km": "118.71",
+    "website": "http://www.jaiminimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 397,
+    "district_id": 36,
+    "category_id": 4,
+    "name": "Bareng",
+    "area_sq_km": "75.28",
+    "website": "http://www.barengmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 398,
+    "district_id": 36,
+    "category_id": 4,
+    "name": "Khathekhola",
+    "area_sq_km": "82.88",
+    "website": "http://www.kathekholamun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 399,
+    "district_id": 36,
+    "category_id": 4,
+    "name": "Taman Khola",
+    "area_sq_km": "178.02",
+    "website": "http://www.tamankholamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 400,
+    "district_id": 36,
+    "category_id": 4,
+    "name": "Tara Khola",
+    "area_sq_km": "129.53",
+    "website": "http://www.tarakholamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 401,
+    "district_id": 36,
+    "category_id": 4,
+    "name": "Nishi Khola",
+    "area_sq_km": "244.37",
+    "website": "http://www.nisikholamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 402,
+    "district_id": 36,
+    "category_id": 4,
+    "name": "Badigad",
+    "area_sq_km": "178.68",
+    "website": "http://www.badigadmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 403,
+    "district_id": 37,
+    "category_id": 3,
+    "name": "Gorkha",
+    "area_sq_km": "131.86",
+    "website": "http://www.gorkhamun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 404,
+    "district_id": 37,
+    "category_id": 3,
+    "name": "Palungtar",
+    "area_sq_km": "158.62",
+    "website": "http://www.palungtarmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 405,
+    "district_id": 37,
+    "category_id": 4,
+    "name": "Sulikot",
+    "area_sq_km": "200.63",
+    "website": "http://www.sulikotmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 406,
+    "district_id": 37,
+    "category_id": 4,
+    "name": "Siranchowk",
+    "area_sq_km": "121.66",
+    "website": "http://www.siranchowkmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 407,
+    "district_id": 37,
+    "category_id": 4,
+    "name": "Ajirkot",
+    "area_sq_km": "198.05",
+    "website": "http://www.ajirkotmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 408,
+    "district_id": 37,
+    "category_id": 4,
+    "name": "Chumnubri",
+    "area_sq_km": "1648.65",
+    "website": "http://www.chumanuwrimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 409,
+    "district_id": 37,
+    "category_id": 4,
+    "name": "Dharche",
+    "area_sq_km": "651.52",
+    "website": "http://www.dharchemun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 410,
+    "district_id": 37,
+    "category_id": 4,
+    "name": "Bhimsen Thapa",
+    "area_sq_km": "101.25",
+    "website": "http://www.bhimsenmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 411,
+    "district_id": 37,
+    "category_id": 4,
+    "name": "Sahid Lakhan",
+    "area_sq_km": "147.97",
+    "website": "http://www.shahidlakhanmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 412,
+    "district_id": 37,
+    "category_id": 4,
+    "name": "Aarughat",
+    "area_sq_km": "160.79",
+    "website": "http://www.aarughatmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 413,
+    "district_id": 37,
+    "category_id": 4,
+    "name": "Gandaki",
+    "area_sq_km": "123.86",
+    "website": "http://www.gandakimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 414,
+    "district_id": 38,
+    "category_id": 1,
+    "name": "Pokhara",
+    "area_sq_km": "464.24",
+    "website": "http://www.pokharamun.gov.np/",
+    "wards": "33"
+  },
+  {
+    "id": 415,
+    "district_id": 38,
+    "category_id": 4,
+    "name": "Annapurna",
+    "area_sq_km": "417.73",
+    "website": "http://www.annapurnamunkaski.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 416,
+    "district_id": 38,
+    "category_id": 4,
+    "name": "Machhapuchchhre",
+    "area_sq_km": "544.58",
+    "website": "http://www.machhapuchhremun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 417,
+    "district_id": 38,
+    "category_id": 4,
+    "name": "Madi",
+    "area_sq_km": "563",
+    "website": "http://www.madimunkaski.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 418,
+    "district_id": 38,
+    "category_id": 4,
+    "name": "Rupa",
+    "area_sq_km": "94.81",
+    "website": "http://www.rupamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 419,
+    "district_id": 39,
+    "category_id": 3,
+    "name": "Besisahar",
+    "area_sq_km": "127.64",
+    "website": "http://www.besishaharmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 420,
+    "district_id": 39,
+    "category_id": 3,
+    "name": "Madhya Nepal",
+    "area_sq_km": "113.86",
+    "website": "http://www.madhyanepalmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 421,
+    "district_id": 39,
+    "category_id": 3,
+    "name": "Rainas",
+    "area_sq_km": "71.97",
+    "website": "http://www.rainasmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 422,
+    "district_id": 39,
+    "category_id": 3,
+    "name": "Sundarbazar",
+    "area_sq_km": "72.05",
+    "website": "http://www.sundarbazarmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 423,
+    "district_id": 39,
+    "category_id": 4,
+    "name": "Dordi",
+    "area_sq_km": "350.93",
+    "website": "http://www.dordimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 424,
+    "district_id": 39,
+    "category_id": 4,
+    "name": "Dudhpokhari",
+    "area_sq_km": "155.33",
+    "website": "http://www.dudhpokharimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 425,
+    "district_id": 39,
+    "category_id": 4,
+    "name": "Kwhlosothar",
+    "area_sq_km": "175.37",
+    "website": "http://www.kwholasotharmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 426,
+    "district_id": 39,
+    "category_id": 4,
+    "name": "Marsyangdi",
+    "area_sq_km": "597.25",
+    "website": "http://www.marsyangdimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 427,
+    "district_id": 40,
+    "category_id": 4,
+    "name": "Chame",
+    "area_sq_km": "78.86",
+    "website": "http://www.chamemun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 428,
+    "district_id": 40,
+    "category_id": 4,
+    "name": "Nason",
+    "area_sq_km": "709.58",
+    "website": "http://www.nasonmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 429,
+    "district_id": 40,
+    "category_id": 4,
+    "name": "NarpaBhumi",
+    "area_sq_km": "837.54",
+    "website": "http://www.narpabhumimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 430,
+    "district_id": 40,
+    "category_id": 4,
+    "name": "Manang Ngisyang",
+    "area_sq_km": "694.63",
+    "website": "http://www.manangngisyangmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 431,
+    "district_id": 41,
+    "category_id": 4,
+    "name": "Gharpajhong",
+    "area_sq_km": "316",
+    "website": "http://www.gharapjhongmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 432,
+    "district_id": 41,
+    "category_id": 4,
+    "name": "Thasang",
+    "area_sq_km": "289",
+    "website": "http://www.thasangmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 433,
+    "district_id": 41,
+    "category_id": 4,
+    "name": "Barhagaun Muktichhetra",
+    "area_sq_km": "886",
+    "website": "http://www.bahragaumuktichhetramun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 434,
+    "district_id": 41,
+    "category_id": 4,
+    "name": "Lomanthang",
+    "area_sq_km": "727",
+    "website": "http://www.lomanthangmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 435,
+    "district_id": 41,
+    "category_id": 4,
+    "name": "Lo-Ghekar Damodarkunda",
+    "area_sq_km": "1344",
+    "website": "http://www.dalomemun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 436,
+    "district_id": 42,
+    "category_id": 3,
+    "name": "Beni",
+    "area_sq_km": "76.57",
+    "website": "http://www.benimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 437,
+    "district_id": 42,
+    "category_id": 4,
+    "name": "Annapurna",
+    "area_sq_km": "556.41",
+    "website": "http://www.annapurnamunmyagdi.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 438,
+    "district_id": 42,
+    "category_id": 4,
+    "name": "Dhaulagiri",
+    "area_sq_km": "1037",
+    "website": "http://www.dhawalagirimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 439,
+    "district_id": 42,
+    "category_id": 4,
+    "name": "Mangala",
+    "area_sq_km": "89",
+    "website": "http://www.mangalamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 440,
+    "district_id": 42,
+    "category_id": 4,
+    "name": "Malika",
+    "area_sq_km": "147",
+    "website": "http://www.malikamunmyagdi.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 441,
+    "district_id": 42,
+    "category_id": 4,
+    "name": "Raghuganga",
+    "area_sq_km": "379",
+    "website": "http://www.raghugangamun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 442,
+    "district_id": 43,
+    "category_id": 3,
+    "name": "Kawasoti",
+    "area_sq_km": "108.34",
+    "website": "http://www.kawasotimun.gov.np/",
+    "wards": "17"
+  },
+  {
+    "id": 443,
+    "district_id": 43,
+    "category_id": 3,
+    "name": "Gaindakot",
+    "area_sq_km": "159.93",
+    "website": "http://www.gaindakotmun.gov.np/",
+    "wards": "18"
+  },
+  {
+    "id": 444,
+    "district_id": 43,
+    "category_id": 3,
+    "name": "Devachuli",
+    "area_sq_km": "112.72",
+    "website": "http://www.devchulimun.gov.np/",
+    "wards": "17"
+  },
+  {
+    "id": 445,
+    "district_id": 43,
+    "category_id": 3,
+    "name": "Madhya Bindu",
+    "area_sq_km": "233.35",
+    "website": "http://www.madhyabindumun.gov.np/",
+    "wards": "15"
+  },
+  {
+    "id": 446,
+    "district_id": 43,
+    "category_id": 4,
+    "name": "Baudikali",
+    "area_sq_km": "91.87",
+    "website": "http://www.bungdikalimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 447,
+    "district_id": 43,
+    "category_id": 4,
+    "name": "Bulingtar",
+    "area_sq_km": "147.68",
+    "website": "http://www.bulingtarmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 448,
+    "district_id": 43,
+    "category_id": 4,
+    "name": "Binayi Tribeni",
+    "area_sq_km": "288.06",
+    "website": "http://www.binayitribenimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 449,
+    "district_id": 43,
+    "category_id": 4,
+    "name": "Hupsekot",
+    "area_sq_km": "189.21",
+    "website": "http://www.hupsekotmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 450,
+    "district_id": 44,
+    "category_id": 3,
+    "name": "Kushma",
+    "area_sq_km": "93.18",
+    "website": "http://www.kushmamun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 451,
+    "district_id": 44,
+    "category_id": 3,
+    "name": "Phalewas",
+    "area_sq_km": "85.7",
+    "website": "http://www.phalewasmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 452,
+    "district_id": 44,
+    "category_id": 4,
+    "name": "Jaljala",
+    "area_sq_km": "82.26",
+    "website": "http://www.jaljalamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 453,
+    "district_id": 44,
+    "category_id": 4,
+    "name": "Paiyun",
+    "area_sq_km": "42.65",
+    "website": "http://www.paiyunmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 454,
+    "district_id": 44,
+    "category_id": 4,
+    "name": "Mahashila",
+    "area_sq_km": "49.38",
+    "website": "http://www.mahashilamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 455,
+    "district_id": 44,
+    "category_id": 4,
+    "name": "Modi",
+    "area_sq_km": "143.6",
+    "website": "http://www.modimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 456,
+    "district_id": 44,
+    "category_id": 4,
+    "name": "Bihadi",
+    "area_sq_km": "44.8",
+    "website": "http://www.bihadimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 457,
+    "district_id": 45,
+    "category_id": 3,
+    "name": "Galyang",
+    "area_sq_km": "122.71",
+    "website": "http://www.galyangmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 458,
+    "district_id": 45,
+    "category_id": 3,
+    "name": "Chapakot",
+    "area_sq_km": "120.59",
+    "website": "http://www.chapakotmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 459,
+    "district_id": 45,
+    "category_id": 3,
+    "name": "Putalibazar",
+    "area_sq_km": "147.21",
+    "website": "http://www.putalibazarmun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 460,
+    "district_id": 45,
+    "category_id": 3,
+    "name": "Bheerkot",
+    "area_sq_km": "78.23",
+    "website": "http://www.bheerkotmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 461,
+    "district_id": 45,
+    "category_id": 3,
+    "name": "Waling",
+    "area_sq_km": "128.4",
+    "website": "http://www.walingmun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 462,
+    "district_id": 45,
+    "category_id": 4,
+    "name": "Arjun Chaupari",
+    "area_sq_km": "57.22",
+    "website": "http://www.arjunchauparimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 463,
+    "district_id": 45,
+    "category_id": 4,
+    "name": "Aandhikhola",
+    "area_sq_km": "69.61",
+    "website": "http://www.aandhikholamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 464,
+    "district_id": 45,
+    "category_id": 4,
+    "name": "Kaligandaki",
+    "area_sq_km": "73.51",
+    "website": "http://www.kaligandakimunsyangja.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 465,
+    "district_id": 45,
+    "category_id": 4,
+    "name": "Phedikhola",
+    "area_sq_km": "56.73",
+    "website": "http://www.phedikholamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 466,
+    "district_id": 45,
+    "category_id": 4,
+    "name": "Harinas",
+    "area_sq_km": "87.48",
+    "website": "http://www.harinasmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 467,
+    "district_id": 45,
+    "category_id": 4,
+    "name": "Biruwa",
+    "area_sq_km": "95.79",
+    "website": "http://www.biruwamun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 468,
+    "district_id": 46,
+    "category_id": 3,
+    "name": "Bhanu",
+    "area_sq_km": "184",
+    "website": "http://www.bhanumun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 469,
+    "district_id": 46,
+    "category_id": 3,
+    "name": "Bhimad",
+    "area_sq_km": "129",
+    "website": "http://www.bhimadmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 470,
+    "district_id": 46,
+    "category_id": 3,
+    "name": "Byas",
+    "area_sq_km": "248",
+    "website": "http://www.vyasmun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 471,
+    "district_id": 46,
+    "category_id": 3,
+    "name": "Suklagandaki",
+    "area_sq_km": "165",
+    "website": "http://www.shuklagandakimun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 472,
+    "district_id": 46,
+    "category_id": 4,
+    "name": "AnbuKhaireni",
+    "area_sq_km": "128",
+    "website": "http://www.aanbookhairenimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 473,
+    "district_id": 46,
+    "category_id": 4,
+    "name": "Devghat",
+    "area_sq_km": "159",
+    "website": "http://www.devghatmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 474,
+    "district_id": 46,
+    "category_id": 4,
+    "name": "Bandipur",
+    "area_sq_km": "102",
+    "website": "http://www.bandipurmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 475,
+    "district_id": 46,
+    "category_id": 4,
+    "name": "Rishing",
+    "area_sq_km": "215",
+    "website": "http://www.rishingmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 476,
+    "district_id": 46,
+    "category_id": 4,
+    "name": "Ghiring",
+    "area_sq_km": "126",
+    "website": "http://www.ghiringmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 477,
+    "district_id": 46,
+    "category_id": 4,
+    "name": "Myagde",
+    "area_sq_km": "115",
+    "website": "http://www.myagdemun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 478,
+    "district_id": 47,
+    "category_id": 3,
+    "name": "Kapilvastu",
+    "area_sq_km": "136.91",
+    "website": "http://www.kapilvastumun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 479,
+    "district_id": 47,
+    "category_id": 3,
+    "name": "Banganga",
+    "area_sq_km": "233.68",
+    "website": "http://www.bangangamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 480,
+    "district_id": 47,
+    "category_id": 3,
+    "name": "Buddhabhumi",
+    "area_sq_km": "366.67",
+    "website": "http://www.buddhabhumimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 481,
+    "district_id": 47,
+    "category_id": 3,
+    "name": "Shivaraj",
+    "area_sq_km": "284.07",
+    "website": "http://www.shivrajmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 482,
+    "district_id": 47,
+    "category_id": 3,
+    "name": "Krishnanagar",
+    "area_sq_km": "96.66",
+    "website": "http://www.krishnanagarmun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 483,
+    "district_id": 47,
+    "category_id": 3,
+    "name": "Maharajgunj",
+    "area_sq_km": "112.21",
+    "website": "http://www.maharajgunjmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 484,
+    "district_id": 47,
+    "category_id": 4,
+    "name": "Mayadevi",
+    "area_sq_km": "88.53",
+    "website": "http://www.mayadevimunkapilvastu.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 485,
+    "district_id": 47,
+    "category_id": 4,
+    "name": "Yashodhara",
+    "area_sq_km": "67.56",
+    "website": "http://www.yasodharamun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 486,
+    "district_id": 47,
+    "category_id": 4,
+    "name": "Suddhodan",
+    "area_sq_km": "91.69",
+    "website": "http://www.shuddhodhanmunkapilvastu.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 487,
+    "district_id": 47,
+    "category_id": 4,
+    "name": "Bijaynagar",
+    "area_sq_km": "173.19",
+    "website": "http://www.bijaynagarmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 488,
+    "district_id": 48,
+    "category_id": 3,
+    "name": "Bardaghat",
+    "area_sq_km": "162.05",
+    "website": "http://www.bardghatmun.gov.np/",
+    "wards": "16"
+  },
+  {
+    "id": 489,
+    "district_id": 48,
+    "category_id": 3,
+    "name": "Ramgram",
+    "area_sq_km": "128.32",
+    "website": "http://www.ramgrammun.gov.np/",
+    "wards": "18"
+  },
+  {
+    "id": 490,
+    "district_id": 48,
+    "category_id": 3,
+    "name": "Sunwal",
+    "area_sq_km": "139.1",
+    "website": "http://www.sunwalmun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 491,
+    "district_id": 48,
+    "category_id": 4,
+    "name": "Susta",
+    "area_sq_km": "91.24",
+    "website": "http://www.sustamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 492,
+    "district_id": 48,
+    "category_id": 4,
+    "name": "Palhi Nandan",
+    "area_sq_km": "44.67",
+    "website": "http://www.palhinandanmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 493,
+    "district_id": 48,
+    "category_id": 4,
+    "name": "Pratappur",
+    "area_sq_km": "87.55",
+    "website": "http://www.pratappurmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 494,
+    "district_id": 48,
+    "category_id": 4,
+    "name": "Sarawal",
+    "area_sq_km": "73.19",
+    "website": "http://www.sarawalmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 495,
+    "district_id": 49,
+    "category_id": 2,
+    "name": "Butwal",
+    "area_sq_km": "101.61",
+    "website": "http://www.butwalmun.gov.np/",
+    "wards": "19"
+  },
+  {
+    "id": 496,
+    "district_id": 49,
+    "category_id": 3,
+    "name": "Devdaha",
+    "area_sq_km": "136.95",
+    "website": "http://www.devdahamun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 497,
+    "district_id": 49,
+    "category_id": 3,
+    "name": "Lumbini Sanskritik",
+    "area_sq_km": "112.21",
+    "website": "http://www.lumbinisanskritikmun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 498,
+    "district_id": 49,
+    "category_id": 3,
+    "name": "Sainamaina",
+    "area_sq_km": "162.18",
+    "website": "http://www.sainamainamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 499,
+    "district_id": 49,
+    "category_id": 3,
+    "name": "Siddharthanagar",
+    "area_sq_km": "36.03",
+    "website": "http://www.siddharthanagarmun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 500,
+    "district_id": 49,
+    "category_id": 3,
+    "name": "Tilottama",
+    "area_sq_km": "126.19",
+    "website": "http://www.tilottamamun.gov.np/",
+    "wards": "17"
+  },
+  {
+    "id": 501,
+    "district_id": 49,
+    "category_id": 4,
+    "name": "Gaidahawa",
+    "area_sq_km": "96.79",
+    "website": "http://www.gaidahawamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 502,
+    "district_id": 49,
+    "category_id": 4,
+    "name": "Kanchan",
+    "area_sq_km": "58.51",
+    "website": "http://www.kanchanmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 503,
+    "district_id": 49,
+    "category_id": 4,
+    "name": "Kotahimai",
+    "area_sq_km": "58.26",
+    "website": "http://www.kotahimaimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 504,
+    "district_id": 49,
+    "category_id": 4,
+    "name": "Marchawari",
+    "area_sq_km": "48.55",
+    "website": "http://www.marchawarimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 505,
+    "district_id": 49,
+    "category_id": 4,
+    "name": "Mayadevi",
+    "area_sq_km": "72.44",
+    "website": "http://www.mayadevimunrupandehi.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 506,
+    "district_id": 49,
+    "category_id": 4,
+    "name": "Omsatiya",
+    "area_sq_km": "48.54",
+    "website": "http://www.omsatiyamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 507,
+    "district_id": 49,
+    "category_id": 4,
+    "name": "Rohini",
+    "area_sq_km": "64.62",
+    "website": "http://www.rohinimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 508,
+    "district_id": 49,
+    "category_id": 4,
+    "name": "Sammarimai",
+    "area_sq_km": "50.78",
+    "website": "http://www.sammarimaimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 509,
+    "district_id": 49,
+    "category_id": 4,
+    "name": "Siyari",
+    "area_sq_km": "66.17",
+    "website": "http://www.siyarimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 510,
+    "district_id": 49,
+    "category_id": 4,
+    "name": "Suddodhan",
+    "area_sq_km": "57.66",
+    "website": "http://www.shuddhodhanmunrupandehi.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 511,
+    "district_id": 50,
+    "category_id": 3,
+    "name": "Sandhikharka",
+    "area_sq_km": "129.42",
+    "website": "http://www.sandhikharkamun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 512,
+    "district_id": 50,
+    "category_id": 3,
+    "name": "Sitganga",
+    "area_sq_km": "610.43",
+    "website": "http://www.shitagangamun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 513,
+    "district_id": 50,
+    "category_id": 3,
+    "name": "Bhumikasthan",
+    "area_sq_km": "159.13",
+    "website": "http://www.bhumikasthanmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 514,
+    "district_id": 50,
+    "category_id": 4,
+    "name": "Chhatradev",
+    "area_sq_km": "87.62",
+    "website": "http://www.chhatradevmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 515,
+    "district_id": 50,
+    "category_id": 4,
+    "name": "Panini",
+    "area_sq_km": "151.42",
+    "website": "http://www.paninimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 516,
+    "district_id": 50,
+    "category_id": 4,
+    "name": "Malarani",
+    "area_sq_km": "101.06",
+    "website": "http://www.malaranimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 517,
+    "district_id": 51,
+    "category_id": 3,
+    "name": "Resunga",
+    "area_sq_km": "83.74",
+    "website": "http://www.resungamun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 518,
+    "district_id": 51,
+    "category_id": 3,
+    "name": "Musikot",
+    "area_sq_km": "114.74",
+    "website": "http://www.musikotmungulmi.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 519,
+    "district_id": 51,
+    "category_id": 4,
+    "name": "Rurukshetra",
+    "area_sq_km": "67.38",
+    "website": "http://www.rurumun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 520,
+    "district_id": 51,
+    "category_id": 4,
+    "name": "Chhatrakot",
+    "area_sq_km": "87.01",
+    "website": "http://www.chhatrakotmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 521,
+    "district_id": 51,
+    "category_id": 4,
+    "name": "Gulmidarbar",
+    "area_sq_km": "79.99",
+    "website": "http://www.gulmidarbarmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 522,
+    "district_id": 51,
+    "category_id": 4,
+    "name": "Chandrakot",
+    "area_sq_km": "105.73",
+    "website": "http://www.chandrakotmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 523,
+    "district_id": 51,
+    "category_id": 4,
+    "name": "Satyawati",
+    "area_sq_km": "115.92",
+    "website": "http://www.satyawatimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 524,
+    "district_id": 51,
+    "category_id": 4,
+    "name": "Dhurkot",
+    "area_sq_km": "86.32",
+    "website": "http://www.dhurkotmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 525,
+    "district_id": 51,
+    "category_id": 4,
+    "name": "Kaligandaki",
+    "area_sq_km": "101.04",
+    "website": "http://www.kaligandakimungulmi.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 526,
+    "district_id": 51,
+    "category_id": 4,
+    "name": "Isma",
+    "area_sq_km": "81.88",
+    "website": "http://www.ishmamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 527,
+    "district_id": 51,
+    "category_id": 4,
+    "name": "Malika",
+    "area_sq_km": "92.49",
+    "website": "http://www.malikamungulmi.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 528,
+    "district_id": 51,
+    "category_id": 4,
+    "name": "Madane",
+    "area_sq_km": "94.52",
+    "website": "http://www.madanemun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 529,
+    "district_id": 52,
+    "category_id": 3,
+    "name": "Tansen",
+    "area_sq_km": "109.8",
+    "website": "http://www.tansenmun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 530,
+    "district_id": 52,
+    "category_id": 3,
+    "name": "Rampur",
+    "area_sq_km": "123.34",
+    "website": "http://www.rampurmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 531,
+    "district_id": 52,
+    "category_id": 4,
+    "name": "Rainadevi Chhahara",
+    "area_sq_km": "175.78",
+    "website": "http://www.rainadevichhaharamun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 532,
+    "district_id": 52,
+    "category_id": 4,
+    "name": "Ripdikot",
+    "area_sq_km": "124.55",
+    "website": "http://www.ribdikotmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 533,
+    "district_id": 52,
+    "category_id": 4,
+    "name": "Bagnaskali",
+    "area_sq_km": "84.17",
+    "website": "http://www.baganaskalimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 534,
+    "district_id": 52,
+    "category_id": 4,
+    "name": "Rambha",
+    "area_sq_km": "94.12",
+    "website": "http://www.rambhamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 535,
+    "district_id": 52,
+    "category_id": 4,
+    "name": "Purbakhola",
+    "area_sq_km": "138.05",
+    "website": "http://www.purbakholamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 536,
+    "district_id": 52,
+    "category_id": 4,
+    "name": "Nisdi",
+    "area_sq_km": "194.5",
+    "website": "http://www.nisdimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 537,
+    "district_id": 52,
+    "category_id": 4,
+    "name": "Mathagadhi",
+    "area_sq_km": "215.49",
+    "website": "http://www.mathagadhimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 538,
+    "district_id": 52,
+    "category_id": 4,
+    "name": "Tinahu",
+    "area_sq_km": "202",
+    "website": "http://www.tinaumun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 539,
+    "district_id": 53,
+    "category_id": 2,
+    "name": "Ghorahi",
+    "area_sq_km": "522.21",
+    "website": "http://www.ghorahimun.gov.np/",
+    "wards": "19"
+  },
+  {
+    "id": 540,
+    "district_id": 53,
+    "category_id": 2,
+    "name": "Tulsipur",
+    "area_sq_km": "384.63",
+    "website": "http://www.tulsipurmun.gov.np/",
+    "wards": "19"
+  },
+  {
+    "id": 541,
+    "district_id": 53,
+    "category_id": 3,
+    "name": "Lamahi",
+    "area_sq_km": "326.66",
+    "website": "http://www.lamahimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 542,
+    "district_id": 53,
+    "category_id": 4,
+    "name": "Gadhawa",
+    "area_sq_km": "358.57",
+    "website": "http://www.gadhawamun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 543,
+    "district_id": 53,
+    "category_id": 4,
+    "name": "Rajpur",
+    "area_sq_km": "577.33",
+    "website": "http://www.rajpurmundang.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 544,
+    "district_id": 53,
+    "category_id": 4,
+    "name": "Shantinagar",
+    "area_sq_km": "116.02",
+    "website": "http://www.shantinagarmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 545,
+    "district_id": 53,
+    "category_id": 4,
+    "name": "Rapti",
+    "area_sq_km": "161.07",
+    "website": "http://www.raptimundang.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 546,
+    "district_id": 53,
+    "category_id": 4,
+    "name": "Banglachuli",
+    "area_sq_km": "245.14",
+    "website": "http://www.bangalachulimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 547,
+    "district_id": 53,
+    "category_id": 4,
+    "name": "Dangisharan",
+    "area_sq_km": "110.7",
+    "website": "http://www.dangisharanmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 548,
+    "district_id": 53,
+    "category_id": 4,
+    "name": "Babai",
+    "area_sq_km": "257.48",
+    "website": "http://www.babaimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 549,
+    "district_id": 54,
+    "category_id": 3,
+    "name": "Sworgadwari",
+    "area_sq_km": "224.7",
+    "website": "http://www.swargadwarimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 550,
+    "district_id": 54,
+    "category_id": 3,
+    "name": "Pyuthan",
+    "area_sq_km": "128.96",
+    "website": "http://www.pyuthanmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 551,
+    "district_id": 54,
+    "category_id": 4,
+    "name": "Mandavi",
+    "area_sq_km": "113.08",
+    "website": "http://www.mandavimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 552,
+    "district_id": 54,
+    "category_id": 4,
+    "name": "Sarumarani",
+    "area_sq_km": "157.97",
+    "website": "http://www.sarumaranimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 553,
+    "district_id": 54,
+    "category_id": 4,
+    "name": "Ayirawati",
+    "area_sq_km": "156.75",
+    "website": "http://www.airawatimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 554,
+    "district_id": 54,
+    "category_id": 4,
+    "name": "Mallarani",
+    "area_sq_km": "80.09",
+    "website": "http://www.mallaranimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 555,
+    "district_id": 54,
+    "category_id": 4,
+    "name": "Jhimruk",
+    "area_sq_km": "106.93",
+    "website": "http://www.jhimrukmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 556,
+    "district_id": 54,
+    "category_id": 4,
+    "name": "Naubahini",
+    "area_sq_km": "213.41",
+    "website": "http://www.naubahinimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 557,
+    "district_id": 54,
+    "category_id": 4,
+    "name": "Gaumukhi",
+    "area_sq_km": "139.04",
+    "website": "http://www.gaumukhimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 558,
+    "district_id": 55,
+    "category_id": 3,
+    "name": "Rolpa",
+    "area_sq_km": "270.42",
+    "website": "http://www.rolpamun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 559,
+    "district_id": 55,
+    "category_id": 4,
+    "name": "Runtigadi",
+    "area_sq_km": "232.69",
+    "website": "http://www.runtigadhimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 560,
+    "district_id": 55,
+    "category_id": 4,
+    "name": "Triveni",
+    "area_sq_km": "205.39",
+    "website": "http://www.trivenimunrolpa.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 561,
+    "district_id": 55,
+    "category_id": 4,
+    "name": "Sunil Smiriti",
+    "area_sq_km": "156.55",
+    "website": "http://www.sunilsmritimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 562,
+    "district_id": 55,
+    "category_id": 4,
+    "name": "Lungri",
+    "area_sq_km": "135.23",
+    "website": "http://www.lungrimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 563,
+    "district_id": 55,
+    "category_id": 4,
+    "name": "Sunchhahari",
+    "area_sq_km": "277.62",
+    "website": "http://www.sunchhaharimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 564,
+    "district_id": 55,
+    "category_id": 4,
+    "name": "Thawang",
+    "area_sq_km": "191.07",
+    "website": "http://www.thabangmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 565,
+    "district_id": 55,
+    "category_id": 4,
+    "name": "Madi",
+    "area_sq_km": "129.05",
+    "website": "http://www.madimunrolpa.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 566,
+    "district_id": 55,
+    "category_id": 4,
+    "name": "GangaDev",
+    "area_sq_km": "124.38",
+    "website": "http://www.sukidahamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 567,
+    "district_id": 55,
+    "category_id": 4,
+    "name": "Pariwartan",
+    "area_sq_km": "163.01",
+    "website": "http://www.duikholimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 568,
+    "district_id": 56,
+    "category_id": 4,
+    "name": "Putha Uttarganga",
+    "area_sq_km": "560.34",
+    "website": "http://www.puthauttargangamun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 569,
+    "district_id": 56,
+    "category_id": 4,
+    "name": "Bhume",
+    "area_sq_km": "273.67",
+    "website": "http://www.bhumemun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 570,
+    "district_id": 56,
+    "category_id": 4,
+    "name": "Sisne",
+    "area_sq_km": "327.12",
+    "website": "http://www.sisnemun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 571,
+    "district_id": 57,
+    "category_id": 2,
+    "name": "Nepalgunj",
+    "area_sq_km": "85.94",
+    "website": "http://www.nepalgunjmun.gov.np/",
+    "wards": "23"
+  },
+  {
+    "id": 572,
+    "district_id": 57,
+    "category_id": 3,
+    "name": "Kohalpur",
+    "area_sq_km": "184.26",
+    "website": "http://www.kohalpurmun.gov.np/",
+    "wards": "15"
+  },
+  {
+    "id": 573,
+    "district_id": 57,
+    "category_id": 4,
+    "name": "Rapti-Sonari",
+    "area_sq_km": "1041.73",
+    "website": "http://www.raptisonarimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 574,
+    "district_id": 57,
+    "category_id": 4,
+    "name": "Narainapur",
+    "area_sq_km": "172.34",
+    "website": "http://www.narainapurmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 575,
+    "district_id": 57,
+    "category_id": 4,
+    "name": "Duduwa",
+    "area_sq_km": "91.1",
+    "website": "http://www.duduwamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 576,
+    "district_id": 57,
+    "category_id": 4,
+    "name": "Janaki",
+    "area_sq_km": "63.32",
+    "website": "http://www.janakimunbanke.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 577,
+    "district_id": 57,
+    "category_id": 4,
+    "name": "Khajura",
+    "area_sq_km": "101.91",
+    "website": "http://www.khajuramun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 578,
+    "district_id": 57,
+    "category_id": 4,
+    "name": "Baijanath",
+    "area_sq_km": "141.67",
+    "website": "http://www.baijanathmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 579,
+    "district_id": 58,
+    "category_id": 3,
+    "name": "Gulariya",
+    "area_sq_km": "118.21",
+    "website": "http://www.gulariyamun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 580,
+    "district_id": 58,
+    "category_id": 3,
+    "name": "Rajapur",
+    "area_sq_km": "127.08",
+    "website": "http://www.rajapurmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 581,
+    "district_id": 58,
+    "category_id": 3,
+    "name": "Madhuwan",
+    "area_sq_km": "129.73",
+    "website": "http://www.madhuwanmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 582,
+    "district_id": 58,
+    "category_id": 3,
+    "name": "Thakurbaba",
+    "area_sq_km": "104.57",
+    "website": "http://www.thakurbabamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 583,
+    "district_id": 58,
+    "category_id": 3,
+    "name": "Basgadhi",
+    "area_sq_km": "206.08",
+    "website": "http://www.bansgadhimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 584,
+    "district_id": 58,
+    "category_id": 3,
+    "name": "Barbardiya",
+    "area_sq_km": "226.09",
+    "website": "http://www.barbardiyamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 585,
+    "district_id": 58,
+    "category_id": 4,
+    "name": "Badhaiyatal",
+    "area_sq_km": "115.19",
+    "website": "http://www.badhaiyatalmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 586,
+    "district_id": 58,
+    "category_id": 4,
+    "name": "Geruwa",
+    "area_sq_km": "78.41",
+    "website": "http://www.geruwamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 587,
+    "district_id": 59,
+    "category_id": 3,
+    "name": "Aathabiskot",
+    "area_sq_km": "560.34",
+    "website": "http://www.aathbiskotmun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 588,
+    "district_id": 59,
+    "category_id": 3,
+    "name": "Musikot",
+    "area_sq_km": "136.06",
+    "website": "http://www.musikotmunrukum.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 589,
+    "district_id": 59,
+    "category_id": 3,
+    "name": "Chaurjahari",
+    "area_sq_km": "107.38",
+    "website": "http://www.chaurjaharimun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 590,
+    "district_id": 59,
+    "category_id": 4,
+    "name": "SaniBheri",
+    "area_sq_km": "133.8",
+    "website": "http://www.sanibherimun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 591,
+    "district_id": 59,
+    "category_id": 4,
+    "name": "Triveni",
+    "area_sq_km": "85.49",
+    "website": "http://www.trivenimunrukum.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 592,
+    "district_id": 59,
+    "category_id": 4,
+    "name": "Banphikot",
+    "area_sq_km": "190.42",
+    "website": "http://www.banphikotmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 593,
+    "district_id": 60,
+    "category_id": 4,
+    "name": "Kumakh",
+    "area_sq_km": "177.28",
+    "website": "http://www.kumakhmalikamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 594,
+    "district_id": 60,
+    "category_id": 4,
+    "name": "Kalimati",
+    "area_sq_km": "500.72",
+    "website": "http://www.kalimatimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 595,
+    "district_id": 60,
+    "category_id": 4,
+    "name": "Chhatreshwari",
+    "area_sq_km": "150.69",
+    "website": "http://www.chhatreshworimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 596,
+    "district_id": 60,
+    "category_id": 4,
+    "name": "Darma",
+    "area_sq_km": "81.46",
+    "website": "http://www.darmamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 597,
+    "district_id": 60,
+    "category_id": 4,
+    "name": "Kapurkot",
+    "area_sq_km": "119.21",
+    "website": "http://www.kapurkotmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 598,
+    "district_id": 60,
+    "category_id": 4,
+    "name": "Triveni",
+    "area_sq_km": "119.11",
+    "website": "http://www.trivenimunsalyan.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 599,
+    "district_id": 60,
+    "category_id": 4,
+    "name": "Siddha Kumakh",
+    "area_sq_km": "89.36",
+    "website": "http://www.siddhakumakhmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 600,
+    "district_id": 60,
+    "category_id": 3,
+    "name": "Bagchaur",
+    "area_sq_km": "163.14",
+    "website": "http://www.bagchaurmun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 601,
+    "district_id": 60,
+    "category_id": 3,
+    "name": "Shaarda",
+    "area_sq_km": "198.34",
+    "website": "http://www.shaaradamun.gov.np/",
+    "wards": "15"
+  },
+  {
+    "id": 602,
+    "district_id": 60,
+    "category_id": 3,
+    "name": "Bangad Kupinde",
+    "area_sq_km": "338.21",
+    "website": "http://www.bangadkupindemun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 603,
+    "district_id": 61,
+    "category_id": 4,
+    "name": "Mudkechula",
+    "area_sq_km": "250.08",
+    "website": "http://www.mudkechulamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 604,
+    "district_id": 61,
+    "category_id": 4,
+    "name": "Kaike",
+    "area_sq_km": "466.6",
+    "website": "http://www.kaikemun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 605,
+    "district_id": 61,
+    "category_id": 4,
+    "name": "She Phoksundo",
+    "area_sq_km": "123.07",
+    "website": "http://www.shephoksundomun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 606,
+    "district_id": 61,
+    "category_id": 4,
+    "name": "Jagadulla",
+    "area_sq_km": "83.31",
+    "website": "http://www.jagdullamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 607,
+    "district_id": 61,
+    "category_id": 4,
+    "name": "Dolpo Buddha",
+    "area_sq_km": "377.38",
+    "website": "http://www.dolpobuddhamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 608,
+    "district_id": 61,
+    "category_id": 4,
+    "name": "Chharka Tongsong",
+    "area_sq_km": "345.57",
+    "website": "http://www.chharkatangsongmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 609,
+    "district_id": 61,
+    "category_id": 3,
+    "name": "Thuli Bheri",
+    "area_sq_km": "421.34",
+    "website": "http://www.thulibherimun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 610,
+    "district_id": 61,
+    "category_id": 3,
+    "name": "Tripurasundari",
+    "area_sq_km": "393.54",
+    "website": "http://www.tripurasundarimundolpa.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 611,
+    "district_id": 62,
+    "category_id": 4,
+    "name": "Simkot",
+    "area_sq_km": "785.89",
+    "website": "http://www.simkotmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 612,
+    "district_id": 62,
+    "category_id": 4,
+    "name": "Sarkegad",
+    "area_sq_km": "306.7",
+    "website": "http://www.sarkegadmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 613,
+    "district_id": 62,
+    "category_id": 4,
+    "name": "Adanchuli",
+    "area_sq_km": "150.61",
+    "website": "http://www.adanchulimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 614,
+    "district_id": 62,
+    "category_id": 4,
+    "name": "Kharpunath",
+    "area_sq_km": "880",
+    "website": "http://www.kharpunathmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 615,
+    "district_id": 62,
+    "category_id": 4,
+    "name": "Tanjakot",
+    "area_sq_km": "159.1",
+    "website": "http://www.tajakotmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 616,
+    "district_id": 62,
+    "category_id": 4,
+    "name": "Chankheli",
+    "area_sq_km": "1310.41",
+    "website": "http://www.chankhelimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 617,
+    "district_id": 62,
+    "category_id": 4,
+    "name": "Namkha",
+    "area_sq_km": "2419.64",
+    "website": "http://www.namkhamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 618,
+    "district_id": 63,
+    "category_id": 4,
+    "name": "Tatopani",
+    "area_sq_km": "525.56",
+    "website": "http://www.tatopanimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 619,
+    "district_id": 63,
+    "category_id": 4,
+    "name": "Patarasi",
+    "area_sq_km": "814.07",
+    "website": "http://www.patarasimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 620,
+    "district_id": 63,
+    "category_id": 4,
+    "name": "Tila",
+    "area_sq_km": "175.49",
+    "website": "http://www.tilamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 621,
+    "district_id": 63,
+    "category_id": 4,
+    "name": "Kanaka Sundari",
+    "area_sq_km": "225.39",
+    "website": "http://www.kankasundarimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 622,
+    "district_id": 63,
+    "category_id": 4,
+    "name": "Sinja",
+    "area_sq_km": "153.29",
+    "website": "http://www.sinjamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 623,
+    "district_id": 63,
+    "category_id": 4,
+    "name": "Hima",
+    "area_sq_km": "132.32",
+    "website": "http://www.himamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 624,
+    "district_id": 63,
+    "category_id": 4,
+    "name": "Guthichaur",
+    "area_sq_km": "427",
+    "website": "http://www.guthichaurmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 625,
+    "district_id": 63,
+    "category_id": 3,
+    "name": "Chandannath",
+    "area_sq_km": "102.03",
+    "website": "http://www.chandannathmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 626,
+    "district_id": 64,
+    "category_id": 3,
+    "name": "Khandachakra",
+    "area_sq_km": "133.29",
+    "website": "http://www.khandachakramun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 627,
+    "district_id": 64,
+    "category_id": 3,
+    "name": "Raskot",
+    "area_sq_km": "59.73",
+    "website": "http://www.raskotmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 628,
+    "district_id": 64,
+    "category_id": 3,
+    "name": "Tilagufa",
+    "area_sq_km": "262.56",
+    "website": "http://www.tilagufamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 629,
+    "district_id": 64,
+    "category_id": 4,
+    "name": "Narharinath",
+    "area_sq_km": "143.86",
+    "website": "http://www.narharinathmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 630,
+    "district_id": 64,
+    "category_id": 4,
+    "name": "Palata",
+    "area_sq_km": "318.84",
+    "website": "http://www.palatamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 631,
+    "district_id": 64,
+    "category_id": 4,
+    "name": "Shubha Kalika",
+    "area_sq_km": "97.32",
+    "website": "http://www.kalikamunkalikot.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 632,
+    "district_id": 64,
+    "category_id": 4,
+    "name": "Sanni Triveni",
+    "area_sq_km": "136.71",
+    "website": "http://www.sannitrivenimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 633,
+    "district_id": 64,
+    "category_id": 4,
+    "name": "Pachaljharana",
+    "area_sq_km": "166.92",
+    "website": "http://www.pachaljharanamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 634,
+    "district_id": 64,
+    "category_id": 4,
+    "name": "Mahawai",
+    "area_sq_km": "322.07",
+    "website": "http://www.mahawaimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 635,
+    "district_id": 65,
+    "category_id": 4,
+    "name": "Khatyad",
+    "area_sq_km": "281.12",
+    "website": "http://www.khatyadmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 636,
+    "district_id": 65,
+    "category_id": 4,
+    "name": "Soru",
+    "area_sq_km": "365.8",
+    "website": "http://www.sorumun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 637,
+    "district_id": 65,
+    "category_id": 4,
+    "name": "Mugum Karmarong",
+    "area_sq_km": "2106.91",
+    "website": "http://www.mugumkarmarongmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 638,
+    "district_id": 65,
+    "category_id": 3,
+    "name": "Chhayanath Rara",
+    "area_sq_km": "480.67",
+    "website": "http://www.chhayanathraramun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 639,
+    "district_id": 66,
+    "category_id": 4,
+    "name": "Simta",
+    "area_sq_km": "241.64",
+    "website": "http://www.simtamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 640,
+    "district_id": 66,
+    "category_id": 4,
+    "name": "Barahatal",
+    "area_sq_km": "455.09",
+    "website": "http://www.barahatalmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 641,
+    "district_id": 66,
+    "category_id": 4,
+    "name": "Chaukune",
+    "area_sq_km": "381.01",
+    "website": "http://www.chaukunemun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 642,
+    "district_id": 66,
+    "category_id": 4,
+    "name": "Chingad",
+    "area_sq_km": "170.19",
+    "website": "http://www.chingadmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 643,
+    "district_id": 66,
+    "category_id": 3,
+    "name": "Gurbhakot",
+    "area_sq_km": "228.62",
+    "website": "http://www.gurbhakotmun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 644,
+    "district_id": 66,
+    "category_id": 3,
+    "name": "Birendranagar",
+    "area_sq_km": "245.06",
+    "website": "http://www.birendranagarmun.gov.np/",
+    "wards": "16"
+  },
+  {
+    "id": 645,
+    "district_id": 66,
+    "category_id": 3,
+    "name": "Bheriganga",
+    "area_sq_km": "256.2",
+    "website": "http://www.bherigangamun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 646,
+    "district_id": 66,
+    "category_id": 3,
+    "name": "Panchapuri",
+    "area_sq_km": "329.9",
+    "website": "http://www.panchapurimun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 647,
+    "district_id": 66,
+    "category_id": 3,
+    "name": "Lekbeshi",
+    "area_sq_km": "180.92",
+    "website": "http://www.lekbeshimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 648,
+    "district_id": 67,
+    "category_id": 3,
+    "name": "Dullu",
+    "area_sq_km": "156.77",
+    "website": "http://www.dullumun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 649,
+    "district_id": 67,
+    "category_id": 4,
+    "name": "Gurans",
+    "area_sq_km": "164.79",
+    "website": "http://www.guransmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 650,
+    "district_id": 67,
+    "category_id": 4,
+    "name": "Bhairabi",
+    "area_sq_km": "110.46",
+    "website": "http://www.bhairabimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 651,
+    "district_id": 67,
+    "category_id": 4,
+    "name": "Naumule",
+    "area_sq_km": "228.59",
+    "website": "http://www.naumulemun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 652,
+    "district_id": 67,
+    "category_id": 4,
+    "name": "Mahabu",
+    "area_sq_km": "110.8",
+    "website": "http://www.mahabumun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 653,
+    "district_id": 67,
+    "category_id": 4,
+    "name": "Thantikandh",
+    "area_sq_km": "88.22",
+    "website": "http://www.thantikandhmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 654,
+    "district_id": 67,
+    "category_id": 4,
+    "name": "Bhagawatimai",
+    "area_sq_km": "151.52",
+    "website": "http://www.bhagawatimaimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 655,
+    "district_id": 67,
+    "category_id": 4,
+    "name": "Dungeshwar",
+    "area_sq_km": "105.19",
+    "website": "http://www.dungeshwormun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 656,
+    "district_id": 67,
+    "category_id": 3,
+    "name": "Aathabis",
+    "area_sq_km": "168",
+    "website": "http://www.aathabismun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 657,
+    "district_id": 67,
+    "category_id": 3,
+    "name": "Narayan",
+    "area_sq_km": "110.63",
+    "website": "http://www.narayanmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 658,
+    "district_id": 67,
+    "category_id": 3,
+    "name": "Chamunda Bindrasaini",
+    "area_sq_km": "90.6",
+    "website": "http://www.chamundabindrasainimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 659,
+    "district_id": 68,
+    "category_id": 3,
+    "name": "Chhedagad",
+    "area_sq_km": "284.2",
+    "website": "http://www.chhedagadmun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 660,
+    "district_id": 68,
+    "category_id": 3,
+    "name": "Bheri",
+    "area_sq_km": "219.77",
+    "website": "http://www.bherimun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 661,
+    "district_id": 68,
+    "category_id": 3,
+    "name": "Nalgad",
+    "area_sq_km": "387.44",
+    "website": "http://www.tribeninalgaadmun.gov.np/",
+    "wards": "13"
+  },
+  {
+    "id": 662,
+    "district_id": 68,
+    "category_id": 4,
+    "name": "Junichande",
+    "area_sq_km": "346.21",
+    "website": "http://www.junichaandemun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 663,
+    "district_id": 68,
+    "category_id": 4,
+    "name": "Kuse",
+    "area_sq_km": "273.97",
+    "website": "http://www.kushemun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 664,
+    "district_id": 68,
+    "category_id": 4,
+    "name": "Barekot",
+    "area_sq_km": "577.5",
+    "website": "http://www.barekotmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 665,
+    "district_id": 68,
+    "category_id": 4,
+    "name": "Shivalaya",
+    "area_sq_km": "134.26",
+    "website": "http://www.shibalayamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 666,
+    "district_id": 69,
+    "category_id": 3,
+    "name": "Mahakali",
+    "area_sq_km": "135.11",
+    "website": "http://www.mahakalimundarchula.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 667,
+    "district_id": 69,
+    "category_id": 3,
+    "name": "Shailyashikhar",
+    "area_sq_km": "117.81",
+    "website": "http://www.shailyashikharmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 668,
+    "district_id": 69,
+    "category_id": 4,
+    "name": "Naugad",
+    "area_sq_km": "180.27",
+    "website": "http://www.naugadmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 669,
+    "district_id": 69,
+    "category_id": 4,
+    "name": "Malikarjun",
+    "area_sq_km": "100.82",
+    "website": "http://www.malikarjunmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 670,
+    "district_id": 69,
+    "category_id": 4,
+    "name": "Marma",
+    "area_sq_km": "208.06",
+    "website": "http://www.marmamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 671,
+    "district_id": 69,
+    "category_id": 4,
+    "name": "Lekam",
+    "area_sq_km": "83.98",
+    "website": "http://www.lekammun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 672,
+    "district_id": 69,
+    "category_id": 4,
+    "name": "Duhun",
+    "area_sq_km": "65.35",
+    "website": "http://www.duhunmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 673,
+    "district_id": 69,
+    "category_id": 4,
+    "name": "Vyans",
+    "area_sq_km": "839.26",
+    "website": "http://www.vyansmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 674,
+    "district_id": 69,
+    "category_id": 4,
+    "name": "Apihimal",
+    "area_sq_km": "613.95",
+    "website": "http://www.apihimalmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 675,
+    "district_id": 70,
+    "category_id": 3,
+    "name": "Jayaprithvi",
+    "area_sq_km": "166.79",
+    "website": "http://www.jayaprithvimun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 676,
+    "district_id": 70,
+    "category_id": 3,
+    "name": "Bungal",
+    "area_sq_km": "447.59",
+    "website": "http://www.bungalmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 677,
+    "district_id": 70,
+    "category_id": 4,
+    "name": "Kedarsyu",
+    "area_sq_km": "113.91",
+    "website": "http://www.kedarasyumun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 678,
+    "district_id": 70,
+    "category_id": 4,
+    "name": "Thalara",
+    "area_sq_km": "105.51",
+    "website": "http://www.thalaramun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 679,
+    "district_id": 70,
+    "category_id": 4,
+    "name": "Bitthadchir",
+    "area_sq_km": "86.15",
+    "website": "http://www.bitthadchirmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 680,
+    "district_id": 70,
+    "category_id": 4,
+    "name": "Chhabis Pathibhera",
+    "area_sq_km": "116.34",
+    "website": "http://www.chhabispathiveramun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 681,
+    "district_id": 70,
+    "category_id": 4,
+    "name": "Khaptadchhanna",
+    "area_sq_km": "113.52",
+    "website": "http://www.khaptadchhannamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 682,
+    "district_id": 70,
+    "category_id": 4,
+    "name": "Masta",
+    "area_sq_km": "109.24",
+    "website": "http://www.mastamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 683,
+    "district_id": 70,
+    "category_id": 4,
+    "name": "Durgathali",
+    "area_sq_km": "61.83",
+    "website": "http://www.durgathalimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 684,
+    "district_id": 70,
+    "category_id": 4,
+    "name": "Talkot",
+    "area_sq_km": "335.26",
+    "website": "http://www.talkotmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 685,
+    "district_id": 70,
+    "category_id": 4,
+    "name": "Surma",
+    "area_sq_km": "270.8",
+    "website": "http://www.surmamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 686,
+    "district_id": 70,
+    "category_id": 4,
+    "name": "Saipal",
+    "area_sq_km": "1467.27",
+    "website": "http://www.kandamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 687,
+    "district_id": 71,
+    "category_id": 3,
+    "name": "Badimalika",
+    "area_sq_km": "276",
+    "website": "http://www.badimalikamun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 688,
+    "district_id": 71,
+    "category_id": 3,
+    "name": "Triveni",
+    "area_sq_km": "170.32",
+    "website": "http://www.trivenimunbajura.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 689,
+    "district_id": 71,
+    "category_id": 3,
+    "name": "Budhiganga",
+    "area_sq_km": "59.2",
+    "website": "http://www.budhigangamunbajura.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 690,
+    "district_id": 71,
+    "category_id": 3,
+    "name": "Budhinanda",
+    "area_sq_km": "232.48",
+    "website": "http://www.budhinandamun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 691,
+    "district_id": 71,
+    "category_id": 4,
+    "name": "Khaptad Chhededaha",
+    "area_sq_km": "135.08",
+    "website": "http://www.chhededahamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 692,
+    "district_id": 71,
+    "category_id": 4,
+    "name": "Swami Kartik Khapar",
+    "area_sq_km": "110.55",
+    "website": "http://www.swamikartikmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 693,
+    "district_id": 71,
+    "category_id": 4,
+    "name": "Jagannath",
+    "area_sq_km": "171.72",
+    "website": "http://www.jagganathmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 694,
+    "district_id": 71,
+    "category_id": 4,
+    "name": "Himali",
+    "area_sq_km": "830.33",
+    "website": "http://www.himalimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 695,
+    "district_id": 71,
+    "category_id": 4,
+    "name": "Gaumul",
+    "area_sq_km": "314.66",
+    "website": "http://www.gaumulmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 696,
+    "district_id": 72,
+    "category_id": 3,
+    "name": "Dashrathchanda",
+    "area_sq_km": "135.15",
+    "website": "http://www.dasharathchandmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 697,
+    "district_id": 72,
+    "category_id": 3,
+    "name": "Patan",
+    "area_sq_km": "219.26",
+    "website": "http://www.patanmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 698,
+    "district_id": 72,
+    "category_id": 3,
+    "name": "Melauli",
+    "area_sq_km": "119.43",
+    "website": "http://www.melaulimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 699,
+    "district_id": 72,
+    "category_id": 3,
+    "name": "Purchaudi",
+    "area_sq_km": "198.52",
+    "website": "http://www.purchaudimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 700,
+    "district_id": 72,
+    "category_id": 4,
+    "name": "Dogdakedar",
+    "area_sq_km": "126.38",
+    "website": "http://www.dogdakedarmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 701,
+    "district_id": 72,
+    "category_id": 4,
+    "name": "Dilashaini",
+    "area_sq_km": "125.28",
+    "website": "http://www.dilasainimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 702,
+    "district_id": 72,
+    "category_id": 4,
+    "name": "Sigas",
+    "area_sq_km": "245.44",
+    "website": "http://www.sigasmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 703,
+    "district_id": 72,
+    "category_id": 4,
+    "name": "Pancheshwar",
+    "area_sq_km": "120.41",
+    "website": "http://www.pancheshwormun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 704,
+    "district_id": 72,
+    "category_id": 4,
+    "name": "Surnaya",
+    "area_sq_km": "124.52",
+    "website": "http://www.sunaryamun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 705,
+    "district_id": 72,
+    "category_id": 4,
+    "name": "Shivanath",
+    "area_sq_km": "81.65",
+    "website": "http://www.shivanathmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 706,
+    "district_id": 73,
+    "category_id": 3,
+    "name": "Dipayal Silgadhi",
+    "area_sq_km": "162.62",
+    "website": "http://www.dipayalsilgadhimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 707,
+    "district_id": 73,
+    "category_id": 3,
+    "name": "Shikhar",
+    "area_sq_km": "585.37",
+    "website": "http://www.shikharmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 708,
+    "district_id": 73,
+    "category_id": 4,
+    "name": "Aadarsha",
+    "area_sq_km": "128.47",
+    "website": "http://www.aadarshamun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 709,
+    "district_id": 73,
+    "category_id": 4,
+    "name": "Purbichauki",
+    "area_sq_km": "117.66",
+    "website": "http://www.purbichaukimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 710,
+    "district_id": 73,
+    "category_id": 4,
+    "name": "K.I.Singh",
+    "area_sq_km": "127.01",
+    "website": "http://www.kisinghmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 711,
+    "district_id": 73,
+    "category_id": 4,
+    "name": "Jorayal",
+    "area_sq_km": "419.09",
+    "website": "http://www.jorayalmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 712,
+    "district_id": 73,
+    "category_id": 4,
+    "name": "Sayal",
+    "area_sq_km": "122.72",
+    "website": "http://www.sayalmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 713,
+    "district_id": 73,
+    "category_id": 4,
+    "name": "Bogatan-Phudsil",
+    "area_sq_km": "300.22",
+    "website": "http://www.bogatanmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 714,
+    "district_id": 73,
+    "category_id": 4,
+    "name": "Badikedar",
+    "area_sq_km": "332.55",
+    "website": "http://www.badikedarmun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 715,
+    "district_id": 74,
+    "category_id": 4,
+    "name": "Ramaroshan",
+    "area_sq_km": "173.33",
+    "website": "http://www.ramaroshanmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 716,
+    "district_id": 74,
+    "category_id": 4,
+    "name": "Chaurpati",
+    "area_sq_km": "182.16",
+    "website": "http://www.chaurpatimun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 717,
+    "district_id": 74,
+    "category_id": 4,
+    "name": "Turmakhand",
+    "area_sq_km": "232.07",
+    "website": "http://www.turmakhadmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 718,
+    "district_id": 74,
+    "category_id": 4,
+    "name": "Mellekh",
+    "area_sq_km": "134.78",
+    "website": "http://www.mellekhmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 719,
+    "district_id": 74,
+    "category_id": 4,
+    "name": "Dhakari",
+    "area_sq_km": "227.88",
+    "website": "http://www.dhakarimun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 720,
+    "district_id": 74,
+    "category_id": 4,
+    "name": "Bannigadi Jayagad",
+    "area_sq_km": "58.26",
+    "website": "http://www.bannigadhijaygadhmun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 721,
+    "district_id": 74,
+    "category_id": 3,
+    "name": "Mangalsen",
+    "area_sq_km": "220.14",
+    "website": "http://www.mangalsenmun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 722,
+    "district_id": 74,
+    "category_id": 3,
+    "name": "Kamalbazar",
+    "area_sq_km": "120.78",
+    "website": "http://www.kamalbazarmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 723,
+    "district_id": 74,
+    "category_id": 3,
+    "name": "Sanfebagar",
+    "area_sq_km": "166.71",
+    "website": "http://www.sanfebagarmun.gov.np/",
+    "wards": "14"
+  },
+  {
+    "id": 724,
+    "district_id": 74,
+    "category_id": 3,
+    "name": "Panchadewal Binayak",
+    "area_sq_km": "147.75",
+    "website": "http://www.panchadewalbinayakmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 725,
+    "district_id": 75,
+    "category_id": 4,
+    "name": "Navadurga",
+    "area_sq_km": "141.89",
+    "website": "http://www.navadurgamun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 726,
+    "district_id": 75,
+    "category_id": 4,
+    "name": "Aalitaal",
+    "area_sq_km": "292.87",
+    "website": "http://www.aalitalmun.gov.np/",
+    "wards": "8"
+  },
+  {
+    "id": 727,
+    "district_id": 75,
+    "category_id": 4,
+    "name": "Ganyapadhura",
+    "area_sq_km": "135.65",
+    "website": "http://www.ganyapadhuramun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 728,
+    "district_id": 75,
+    "category_id": 4,
+    "name": "Bhageshwar",
+    "area_sq_km": "233.38",
+    "website": "http://www.bhageshwormun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 729,
+    "district_id": 75,
+    "category_id": 4,
+    "name": "Ajaymeru",
+    "area_sq_km": "148.9",
+    "website": "http://www.ajayamerumun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 730,
+    "district_id": 75,
+    "category_id": 3,
+    "name": "Amargadhi",
+    "area_sq_km": "139.33",
+    "website": "http://www.amargadhimun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 731,
+    "district_id": 75,
+    "category_id": 3,
+    "name": "Parshuram",
+    "area_sq_km": "414.07",
+    "website": "http://www.parshurammun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 732,
+    "district_id": 76,
+    "category_id": 3,
+    "name": "Bhimdatta",
+    "area_sq_km": "171.8",
+    "website": "http://www.bheemdattamun.gov.np/",
+    "wards": "19"
+  },
+  {
+    "id": 733,
+    "district_id": 76,
+    "category_id": 3,
+    "name": "Punarbas",
+    "area_sq_km": "103.71",
+    "website": "http://www.punarbasmun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 734,
+    "district_id": 76,
+    "category_id": 3,
+    "name": "Bedkot",
+    "area_sq_km": "159.92",
+    "website": "http://www.bedkotmun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 735,
+    "district_id": 76,
+    "category_id": 3,
+    "name": "Mahakali",
+    "area_sq_km": "56.84",
+    "website": "https://mahakalimunkanchanpur.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 736,
+    "district_id": 76,
+    "category_id": 3,
+    "name": "Shuklaphanta",
+    "area_sq_km": "162.57",
+    "website": "http://www.shuklaphantamun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 737,
+    "district_id": 76,
+    "category_id": 3,
+    "name": "Belauri",
+    "area_sq_km": "123.37",
+    "website": "http://www.belaurimun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 738,
+    "district_id": 76,
+    "category_id": 3,
+    "name": "Krishnapur",
+    "area_sq_km": "252.75",
+    "website": "http://www.krishnapurmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 739,
+    "district_id": 76,
+    "category_id": 4,
+    "name": "Laljhadi",
+    "area_sq_km": "154.65",
+    "website": "http://www.laljhadimun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 740,
+    "district_id": 76,
+    "category_id": 4,
+    "name": "Beldandi",
+    "area_sq_km": "36.7",
+    "website": "http://www.beldandimun.gov.np/",
+    "wards": "5"
+  },
+  {
+    "id": 741,
+    "district_id": 77,
+    "category_id": 4,
+    "name": "Janaki",
+    "area_sq_km": "107.27",
+    "website": "http://www.janakimunkailali.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 742,
+    "district_id": 77,
+    "category_id": 4,
+    "name": "Kailari",
+    "area_sq_km": "233.27",
+    "website": "http://www.kailarimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 743,
+    "district_id": 77,
+    "category_id": 4,
+    "name": "Joshipur",
+    "area_sq_km": "65.57",
+    "website": "http://www.joshipurmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 744,
+    "district_id": 77,
+    "category_id": 4,
+    "name": "Bardagoriya",
+    "area_sq_km": "77.26",
+    "website": "http://www.bardgoriyamun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 745,
+    "district_id": 77,
+    "category_id": 4,
+    "name": "Mohanyal",
+    "area_sq_km": "626.95",
+    "website": "http://www.mohanyalmun.gov.np/",
+    "wards": "7"
+  },
+  {
+    "id": 746,
+    "district_id": 77,
+    "category_id": 4,
+    "name": "Chure",
+    "area_sq_km": "493.18",
+    "website": "http://www.churemun.gov.np/",
+    "wards": "6"
+  },
+  {
+    "id": 747,
+    "district_id": 77,
+    "category_id": 3,
+    "name": "Tikapur",
+    "area_sq_km": "118.33",
+    "website": "http://www.tikapurmun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 748,
+    "district_id": 77,
+    "category_id": 3,
+    "name": "Ghodaghodi",
+    "area_sq_km": "354.45",
+    "website": "http://www.ghodaghodimun.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 749,
+    "district_id": 77,
+    "category_id": 3,
+    "name": "Lamkichuha",
+    "area_sq_km": "225",
+    "website": "http://www.lamkichuhamun.gov.np/",
+    "wards": "10"
+  },
+  {
+    "id": 750,
+    "district_id": 77,
+    "category_id": 3,
+    "name": "Bhajni",
+    "area_sq_km": "176.25",
+    "website": "http://www.bhajanimun.gov.np/",
+    "wards": "9"
+  },
+  {
+    "id": 751,
+    "district_id": 77,
+    "category_id": 3,
+    "name": "Godawari",
+    "area_sq_km": "308.63",
+    "website": "http://www.godawarimunkailali.gov.np/",
+    "wards": "12"
+  },
+  {
+    "id": 752,
+    "district_id": 77,
+    "category_id": 3,
+    "name": "Gauriganga",
+    "area_sq_km": "244.44",
+    "website": "http://www.gaurigangamun.gov.np/",
+    "wards": "11"
+  },
+  {
+    "id": 753,
+    "district_id": 77,
+    "category_id": 2,
+    "name": "Dhangadhi",
+    "area_sq_km": "261.75",
+    "website": "http://www.dhangadhimun.gov.np/",
+    "wards": "19"
+  }
+];
 
-module.exports = { provinces, districts, municipalities }
+module.exports = { provinces, districts, municipalities };

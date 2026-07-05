@@ -7,6 +7,7 @@ import Card from '../../components/common/Card'
 import { FormField, Input, Select } from '../../components/common/Input'
 import { Skeleton } from '../../components/common/Skeleton'
 import { userService } from '../../services/userService'
+import { locationService } from '../../services/locationService'
 import { formatDate } from '../../utils/formatters'
 import { getApiErrorMessage } from '../../utils/validators'
 
@@ -21,21 +22,50 @@ export default function ManageUsers() {
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState('')
-  const [debouncedSearch, setDebouncedSearch] = useState('')
   const [updatingId, setUpdatingId] = useState(null)
   const [expandedId, setExpandedId] = useState(null)
 
+  const [provinces, setProvinces] = useState([])
+  const [districts, setDistricts] = useState([])
+  const [municipalities, setMunicipalities] = useState([])
+  const [provinceFilter, setProvinceFilter] = useState('')
+  const [districtFilter, setDistrictFilter] = useState('')
+  const [municipalityFilter, setMunicipalityFilter] = useState('')
   useEffect(() => {
-    const timer = setTimeout(() => setDebouncedSearch(search), 400)
-    return () => clearTimeout(timer)
-  }, [search])
+    locationService.getProvinces().then(res => setProvinces(res.data || [])).catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (provinceFilter) {
+      const province = provinces.find(p => p.name === provinceFilter)
+      locationService.getDistricts(province?.id).then(res => setDistricts(res.data || [])).catch(() => {})
+    } else {
+      setDistricts([])
+    }
+    setDistrictFilter('')
+    setMunicipalityFilter('')
+    setMunicipalities([])
+  }, [provinceFilter])
+
+  useEffect(() => {
+    if (districtFilter) {
+      const district = districts.find(d => d.name === districtFilter)
+      locationService.getMunicipalities(district?.id).then(res => setMunicipalities(res.data || [])).catch(() => {})
+    } else {
+      setMunicipalities([])
+    }
+    setMunicipalityFilter('')
+  }, [districtFilter])
 
   const fetchUsers = useCallback(async () => {
     setLoading(true)
     try {
       const params = {}
-      if (debouncedSearch) params.search = debouncedSearch
+      if (search) params.search = search
       if (roleFilter) params.role = roleFilter
+      if (provinceFilter) params.province = provinceFilter
+      if (districtFilter) params.district = districtFilter
+      if (municipalityFilter) params.municipality = municipalityFilter
 
       const response = await userService.getUsers(params)
       if (response.success) setUsers(response.users)
@@ -44,11 +74,19 @@ export default function ManageUsers() {
     } finally {
       setLoading(false)
     }
-  }, [debouncedSearch, roleFilter])
+  }, [search, roleFilter, provinceFilter, districtFilter, municipalityFilter])
 
   useEffect(() => {
     fetchUsers()
   }, [fetchUsers])
+
+  const handleClearFilter = () => {
+    setSearch('')
+    setRoleFilter('')
+    setProvinceFilter('')
+    setDistrictFilter('')
+    setMunicipalityFilter('')
+  }
 
   const handleRoleChange = async (userId, role) => {
     setUpdatingId(userId)
@@ -112,6 +150,37 @@ export default function ManageUsers() {
               ))}
             </Select>
           </FormField>
+        </div>
+        <div className="mt-4 grid gap-4 sm:grid-cols-3">
+          <FormField label="Province">
+            <Select value={provinceFilter} onChange={(e) => setProvinceFilter(e.target.value)}>
+              <option value="">All provinces</option>
+              {provinces.map((p) => (
+                <option key={p.id} value={p.name}>{p.name}</option>
+              ))}
+            </Select>
+          </FormField>
+          <FormField label="District">
+            <Select value={districtFilter} onChange={(e) => setDistrictFilter(e.target.value)} disabled={!provinceFilter}>
+              <option value="">All districts</option>
+              {districts.map((d) => (
+                <option key={d.id} value={d.name}>{d.name}</option>
+              ))}
+            </Select>
+          </FormField>
+          <FormField label="Municipality">
+            <Select value={municipalityFilter} onChange={(e) => setMunicipalityFilter(e.target.value)} disabled={!districtFilter}>
+              <option value="">All municipalities</option>
+              {municipalities.map((m) => (
+                <option key={m.id} value={m.name}>{m.name}</option>
+              ))}
+            </Select>
+          </FormField>
+        </div>
+        <div className="mt-4 flex flex-wrap gap-3">
+          <Button variant="outline" size="sm" onClick={handleClearFilter}>
+            Clear Filters
+          </Button>
         </div>
       </Card>
 

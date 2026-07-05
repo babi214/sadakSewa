@@ -38,6 +38,7 @@ const workerLinks = [
 const adminLinks = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { to: '/admin/reports', label: 'Manage Reports' },
+  { to: '/admin/flagged-reports', label: 'Flagged' },
   { to: '/admin/users', label: 'Manage Users' },
 ]
 
@@ -106,7 +107,7 @@ export default function Navbar() {
     const fetch = async () => {
       try {
         const res = await notificationService.getUnreadCount()
-        if (!cancelled) setUnreadCount(res?.unreadCount ?? 0)
+        if (!cancelled) setUnreadCount(res?.unreadCount ?? res?.count ?? 0)
       } catch {}
     }
     fetch()

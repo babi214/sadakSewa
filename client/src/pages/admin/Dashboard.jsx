@@ -92,11 +92,58 @@ export default function AdminDashboard() {
           <Link to="/admin/users">
             <Button variant="outline">Manage Users</Button>
           </Link>
+          <Link to="/admin/flagged-reports">
+            <Button variant="danger" outline>Review Flagged</Button>
+          </Link>
           <Link to="/reports">
             <Button variant="ghost">View Public Reports</Button>
           </Link>
         </div>
       </div>
+
+      {stats.flaggedReports > 0 && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 shadow-card">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-6 w-6 text-red-600" />
+              <div>
+                <h3 className="text-lg font-semibold text-red-700">
+                  Flagged Reports ({stats.flaggedReports})
+                </h3>
+                <p className="text-sm text-red-600">
+                  Reports flagged as potential duplicates requiring review
+                </p>
+              </div>
+            </div>
+            <Link to="/admin/flagged-reports">
+              <Button variant="danger" size="sm">Review All</Button>
+            </Link>
+          </div>
+          {stats.flaggedReportList && stats.flaggedReportList.length > 0 && (
+            <div className="mt-4 space-y-3">
+              {stats.flaggedReportList.map((report) => (
+                <Link key={report._id} to={`/reports/${report._id}`}>
+                  <div className="rounded-xl border border-red-200 bg-white p-4 transition hover:shadow-md">
+                    <p className="font-medium text-secondary">{report.title}</p>
+                    <p className="mt-1 text-sm text-muted">
+                      by {report.reportedBy?.fullName || 'Unknown'} &middot;{' '}
+                      {new Date(report.createdAt).toLocaleDateString()}
+                    </p>
+                    {report.flaggedReason && (
+                      <p className="mt-1 text-xs text-red-500">{report.flaggedReason}</p>
+                    )}
+                    {report.userFlags && report.userFlags.length > 0 && (
+                      <p className="mt-1 text-xs text-muted">
+                        {report.userFlags.length} user{report.userFlags.length > 1 ? 's' : ''} flagged
+                      </p>
+                    )}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <div>
         <div className="mb-6 flex items-center justify-between">

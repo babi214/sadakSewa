@@ -65,8 +65,8 @@ export const reportService = {
     const { data } = await api.get('/reports/my-assigned', { params })
     return data
   },
-  updateReportStatus: async (id, status) => {
-    const { data } = await api.patch(`/reports/${id}/status`, { status })
+  updateReportStatus: async (id, status, rejectionReason) => {
+    const { data } = await api.patch(`/reports/${id}/status`, { status, rejectionReason })
     return data
   },
   assignWorker: async (id, workerId) => {
@@ -81,6 +81,18 @@ export const reportService = {
   updateReport: async (id, reportData, imageUris = []) => {
     const images = await uploadImages(imageUris)
     const { data } = await api.put(`/reports/${id}`, { ...reportData, images })
+    return data
+  },
+  getFlaggedReports: async () => {
+    const { data } = await api.get('/reports/flagged')
+    return data
+  },
+  clearFlag: async (id) => {
+    const { data } = await api.patch(`/reports/${id}/clear-flag`)
+    return data
+  },
+  flagReport: async (id, reason, customReason) => {
+    const { data } = await api.post(`/reports/${id}/flag`, { reason, customReason })
     return data
   },
 }

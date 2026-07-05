@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react'
 import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native'
-import { FileText, Filter, Clock, TrendingUp, CheckCircle2, XCircle, ShieldCheck } from 'lucide-react-native'
+import { AlertCircle, FileText, Filter, Clock, TrendingUp, CheckCircle2, XCircle, ShieldCheck, Flag } from 'lucide-react-native'
 import { useFocusEffect } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
@@ -20,6 +20,7 @@ const STATUS_FILTERS = [
   { key: 'in_progress', label: 'In Progress', icon: TrendingUp },
   { key: 'resolved', label: 'Resolved', icon: CheckCircle2 },
   { key: 'rejected', label: 'Rejected', icon: XCircle },
+  { key: 'flagged', label: 'Flagged', icon: AlertCircle },
 ]
 
 export default function ManageReportsScreen({ navigation }) {
@@ -30,9 +31,14 @@ export default function ManageReportsScreen({ navigation }) {
 
   const fetchReports = useCallback(async (isRefresh = false) => {
     try {
-      const params = { limit: 50 }
-      if (filter !== 'all') params.status = filter
-      const res = await reportService.getAllReports(params)
+      let res
+      if (filter === 'flagged') {
+        res = await reportService.getFlaggedReports()
+      } else {
+        const params = { limit: 50 }
+        if (filter !== 'all') params.status = filter
+        res = await reportService.getAllReports(params)
+      }
       setReports(res?.reports || res?.data || [])
     } catch {
       if (!isRefresh) Toast.show({ type: 'error', text1: 'Failed to load reports' })
@@ -53,6 +59,12 @@ export default function ManageReportsScreen({ navigation }) {
           <StatusBadge status={item.status} size="sm" />
           {item.severity && (
             <View style={[styles.severityDot, { backgroundColor: item.severity === 'high' ? COLORS.danger : item.severity === 'medium' ? COLORS.warning : COLORS.accent }]} />
+          )}
+          {item.flagged && (
+            <View style={styles.flaggedBadge}>
+              <AlertCircle size={12} color={COLORS.danger} />
+              <Text style={styles.flaggedText}>Flagged</Text>
+            </View>
           )}
         </View>
         <Text style={styles.reportTitle} numberOfLines={1}>{item.title}</Text>
@@ -81,6 +93,13 @@ export default function ManageReportsScreen({ navigation }) {
             </TouchableOpacity>
           )
         })}
+        <TouchableOpacity
+          style={styles.flaggedNavChip}
+          onPress={() => navigation.navigate('FlaggedReports')}
+        >
+          <Flag size={14} color={COLORS.danger} />
+          <Text style={styles.flaggedNavText}>Review Flagged</Text>
+        </TouchableOpacity>
       </View>
 
       {loading && !refreshing ? (
@@ -126,6 +145,18 @@ const styles = StyleSheet.create({
   reportMeta: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   metaText: { fontSize: 12, color: COLORS.muted },
   metaDot: { fontSize: 12, color: COLORS.muted },
+  flaggedBadge: {
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+    backgroundColor: COLORS.danger + '18',
+    paddingHorizontal: 6, paddingVertical: 2, borderRadius: RADIUS.sm,
+  },
+  flaggedText: { fontSize: 11, fontWeight: '600', color: COLORS.danger },
+  flaggedNavChip: {
+    flexDirection: 'row', alignItems: 'center', gap: 4,
+    paddingHorizontal: 12, paddingVertical: 8, borderRadius: RADIUS.full,
+    backgroundColor: COLORS.danger + '12', borderWidth: 1, borderColor: COLORS.danger + '30',
+  },
+  flaggedNavText: { fontSize: 12, fontWeight: '600', color: COLORS.danger },
   empty: { alignItems: 'center', paddingTop: 60 },
   emptyTitle: { fontSize: 18, fontWeight: '700', color: COLORS.mutedText, marginTop: 16 },
   emptyDesc: { fontSize: 14, color: COLORS.muted, marginTop: 4 },

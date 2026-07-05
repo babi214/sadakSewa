@@ -27,6 +27,7 @@ import NearbyReports from '../pages/citizen/NearbyReports'
 import WorkerDashboard from '../pages/worker/Dashboard'
 import AssignedReports from '../pages/worker/AssignedReports'
 import AdminDashboard from '../pages/admin/Dashboard'
+import FlaggedReports from '../pages/admin/FlaggedReports'
 import ManageReports from '../pages/admin/ManageReports'
 import ManageUsers from '../pages/admin/ManageUsers'
 
@@ -115,6 +116,7 @@ export default function AppRoutes() {
         {/* Admin */}
         <Route path="admin/dashboard" element={<RoleRoute allowedRoles={['admin']}><AdminDashboard /></RoleRoute>} />
         <Route path="admin/reports" element={<RoleRoute allowedRoles={['admin']}><ManageReports /></RoleRoute>} />
+        <Route path="admin/flagged-reports" element={<RoleRoute allowedRoles={['admin']}><FlaggedReports /></RoleRoute>} />
         <Route path="admin/users" element={<RoleRoute allowedRoles={['admin']}><ManageUsers /></RoleRoute>} />
         <Route path="admin/profile" element={<RoleRoute allowedRoles={['admin']}><Profile /></RoleRoute>} />
       </Route>

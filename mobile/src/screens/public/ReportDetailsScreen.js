@@ -1,6 +1,6 @@
 import React, { useState, useContext, useCallback, useRef } from 'react'
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Alert, FlatList, Dimensions, Modal, Share, Linking } from 'react-native'
-import { ChevronLeft, MapPin, Calendar, User, ArrowUp, Share2, Activity, Flag, Edit3, Trash2, Clock, CheckCircle2, X, ChevronDown, ChevronUp, Camera } from 'lucide-react-native'
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Alert, FlatList, Dimensions, Modal, Share, Linking, TextInput } from 'react-native'
+import { AlertCircle, ChevronLeft, MapPin, Calendar, User, ArrowUp, Share2, Activity, Flag, Edit3, Trash2, Clock, CheckCircle2, X, ChevronDown, ChevronUp, Camera } from 'lucide-react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MapView, { Marker } from 'react-native-maps'
 import Toast from 'react-native-toast-message'
@@ -127,6 +127,12 @@ export default function ReportDetailsScreen({ route, navigation }) {
   const [updating, setUpdating] = useState(false)
   const [showAiSection, setShowAiSection] = useState(false)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
+  const [flagModalVisible, setFlagModalVisible] = useState(false)
+  const [rejectionReason, setRejectionReason] = useState('')
+  const [selectedReject, setSelectedReject] = useState(false)
+  const [flagReason, setFlagReason] = useState('')
+  const [flagCustom, setFlagCustom] = useState('')
+  const [flagLoading, setFlagLoading] = useState(false)
 
   const fetchAll = useCallback(async () => {
     try {
@@ -195,11 +201,13 @@ export default function ReportDetailsScreen({ route, navigation }) {
     } catch {}
   }
 
-  const handleStatusUpdate = async (newStatus) => {
+  const handleStatusUpdate = async (newStatus, reason) => {
     setUpdating(true)
     try {
-      await reportService.updateReportStatus(reportId, newStatus)
+      await reportService.updateReportStatus(reportId, newStatus, reason || undefined)
       setShowStatusModal(false)
+      setRejectionReason('')
+      setSelectedReject(false)
       fetchAll()
       Toast.show({ type: 'success', text1: 'Status updated' })
     } catch (err) {
@@ -232,6 +240,25 @@ export default function ReportDetailsScreen({ route, navigation }) {
     }
   }
 
+  const handleFlagReport = async () => {
+    if (!flagReason) return
+    setFlagLoading(true)
+    try {
+      const res = await reportService.flagReport(reportId, flagReason, flagCustom)
+      if (res.success) {
+        Toast.show({ type: 'success', text1: res.message })
+        setFlagModalVisible(false)
+        setFlagReason('')
+        setFlagCustom('')
+        fetchAll()
+      }
+    } catch (err) {
+      Toast.show({ type: 'error', text1: getApiErrorMessage(err, 'Failed to report') })
+    } finally {
+      setFlagLoading(false)
+    }
+  }
+
   const getCoords = () => {
     const coords = report?.location?.coordinates
     if (!coords || coords.length < 2) return null
@@ -248,7 +275,9 @@ export default function ReportDetailsScreen({ route, navigation }) {
     })
   }
 
-  const canEdit = user && (user._id === report?.reportedBy?._id || user._id === report?.reportedBy) && report?.status === 'pending'
+  const isOwnerMobile = user && (user._id === report?.reportedBy?._id || user._id === report?.reportedBy)
+  const canEdit = isOwnerMobile && report?.status === 'pending'
+  const canDeleteMobile = isOwnerMobile && (report?.status === 'pending' || report?.status === 'rejected')
   const isAdmin = user?.role === 'admin'
   const statusOptions = isAdmin
     ? (report?.status === 'pending' ? ['verified', 'rejected'] : [])
@@ -262,6 +291,7 @@ export default function ReportDetailsScreen({ route, navigation }) {
   const locationLabel = report?.locationName || report?.location?.address || ''
   const upvoteCount = report?.upvoteCount ?? report?.upvotes?.length ?? 0
   const hasUpvoted = report?.upvotes?.some(uid => String(uid?._id || uid) === String(user?._id))
+  const hasFlagged = report?.userFlags?.some(f => String(f.user?._id || f.user) === String(user?._id))
 
   const onViewableItemsChanged = useCallback(({ viewableItems }) => {
     if (viewableItems?.length > 0) {
@@ -452,6 +482,16 @@ export default function ReportDetailsScreen({ route, navigation }) {
                 <Text style={styles.metaLabel}>Reported by</Text>
                 <Text style={styles.metaValue}>{report.reportedBy?.fullName || 'Anonymous'}</Text>
               </View>
+              {report.rejectionReason && report.status === 'rejected' && (
+                <>
+                  <View style={styles.metaDivider} />
+                  <View style={styles.metaRow}>
+                    <AlertCircle size={16} color={COLORS.danger} />
+                    <Text style={[styles.metaLabel, { color: COLORS.danger }]}>Rejected</Text>
+                    <Text style={[styles.metaValue, { color: COLORS.danger }]}>{report.rejectionReason}</Text>
+                  </View>
+                </>
+              )}
               {report.assignedWorker && (
                 <>
                   <View style={styles.metaDivider} />
@@ -495,6 +535,24 @@ export default function ReportDetailsScreen({ route, navigation }) {
               </Button>
             )}
 
+            {user && !isOwnerMobile && !hasFlagged && user?.role !== 'admin' && (
+              <Button
+                variant="danger"
+                outline
+                onPress={() => setFlagModalVisible(true)}
+                style={styles.flagBtn}
+              >
+                <Flag size={16} color={COLORS.danger} /> Report this issue
+              </Button>
+            )}
+
+            {user && hasFlagged && user?.role !== 'admin' && (
+              <View style={styles.flaggedBadge}>
+                <Flag size={14} color={COLORS.danger} />
+                <Text style={styles.flaggedText}>You reported this issue</Text>
+              </View>
+            )}
+
             {(canManageStatus || canAssign) && (
               <View style={styles.manageRow}>
                 {canManageStatus && (
@@ -521,24 +579,24 @@ export default function ReportDetailsScreen({ route, navigation }) {
             )}
 
             {canEdit && (
-              <View style={styles.ownerActions}>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onPress={() => navigation.navigate('EditReport', { reportId })}
-                  style={{ flex: 1 }}
-                >
-                  <Edit3 size={16} color={COLORS.muted} /> Edit
-                </Button>
-                <Button
-                  variant="danger"
-                  size="sm"
-                  onPress={handleDelete}
-                  style={{ flex: 1 }}
-                >
-                  <Trash2 size={16} color={COLORS.white} /> Delete
-                </Button>
-              </View>
+              <Button
+                variant="outline"
+                size="sm"
+                onPress={() => navigation.navigate('EditReport', { reportId })}
+                style={{ flex: 1, marginTop: SPACING.md }}
+              >
+                <Edit3 size={16} color={COLORS.muted} /> Edit
+              </Button>
+            )}
+            {canDeleteMobile && (
+              <Button
+                variant="danger"
+                size="sm"
+                onPress={handleDelete}
+                style={{ flex: 1, marginTop: SPACING.md }}
+              >
+                <Trash2 size={16} color={COLORS.white} /> Delete
+              </Button>
             )}
 
             {history.length > 0 && (
@@ -579,35 +637,78 @@ export default function ReportDetailsScreen({ route, navigation }) {
           onClose={() => setSelectedImage(null)}
         />
 
-        <Modal visible={showStatusModal} transparent animationType="slide" onRequestClose={() => setShowStatusModal(false)}>
+        <Modal visible={showStatusModal} transparent animationType="slide" onRequestClose={() => { setShowStatusModal(false); setRejectionReason(''); setSelectedReject(false) }}>
           <View style={styles.modalOverlay}>
             <View style={styles.modalSheet}>
               <View style={styles.modalSheetHeader}>
-                <Text style={styles.modalTitle}>Update Status</Text>
-                <TouchableOpacity onPress={() => setShowStatusModal(false)}>
+                <Text style={styles.modalTitle}>
+                  {selectedReject ? 'Rejection Reason' : 'Update Status'}
+                </Text>
+                <TouchableOpacity onPress={() => { setShowStatusModal(false); setRejectionReason(''); setSelectedReject(false) }}>
                   <X size={22} color={COLORS.muted} />
                 </TouchableOpacity>
               </View>
-              <ScrollView>
-                {statusOptions.map(s => {
-                  const active = s === report.status
-                  const c = STATUS_COLORS[s] || COLORS.muted
-                  return (
-                    <TouchableOpacity
-                      key={s}
-                      style={[styles.modalOption, active && { backgroundColor: c + '10' }]}
-                      onPress={() => handleStatusUpdate(s)}
-                      disabled={active || updating}
+              {selectedReject ? (
+                <View>
+                  <Text style={{ fontSize: 13, color: COLORS.mutedText, marginBottom: 12 }}>
+                    Explain why this report is being rejected
+                  </Text>
+                  <TextInput
+                    placeholder="Reason for rejection..."
+                    placeholderTextColor={COLORS.muted}
+                    value={rejectionReason}
+                    onChangeText={setRejectionReason}
+                    style={styles.rejectionInput}
+                    multiline
+                    maxLength={500}
+                  />
+                  <View style={{ flexDirection: 'row', gap: 10, marginTop: 16 }}>
+                    <Button
+                      variant="outline"
+                      style={{ flex: 1 }}
+                      onPress={() => { setSelectedReject(false); setRejectionReason('') }}
                     >
-                      <View style={[styles.modalOptionDot, { backgroundColor: c }]} />
-                      <Text style={[styles.modalOptionText, active && { color: c, fontWeight: '700' }]}>
-                        {STATUS_LABELS[s] || s.split('_').join(' ')}
-                      </Text>
-                      {active && <CheckCircle2 size={18} color={c} />}
-                    </TouchableOpacity>
-                  )
-                })}
-              </ScrollView>
+                      Back
+                    </Button>
+                    <Button
+                      variant="danger"
+                      style={{ flex: 1 }}
+                      onPress={() => handleStatusUpdate('rejected', rejectionReason)}
+                      loading={updating}
+                      disabled={!rejectionReason.trim()}
+                    >
+                      Reject
+                    </Button>
+                  </View>
+                </View>
+              ) : (
+                <ScrollView>
+                  {statusOptions.map(s => {
+                    const active = s === report.status
+                    const c = STATUS_COLORS[s] || COLORS.muted
+                    return (
+                      <TouchableOpacity
+                        key={s}
+                        style={[styles.modalOption, active && { backgroundColor: c + '10' }]}
+                        onPress={() => {
+                          if (s === 'rejected') {
+                            setSelectedReject(true)
+                          } else {
+                            handleStatusUpdate(s)
+                          }
+                        }}
+                        disabled={active || updating}
+                      >
+                        <View style={[styles.modalOptionDot, { backgroundColor: c }]} />
+                        <Text style={[styles.modalOptionText, active && { color: c, fontWeight: '700' }]}>
+                          {STATUS_LABELS[s] || s.split('_').join(' ')}
+                        </Text>
+                        {active && <CheckCircle2 size={18} color={c} />}
+                      </TouchableOpacity>
+                    )
+                  })}
+                </ScrollView>
+              )}
             </View>
           </View>
         </Modal>
@@ -653,6 +754,64 @@ export default function ReportDetailsScreen({ route, navigation }) {
                   ))}
                 </ScrollView>
               )}
+            </View>
+          </View>
+        </Modal>
+        <Modal visible={flagModalVisible} transparent animationType="slide" onRequestClose={() => setFlagModalVisible(false)}>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalSheet}>
+              <View style={styles.modalSheetHeader}>
+                <Text style={styles.modalTitle}>Report this issue</Text>
+                <TouchableOpacity onPress={() => { setFlagModalVisible(false); setFlagReason(''); setFlagCustom('') }}>
+                  <X size={22} color={COLORS.muted} />
+                </TouchableOpacity>
+              </View>
+              <Text style={{ fontSize: 13, color: COLORS.mutedText, marginBottom: 16 }}>
+                Why are you reporting this report?
+              </Text>
+              <ScrollView>
+                {['fake', 'duplicate', 'inappropriate', 'wrong_location', 'other'].map((r) => (
+                  <TouchableOpacity
+                    key={r}
+                    style={[styles.modalOption, flagReason === r && { backgroundColor: COLORS.danger + '10' }]}
+                    onPress={() => setFlagReason(r)}
+                  >
+                    <View style={[styles.radioOuter, flagReason === r && { borderColor: COLORS.danger }]}>
+                      {flagReason === r && <View style={styles.radioInner} />}
+                    </View>
+                    <Text style={[styles.modalOptionText, flagReason === r && { color: COLORS.danger }]}>
+                      {r.split('_').join(' ')}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+                {flagReason === 'other' && (
+                  <TextInput
+                    placeholder="Describe the issue..."
+                    placeholderTextColor={COLORS.muted}
+                    value={flagCustom}
+                    onChangeText={setFlagCustom}
+                    style={styles.flagInput}
+                  />
+                )}
+              </ScrollView>
+              <View style={{ flexDirection: 'row', gap: 10, marginTop: 16 }}>
+                <Button
+                  variant="outline"
+                  style={{ flex: 1 }}
+                  onPress={() => { setFlagModalVisible(false); setFlagReason(''); setFlagCustom('') }}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  variant="danger"
+                  style={{ flex: 1 }}
+                  onPress={handleFlagReport}
+                  loading={flagLoading}
+                  disabled={!flagReason}
+                >
+                  Submit
+                </Button>
+              </View>
             </View>
           </View>
         </Modal>
@@ -1128,5 +1287,56 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: COLORS.muted,
     marginTop: 2,
+  },
+  flagBtn: {
+    marginTop: SPACING.lg,
+  },
+  flaggedBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    marginTop: SPACING.md,
+    padding: 12,
+    borderRadius: RADIUS.md,
+    backgroundColor: COLORS.danger + '10',
+  },
+  flaggedText: {
+    fontSize: 13,
+    color: COLORS.danger,
+    fontWeight: '500',
+  },
+  radioOuter: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    borderWidth: 2,
+    borderColor: COLORS.border,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  radioInner: {
+    width: 10,
+    height: 10,
+    borderRadius: 5,
+    backgroundColor: COLORS.danger,
+  },
+  flagInput: {
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    padding: 12,
+    fontSize: 14,
+    color: COLORS.secondary,
+    marginTop: 8,
+  },
+  rejectionInput: {
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    borderRadius: RADIUS.md,
+    padding: 12,
+    fontSize: 14,
+    color: COLORS.secondary,
+    minHeight: 80,
+    textAlignVertical: 'top',
   },
 })

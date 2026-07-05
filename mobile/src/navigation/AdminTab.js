@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { LayoutDashboard, FileText, Users, User } from 'lucide-react-native'
 import AdminHomeScreen from '../screens/admin/HomeScreen'
 import ManageReportsScreen from '../screens/admin/ManageReportsScreen'
+import FlaggedReportsScreen from '../screens/admin/FlaggedReportsScreen'
 import ManageUsersScreen from '../screens/admin/ManageUsersScreen'
 import ProfileScreen from '../screens/citizen/ProfileScreen'
 import ReportDetailsScreen from '../screens/public/ReportDetailsScreen'
@@ -33,6 +34,7 @@ function AdminReportsStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
       <Stack.Screen name="ManageReportsHome" component={ManageReportsScreen} />
+      <Stack.Screen name="FlaggedReports" component={FlaggedReportsScreen} />
       <Stack.Screen name="ReportDetails" component={ReportDetailsScreen} />
       <Stack.Screen name="EditReport" component={EditReportScreen} />
     </Stack.Navigator>

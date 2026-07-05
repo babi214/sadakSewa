@@ -3,11 +3,30 @@ const User = require("../models/userModel");
 const ReportHistory = require("../models/reportHistoryModel");
 const cloudinary = require("../config/cloudinary");
 const { createNotification } = require("./notificationController");
+const Notification = require("../models/notificationModel");
 
 const VALID_STATUSES = ["pending", "verified", "in_progress", "resolved", "rejected"];
 
 const logHistory = async (reportId, action, performedBy, details = {}) => {
   await ReportHistory.create({ report: reportId, action, performedBy, details });
+};
+
+const notifyAdmins = async (title, message, reportId = null) => {
+  try {
+    const admins = await User.find({ role: "admin" }).select("_id");
+    const notifications = admins.map((a) => ({
+      user: a._id,
+      title,
+      message,
+      type: "system",
+      report: reportId,
+    }));
+    if (notifications.length > 0) {
+      await Notification.insertMany(notifications);
+    }
+  } catch (error) {
+    console.error("Failed to notify admins:", error.message);
+  }
 };
 
 const merge = (left, right, compareFn) => {
@@ -81,6 +100,43 @@ const createReport = async (req, res) => {
       });
     }
 
+    // --- Anti-spam: rate limit ---
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const recentCount = await Report.countDocuments({
+      reportedBy: req.user._id,
+      createdAt: { $gte: oneHourAgo },
+    });
+    if (recentCount >= 3) {
+      return res.status(429).json({
+        success: false,
+        message: "You can only submit 3 reports per hour. Please wait before submitting another.",
+      });
+    }
+
+    const lng = Number(longitude);
+    const lat = Number(latitude);
+
+    // --- Anti-spam: duplicate check (same coordinates ±50m, same user, last 30 days) ---
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const duplicate = await Report.findOne({
+      reportedBy: req.user._id,
+      createdAt: { $gte: thirtyDaysAgo },
+      location: {
+        $nearSphere: {
+          $geometry: { type: "Point", coordinates: [lng, lat] },
+          $maxDistance: 50,
+        },
+      },
+    });
+
+    let flagged = false;
+    let flaggedReason = null;
+
+    if (duplicate) {
+      flagged = true;
+      flaggedReason = "Possible duplicate — similar location to a recent report";
+    }
+
     const report = await Report.create({
       title,
       description,
@@ -92,19 +148,36 @@ const createReport = async (req, res) => {
       locationName,
       images: images || [],
       reportedBy: req.user._id,
+      flagged,
+      flaggedReason,
       location: {
         type: "Point",
-        coordinates: [Number(longitude), Number(latitude)],
+        coordinates: [lng, lat],
       },
     });
 
-    await logHistory(report._id, "created", req.user._id, { title: report.title });
+    if (flagged) {
+      createNotification(
+        req.user._id,
+        "Report Flagged",
+        `Your report "${report.title}" has been flagged as a possible duplicate and will be reviewed by an admin.`,
+        "report_update",
+        report._id
+      );
+      notifyAdmins(
+        "Report Flagged",
+        `Report "${report.title}" was flagged as a possible duplicate and needs review.`,
+        report._id
+      );
+    }
+
+    await logHistory(report._id, "created", req.user._id, { title: report.title, flagged });
 
     createNotification(req.user._id, 'Report Created', `Your report "${report.title}" has been submitted successfully.`, 'report_update', report._id);
 
     res.status(201).json({
       success: true,
-      message: "Report created successfully",
+      message: flagged ? "Report submitted but flagged for review" : "Report created successfully",
       report,
     });
   } catch (error) {
@@ -254,12 +327,19 @@ const deleteReport = async (req, res) => {
 
 const updateReportStatus = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status, rejectionReason } = req.body;
 
     if (!status || !VALID_STATUSES.includes(status)) {
       return res.status(400).json({
         success: false,
         message: `Status must be one of: ${VALID_STATUSES.join(", ")}`,
+      });
+    }
+
+    if (status === "rejected" && (!rejectionReason || !rejectionReason.trim())) {
+      return res.status(400).json({
+        success: false,
+        message: "A rejection reason is required when rejecting a report",
       });
     }
 
@@ -322,14 +402,28 @@ const updateReportStatus = async (req, res) => {
 
     const previousStatus = report.status;
     report.status = status;
+
+    if (status === "rejected") {
+      report.rejectionReason = rejectionReason.trim();
+      report.rejectedAt = new Date();
+    } else {
+      report.rejectionReason = null;
+      report.rejectedAt = null;
+    }
+
     await report.save();
 
     await logHistory(report._id, "status_changed", req.user._id, {
       from: previousStatus,
       to: status,
+      ...(status === "rejected" && { rejectionReason: rejectionReason.trim() }),
     });
 
-    createNotification(report.reportedBy, 'Status Updated', `Your report "${report.title}" status changed to ${status.replace('_', ' ')}.`, 'status_change', report._id);
+    const notifMessage = status === "rejected"
+      ? `Your report "${report.title}" was rejected. Reason: ${rejectionReason.trim()}`
+      : `Your report "${report.title}" status changed to ${status.replace('_', ' ')}.`;
+
+    createNotification(report.reportedBy, 'Status Updated', notifMessage, 'status_change', report._id);
 
     res.status(200).json({
       success: true,
@@ -699,9 +793,11 @@ const getAdminDashboard = async (req, res) => {
       inProgress,
       resolved,
       rejected,
+      flaggedReports,
       totalCitizens,
       totalWorkers,
       totalAdmins,
+      flaggedReportList,
       recentReports,
     ] = await Promise.all([
       Report.countDocuments(),
@@ -710,9 +806,14 @@ const getAdminDashboard = async (req, res) => {
       Report.countDocuments({ status: "in_progress" }),
       Report.countDocuments({ status: "resolved" }),
       Report.countDocuments({ status: "rejected" }),
+      Report.countDocuments({ flagged: true }),
       User.countDocuments({ role: "citizen" }),
       User.countDocuments({ role: "worker" }),
       User.countDocuments({ role: "admin" }),
+      Report.find({ flagged: true })
+        .populate("reportedBy", "fullName email")
+        .sort({ createdAt: -1 })
+        .limit(10),
       Report.find()
         .populate("reportedBy", "fullName email")
         .sort({ createdAt: -1 })
@@ -727,11 +828,111 @@ const getAdminDashboard = async (req, res) => {
         inProgress,
         resolved,
         rejected,
+        flaggedReports,
         totalCitizens,
         totalWorkers,
         totalAdmins,
+        flaggedReportList,
         recentReports,
       },
+    });
+  } catch (error) {
+    const isDev = process.env.NODE_ENV === "development";
+    res.status(500).json({
+      success: false,
+      message: isDev ? error.message : "Internal server error",
+    });
+  }
+};
+
+const getFlaggedReports = async (req, res) => {
+  try {
+    const reports = await Report.find({ flagged: true })
+      .populate("reportedBy", "fullName email profilePicture")
+      .populate("userFlags.user", "fullName email")
+      .sort({ createdAt: -1 });
+    res.status(200).json({
+      success: true,
+      count: reports.length,
+      reports,
+    });
+  } catch (error) {
+    const isDev = process.env.NODE_ENV === "development";
+    res.status(500).json({
+      success: false,
+      message: isDev ? error.message : "Internal server error",
+    });
+  }
+};
+
+const clearFlag = async (req, res) => {
+  try {
+    const report = await Report.findByIdAndUpdate(
+      req.params.id,
+      { flagged: false, flaggedReason: null },
+      { new: true }
+    );
+    if (!report) {
+      return res.status(404).json({ success: false, message: "Report not found" });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Flag cleared",
+      report,
+    });
+  } catch (error) {
+    const isDev = process.env.NODE_ENV === "development";
+    res.status(500).json({
+      success: false,
+      message: isDev ? error.message : "Internal server error",
+    });
+  }
+};
+
+const flagReport = async (req, res) => {
+  try {
+    const { reason, customReason } = req.body;
+    if (!reason) {
+      return res.status(400).json({ success: false, message: "Reason is required" });
+    }
+
+    const validReasons = ["fake", "duplicate", "inappropriate", "wrong_location", "other"];
+    if (!validReasons.includes(reason)) {
+      return res.status(400).json({ success: false, message: "Invalid reason" });
+    }
+
+    const report = await Report.findById(req.params.id);
+    if (!report) {
+      return res.status(404).json({ success: false, message: "Report not found" });
+    }
+
+    const alreadyFlagged = report.userFlags.find(
+      (f) => f.user.toString() === req.user._id.toString()
+    );
+    if (alreadyFlagged) {
+      return res.status(400).json({ success: false, message: "You have already reported this report" });
+    }
+
+    report.userFlags.push({
+      user: req.user._id,
+      reason,
+      customReason: reason === "other" ? customReason || null : null,
+    });
+
+    report.flagged = true;
+    report.flaggedReason = `Reported by user as: ${reason}${reason === "other" && customReason ? ` - ${customReason}` : ""}`;
+
+    await report.save();
+
+    notifyAdmins(
+      "Report Flagged by User",
+      `Report "${report.title}" was flagged by ${req.user.fullName || 'a user'} as ${reason}.`,
+      report._id
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Report has been flagged for admin review",
     });
   } catch (error) {
     const isDev = process.env.NODE_ENV === "development";
@@ -877,4 +1078,7 @@ module.exports = {
   getReportHistory,
   getPublicStats,
   getAvailableWorkers,
+  getFlaggedReports,
+  clearFlag,
+  flagReport,
 };

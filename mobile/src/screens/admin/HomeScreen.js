@@ -11,6 +11,7 @@ import StatusBadge from '../../components/StatusBadge'
 import { SkeletonList } from '../../components/SkeletonLoader'
 import { reportService } from '../../services/reportService'
 import { userService } from '../../services/userService'
+import { notificationService } from '../../services/notificationService'
 import { AuthContext } from '../../context/AuthContext'
 import { COLORS, GRADIENTS, RADIUS, SHADOWS, SPACING } from '../../constants'
 
@@ -21,6 +22,11 @@ export default function AdminHomeScreen({ navigation }) {
   const [recentReports, setRecentReports] = useState([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
+  const [unreadCount, setUnreadCount] = useState(0)
+
+  useFocusEffect(useCallback(() => {
+    notificationService.getUnreadCount().then(res => setUnreadCount(res?.unreadCount ?? res?.count ?? 0)).catch(() => {})
+  }, []))
 
   const fetchData = useCallback(async (isRefresh = false) => {
     try {
@@ -90,6 +96,7 @@ export default function AdminHomeScreen({ navigation }) {
             <View style={styles.headerIcons}>
               <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('Notifications')}>
                 <Bell size={20} color="#FFF" />
+                {unreadCount > 0 && <View style={styles.badgeDot} />}
               </TouchableOpacity>
               <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('Settings')}>
                 <Settings size={20} color="#FFF" />
@@ -198,6 +205,12 @@ const styles = StyleSheet.create({
     width: 40, height: 40, borderRadius: RADIUS.md,
     backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center', justifyContent: 'center',
+  },
+  badgeDot: {
+    position: 'absolute', top: 6, right: 6,
+    width: 8, height: 8, borderRadius: 4,
+    backgroundColor: '#FF4444',
+    borderWidth: 1.5, borderColor: COLORS.primary,
   },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', padding: 16 },
   statCardWrap: { width: '48%', marginBottom: 12 },
