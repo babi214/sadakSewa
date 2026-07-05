@@ -308,7 +308,18 @@ export default function ReportRoadScreen() {
         navigation.navigate('Map')
       }
     } catch (err) {
-      Toast.show({ type: 'error', text1: getApiErrorMessage(err, 'Failed to submit report') })
+      if (err.response?.status === 409) {
+        Alert.alert(
+          'Similar Report Found',
+          err.response.data.message,
+          [
+            { text: 'View Existing', onPress: () => navigation.navigate('ReportDetails', { reportId: err.response.data.similarReportId }) },
+            { text: 'Got it', style: 'cancel' },
+          ]
+        )
+      } else {
+        Toast.show({ type: 'error', text1: getApiErrorMessage(err, 'Failed to submit report') })
+      }
     } finally {
       setSubmitting(false)
     }

@@ -119,7 +119,7 @@ const createReport = async (req, res) => {
 
     // --- Anti-spam: duplicate check (same coordinates ±50m, same user, last 30 days) ---
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-    const duplicate = await Report.findOne({
+    const geoDuplicate = await Report.findOne({
       reportedBy: req.user._id,
       createdAt: { $gte: thirtyDaysAgo },
       location: {
@@ -128,37 +128,36 @@ const createReport = async (req, res) => {
           $maxDistance: 50,
         },
       },
-    });
+    }).select("title");
 
-    let flagged = false;
-    let flaggedReason = null;
-
-    if (duplicate) {
-      flagged = true;
-      flaggedReason = "Possible duplicate — similar location to a recent report";
+    if (geoDuplicate) {
+      return res.status(409).json({
+        success: false,
+        message: `A report about "${geoDuplicate.title}" has already been submitted from this location. Please check the map for existing reports.`,
+        similarReportId: geoDuplicate._id,
+      });
     }
 
     // --- Anti-spam: text similarity check (same category/municipality, last 30 days) ---
-    if (!flagged) {
-      const textCandidates = await Report.find({
-        _id: { $ne: duplicate?._id },
-        category,
-        municipality,
-        createdAt: { $gte: thirtyDaysAgo },
-      }).select("title description").lean();
+    const textCandidates = await Report.find({
+      category,
+      municipality,
+      createdAt: { $gte: thirtyDaysAgo },
+    }).select("title description").lean();
 
-      const THRESHOLD = 0.7;
+    const THRESHOLD = 0.7;
 
-      for (const candidate of textCandidates) {
-        const body = `${title} ${description}`;
-        const candidateBody = `${candidate.title} ${candidate.description}`;
-        const titleSim = cosineSimilarity(title, candidate.title);
-        const bodySim = cosineSimilarity(body, candidateBody);
-        if (titleSim > THRESHOLD || bodySim > THRESHOLD) {
-          flagged = true;
-          flaggedReason = `Possible duplicate — similar text to report ${candidate._id}`;
-          break;
-        }
+    for (const candidate of textCandidates) {
+      const body = `${title} ${description}`;
+      const candidateBody = `${candidate.title} ${candidate.description}`;
+      const titleSim = cosineSimilarity(title, candidate.title);
+      const bodySim = cosineSimilarity(body, candidateBody);
+      if (titleSim > THRESHOLD || bodySim > THRESHOLD) {
+        return res.status(409).json({
+          success: false,
+          message: `A similar report about "${candidate.title}" has already been submitted in this area. Please check the map for existing reports.`,
+          similarReportId: candidate._id,
+        });
       }
     }
 
@@ -173,36 +172,19 @@ const createReport = async (req, res) => {
       locationName,
       images: images || [],
       reportedBy: req.user._id,
-      flagged,
-      flaggedReason,
       location: {
         type: "Point",
         coordinates: [lng, lat],
       },
     });
 
-    if (flagged) {
-      createNotification(
-        req.user._id,
-        "Report Flagged",
-        `Your report "${report.title}" has been flagged as a possible duplicate and will be reviewed by an admin.`,
-        "report_update",
-        report._id
-      );
-      notifyAdmins(
-        "Report Flagged",
-        `Report "${report.title}" was flagged as a possible duplicate and needs review.`,
-        report._id
-      );
-    }
-
-    await logHistory(report._id, "created", req.user._id, { title: report.title, flagged });
+    await logHistory(report._id, "created", req.user._id, { title: report.title });
 
     createNotification(req.user._id, 'Report Created', `Your report "${report.title}" has been submitted successfully.`, 'report_update', report._id);
 
     res.status(201).json({
       success: true,
-      message: flagged ? "Report submitted but flagged for review" : "Report created successfully",
+      message: "Report created successfully",
       report,
     });
   } catch (error) {

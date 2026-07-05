@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Send, Scan, XCircle, CheckCircle2, MapPin } from 'lucide-react'
+import { ArrowLeft, Send, Scan, XCircle, CheckCircle2, MapPin, AlertTriangle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import * as exifr from 'exifr'
 import Button from '../../components/common/Button'
@@ -8,6 +8,7 @@ import Card from '../../components/common/Card'
 import { FormField, Input, Select, Textarea } from '../../components/common/Input'
 import ImageUploader from '../../components/report/ImageUploader'
 import LocationPicker from '../../components/report/LocationPicker'
+import Modal from '../../components/common/Modal'
 import { useAuth } from '../../hooks/useAuth'
 import { reportService } from '../../services/reportService'
 import { aiService } from '../../services/aiService'
@@ -51,6 +52,7 @@ export default function CreateReport() {
   const [municipalities, setMunicipalities] = useState([])
   const [selectedProvinceId, setSelectedProvinceId] = useState('')
   const [selectedDistrictId, setSelectedDistrictId] = useState('')
+  const [duplicateDlg, setDuplicateDlg] = useState({ isOpen: false, title: '', message: '', similarReportId: '' })
 
   useEffect(() => {
     api.get('/locations/provinces').then(({ data }) => {
@@ -223,7 +225,16 @@ export default function CreateReport() {
         navigate('/citizen/reports')
       }
     } catch (error) {
-      toast.error(getApiErrorMessage(error, 'Failed to submit report'))
+      if (error.response?.status === 409) {
+        setDuplicateDlg({
+          isOpen: true,
+          title: 'Similar Report Found',
+          message: error.response.data.message,
+          similarReportId: error.response.data.similarReportId || '',
+        })
+      } else {
+        toast.error(getApiErrorMessage(error, 'Failed to submit report'))
+      }
     } finally {
       setIsSubmitting(false)
     }
@@ -465,6 +476,36 @@ export default function CreateReport() {
           </Link>
         </div>
       </form>
+
+      <Modal
+        isOpen={duplicateDlg.isOpen}
+        onClose={() => setDuplicateDlg({ ...duplicateDlg, isOpen: false })}
+        title={duplicateDlg.title}
+        size="sm"
+      >
+        <div className="flex flex-col items-center text-center gap-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-100">
+            <AlertTriangle className="h-7 w-7 text-amber-600" />
+          </div>
+          <p className="text-sm text-muted">{duplicateDlg.message}</p>
+          {duplicateDlg.similarReportId && (
+            <Link
+              to={`/reports/${duplicateDlg.similarReportId}`}
+              className="text-sm font-medium text-primary hover:text-primary-dark underline"
+              onClick={() => setDuplicateDlg({ ...duplicateDlg, isOpen: false })}
+            >
+              View existing report
+            </Link>
+          )}
+          <Button
+            variant="outline"
+            onClick={() => setDuplicateDlg({ ...duplicateDlg, isOpen: false })}
+            className="min-w-[120px]"
+          >
+            Got it
+          </Button>
+        </div>
+      </Modal>
     </div>
   )
 }
