@@ -1,8 +1,8 @@
 import React, { useState, useContext, useRef, useEffect } from 'react'
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Animated, KeyboardAvoidingView, Platform } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Animated, KeyboardAvoidingView, Platform, Image } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
-import { User, Mail, Lock, Eye, EyeOff, Phone, MapPin, ChevronDown, Zap } from 'lucide-react-native'
+import { User, Mail, Lock, Eye, EyeOff, Phone, MapPin, ChevronDown } from 'lucide-react-native'
 import Toast from 'react-native-toast-message'
 import { FormField, Input } from '../../components/Input'
 import Button from '../../components/Button'
@@ -25,6 +25,7 @@ export default function RegisterScreen({ navigation }) {
   })
   const [errors, setErrors] = useState({})
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [showProvincePicker, setShowProvincePicker] = useState(false)
   const [showDistrictPicker, setShowDistrictPicker] = useState(false)
   const [showMunicipalityPicker, setShowMunicipalityPicker] = useState(false)
@@ -167,7 +168,11 @@ export default function RegisterScreen({ navigation }) {
                 style={styles.logoGlow}
               >
                 <View style={styles.logoInner}>
-                  <Zap size={34} color={COLORS.white} />
+                  <Image
+                    source={require('../../../assets/logoSadakSewa.png')}
+                    style={styles.logoImage}
+                    resizeMode="contain"
+                  />
                 </View>
               </LinearGradient>
               <Text style={styles.brandName}>Join SadakSewa</Text>
@@ -243,10 +248,21 @@ export default function RegisterScreen({ navigation }) {
                     value={form.confirmPassword}
                     onChangeText={v => handleChange('confirmPassword', v)}
                     placeholder="Re-enter your password"
-                    secureTextEntry
+                    secureTextEntry={!showConfirmPassword}
                     error={errors.confirmPassword}
                     style={styles.inputField}
                   />
+                  <TouchableOpacity
+                    onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                    style={styles.rightIconBtn}
+                    activeOpacity={0.7}
+                  >
+                    {showConfirmPassword ? (
+                      <Eye size={20} color={COLORS.mutedText} />
+                    ) : (
+                      <EyeOff size={20} color={COLORS.mutedText} />
+                    )}
+                  </TouchableOpacity>
                 </View>
               </FormField>
 
@@ -454,6 +470,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  logoImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
   },
   brandName: {
     fontSize: 30,

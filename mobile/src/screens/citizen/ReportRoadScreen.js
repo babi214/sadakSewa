@@ -6,6 +6,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import * as ImagePicker from 'expo-image-picker'
+import * as Location from 'expo-location'
 import Toast from 'react-native-toast-message'
 import { useNavigation } from '@react-navigation/native'
 import {
@@ -63,6 +64,7 @@ export default function ReportRoadScreen() {
   const [location, setLocation] = useState(null)
   const [aiResult, setAiResult] = useState(null)
   const [analyzing, setAnalyzing] = useState(false)
+  const [gpsStatus, setGpsStatus] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const [provinces, setProvinces] = useState([])
   const [districts, setDistricts] = useState([])
@@ -180,7 +182,7 @@ export default function ReportRoadScreen() {
     }
   }
 
-  const addAssets = (assets = []) => {
+  const addAssets = async (assets = []) => {
     if (!assets.length) return
     const room = MAX_REPORT_IMAGES - images.length
     if (room <= 0) {
@@ -194,26 +196,29 @@ export default function ReportRoadScreen() {
 
     if (!location) {
       const exif = selected[0]?.exif
-      if (exif) {
-        const keys = Object.keys(exif)
-        Toast.show({ type: 'info', text1: 'EXIF keys: ' + keys.slice(0, 5).join(', ') + (keys.length > 5 ? '...' : '') })
-      }
       let lat, lng
       if (exif) {
         lat = exif.GPSLatitude ?? exif.GPS?.Latitude
         lng = exif.GPSLongitude ?? exif.GPS?.Longitude
-        if (lat == null && lng == null) {
-          const gpsK = Object.keys(exif).find(k => /gps.*lat/i.test(k))
-          const lonK = Object.keys(exif).find(k => /gps.*(?:lng|lon)/i.test(k))
-          if (gpsK && lonK) { lat = exif[gpsK]; lng = exif[lonK] }
-        }
-        if (lat == null) Toast.show({ type: 'info', text1: 'No GPS found in EXIF' })
-      } else {
-        Toast.show({ type: 'info', text1: 'No EXIF data on this image' })
       }
       if (lat != null && lng != null) {
         setLocation({ coordinates: [lng, lat], address: `${lat.toFixed(4)}, ${lng.toFixed(4)}`, gpsExtracted: true })
-        Toast.show({ type: 'success', text1: `GPS extracted: ${lat.toFixed(4)}, ${lng.toFixed(4)}` })
+        setGpsStatus(`GPS extracted from photo: ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
+      } else {
+        setGpsStatus('Photo has no GPS — getting device location...')
+        try {
+          const { status } = await Location.requestForegroundPermissionsAsync()
+          if (status === 'granted') {
+            const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High })
+            const { latitude, longitude } = loc.coords
+            setLocation({ coordinates: [longitude, latitude], address: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`, gpsExtracted: true })
+            setGpsStatus(`Device GPS: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
+          } else {
+            setGpsStatus('Location permission denied')
+          }
+        } catch {
+          setGpsStatus('Could not get device location')
+        }
       }
     }
 
@@ -322,6 +327,7 @@ export default function ReportRoadScreen() {
             setImages([])
             setLocation(null)
             setAiResult(null)
+            setGpsStatus('')
           }}
           style={styles.clearBtn}
           activeOpacity={0.7}
@@ -458,6 +464,7 @@ export default function ReportRoadScreen() {
             </View>
           )}
           <LocationPicker location={location} onLocationSelect={setLocation} />
+          {gpsStatus ? <Text style={styles.gpsStatus}>{gpsStatus}</Text> : null}
         </GlassCard>
 
         <GlassCard style={styles.card}>
@@ -488,6 +495,11 @@ export default function ReportRoadScreen() {
               ))}
             </ScrollView>
           )}
+
+          <Text style={styles.aiNote}>
+            AI only detects road damage (potholes, cracks, surface issues). Other problems like
+            garbage, drainage, or streetlights should still be reported.
+          </Text>
 
           {analyzing && (
             <View style={styles.aiStatusRow}>
@@ -626,4 +638,6 @@ const styles = StyleSheet.create({
   pickerItem: { paddingVertical: 10, paddingHorizontal: 12, borderRadius: RADIUS.sm },
   pickerItemText: { fontSize: 14, color: COLORS.secondary },
   pickerItemTextSelected: { color: COLORS.primary, fontWeight: '700' },
+  gpsStatus: { fontSize: 12, color: COLORS.mutedText, marginTop: 8, fontStyle: 'italic' },
+  aiNote: { fontSize: 11, color: COLORS.mutedText, marginTop: 14, lineHeight: 16 },
 })
