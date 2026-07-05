@@ -4,6 +4,7 @@ const ReportHistory = require("../models/reportHistoryModel");
 const cloudinary = require("../config/cloudinary");
 const { createNotification } = require("./notificationController");
 const Notification = require("../models/notificationModel");
+const { cosineSimilarity } = require("../utils/textSimilarity");
 
 const VALID_STATUSES = ["pending", "verified", "in_progress", "resolved", "rejected"];
 
@@ -135,6 +136,28 @@ const createReport = async (req, res) => {
     if (duplicate) {
       flagged = true;
       flaggedReason = "Possible duplicate — similar location to a recent report";
+    }
+
+    // --- Anti-spam: text similarity check (same category/municipality, last 30 days) ---
+    if (!flagged) {
+      const textCandidates = await Report.find({
+        _id: { $ne: duplicate?._id },
+        category,
+        municipality,
+        createdAt: { $gte: thirtyDaysAgo },
+      }).select("title description").lean();
+
+      const body = `${title} ${description}`;
+      const THRESHOLD = 0.7;
+
+      for (const candidate of textCandidates) {
+        const candidateBody = `${candidate.title} ${candidate.description}`;
+        if (cosineSimilarity(body, candidateBody) > THRESHOLD) {
+          flagged = true;
+          flaggedReason = `Possible duplicate — similar text to report ${candidate._id}`;
+          break;
+        }
+      }
     }
 
     const report = await Report.create({
