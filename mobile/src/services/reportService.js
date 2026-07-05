@@ -16,6 +16,10 @@ export const reportService = {
     const { data } = await api.get('/reports/my-reports', { params })
     return data
   },
+  getPublicStats: async () => {
+    const { data } = await api.get('/reports/stats')
+    return data
+  },
   getReports: async (params = {}) => {
     const { data } = await api.get('/reports', { params })
     return data

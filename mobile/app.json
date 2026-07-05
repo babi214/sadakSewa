@@ -8,6 +8,7 @@
     "backgroundColor": "#F8FAFC",
     "icon": "./assets/icon.png",
     "splash": {
+      "image": "./assets/logoSadakSewa.png",
       "backgroundColor": "#2563EB",
       "resizeMode": "contain"
     },

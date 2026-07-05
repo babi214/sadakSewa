@@ -1,8 +1,9 @@
 import React, { useState, useContext, useRef, useEffect } from 'react'
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Animated, KeyboardAvoidingView, Platform } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Animated, KeyboardAvoidingView, Platform, Image } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
-import { Mail, Lock, Eye, EyeOff, Zap } from 'lucide-react-native'
+import { CommonActions } from '@react-navigation/native'
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react-native'
 import Toast from 'react-native-toast-message'
 import { FormField, Input } from '../../components/Input'
 import Button from '../../components/Button'
@@ -49,6 +50,7 @@ export default function LoginScreen({ navigation }) {
       const res = await login({ email: form.email.trim(), password: form.password })
       if (res.success) {
         Toast.show({ type: 'success', text1: 'Welcome back!' })
+        navigation.dispatch(CommonActions.reset({ index: 0, routes: [{ name: 'Main' }] }))
       }
     } catch (error) {
       Toast.show({ type: 'error', text1: getApiErrorMessage(error, 'Login failed') })
@@ -81,7 +83,11 @@ export default function LoginScreen({ navigation }) {
                 style={styles.logoGlow}
               >
                 <View style={styles.logoInner}>
-                  <Zap size={34} color={COLORS.white} />
+                  <Image
+                    source={require('../../../assets/logoSadakSewa.png')}
+                    style={styles.logoImage}
+                    resizeMode="contain"
+                  />
                 </View>
               </LinearGradient>
               <Text style={styles.brandName}>SadakSewa</Text>
@@ -218,6 +224,11 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  logoImage: {
+    width: 48,
+    height: 48,
+    borderRadius: 8,
   },
   brandName: {
     fontSize: 30,
