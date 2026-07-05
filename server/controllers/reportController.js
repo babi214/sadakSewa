@@ -147,12 +147,14 @@ const createReport = async (req, res) => {
         createdAt: { $gte: thirtyDaysAgo },
       }).select("title description").lean();
 
-      const body = `${title} ${description}`;
       const THRESHOLD = 0.7;
 
       for (const candidate of textCandidates) {
+        const body = `${title} ${description}`;
         const candidateBody = `${candidate.title} ${candidate.description}`;
-        if (cosineSimilarity(body, candidateBody) > THRESHOLD) {
+        const titleSim = cosineSimilarity(title, candidate.title);
+        const bodySim = cosineSimilarity(body, candidateBody);
+        if (titleSim > THRESHOLD || bodySim > THRESHOLD) {
           flagged = true;
           flaggedReason = `Possible duplicate — similar text to report ${candidate._id}`;
           break;
