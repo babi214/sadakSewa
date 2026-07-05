@@ -68,8 +68,11 @@ export default function Login() {
   return (
     <div>
       <div className="mb-8 lg:hidden">
-        <h1 className="text-2xl font-bold text-secondary">SadakSewa</h1>
-        <p className="mt-1 text-sm text-muted">Sign in to your account</p>
+        <div className="flex items-center gap-3 mb-3">
+          <img src="/logoSadakSewa.png" alt="SadakSewa" className="h-10 w-10 rounded-xl object-cover" />
+          <h1 className="text-2xl font-bold text-secondary">SadakSewa</h1>
+        </div>
+        <p className="text-sm text-muted">Sign in to your account</p>
       </div>
 
       <div className="mb-8 hidden lg:block">

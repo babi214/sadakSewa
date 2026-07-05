@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Send, Scan, XCircle, CheckCircle2 } from 'lucide-react'
+import { ArrowLeft, Send, Scan, XCircle, CheckCircle2, MapPin } from 'lucide-react'
 import toast from 'react-hot-toast'
+import * as exifr from 'exifr'
 import Button from '../../components/common/Button'
 import Card from '../../components/common/Card'
 import { FormField, Input, Select, Textarea } from '../../components/common/Input'
@@ -97,6 +98,7 @@ export default function CreateReport() {
 
   const [aiResult, setAiResult] = useState(null)
   const [analyzing, setAnalyzing] = useState(false)
+  const [gpsStatus, setGpsStatus] = useState('')
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -149,6 +151,23 @@ export default function CreateReport() {
       toast.error(getApiErrorMessage(err, 'AI analysis failed'))
     } finally {
       setAnalyzing(false)
+    }
+
+    if (!location) {
+      let lat, lng
+      try {
+        const gps = await exifr.gps(file)
+        if (gps?.latitude != null && gps?.longitude != null) {
+          lat = gps.latitude; lng = gps.longitude
+        }
+      } catch { /* skip */ }
+
+      if (lat != null && lng != null) {
+        setLocation({ lat, lng })
+        setGpsStatus(`Location extracted from photo: ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
+      } else {
+        setGpsStatus('No GPS in photo. Click the map or use "My Location" to pin it.')
+      }
     }
   }
 
@@ -298,6 +317,11 @@ export default function CreateReport() {
                 <p className="mt-2 text-sm text-danger">{errors.images}</p>
               )}
 
+              <p className="mt-3 text-xs text-muted">
+                AI detects road damage only (potholes, cracks, road surface issues). Other problems like
+                garbage, drainage, or streetlight issues should still be reported — just ignore "no damage detected".
+              </p>
+
               {analyzing && (
                 <div className="mt-3 flex items-center gap-2 text-sm text-muted">
                   <Scan className="h-4 w-4 animate-pulse" />
@@ -401,10 +425,17 @@ export default function CreateReport() {
                 </FormField>
 
                 <FormField label="Pin on map" error={errors.location} required>
+                  {gpsStatus && (
+                    <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-primary">
+                      <MapPin className="h-3.5 w-3.5" />
+                      {gpsStatus}
+                    </div>
+                  )}
                   <LocationPicker
                     value={location}
                     onChange={(coords) => {
                       setLocation(coords)
+                      setGpsStatus('')
                       if (errors.location) {
                         setErrors((prev) => ({ ...prev, location: '' }))
                       }

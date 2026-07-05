@@ -1,19 +1,20 @@
 import { Link, Outlet } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { MapPin } from 'lucide-react'
 
 export default function AuthLayout() {
   return (
-    <div className="flex min-h-screen">
+    <div className="flex h-screen overflow-hidden">
       {/* Left Panel — Branding */}
-      <div className="relative hidden w-1/2 overflow-hidden bg-secondary lg:flex lg:flex-col lg:justify-between lg:p-12">
+      <div className="relative hidden w-1/2 bg-secondary lg:flex lg:flex-col lg:justify-between lg:p-12">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(37,99,235,0.3)_0%,_transparent_60%)]" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_left,_rgba(16,185,129,0.15)_0%,_transparent_50%)]" />
 
-        <Link to="/" className="relative z-10 flex items-center gap-2.5">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-            <MapPin className="h-5 w-5 text-white" />
-          </div>
+        <Link to="/" className="relative z-10 flex items-center gap-3">
+          <img
+            src="/logoSadakSewa.png"
+            alt="SadakSewa"
+            className="h-9 w-9 rounded-xl object-cover"
+          />
           <span className="text-xl font-bold text-white">SadakSewa</span>
         </Link>
 
@@ -35,7 +36,7 @@ export default function AuthLayout() {
       </div>
 
       {/* Right Panel — Form */}
-      <div className="flex flex-1 items-center justify-center bg-background px-4 py-12 sm:px-6">
+      <div className="flex flex-1 items-start justify-center overflow-y-auto bg-background px-4 py-12 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}

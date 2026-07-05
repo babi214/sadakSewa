@@ -32,6 +32,7 @@ export default function Register() {
   })
   const [errors, setErrors] = useState({})
   const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [provinces, setProvinces] = useState([])
   const [districts, setDistricts] = useState([])
@@ -154,8 +155,11 @@ export default function Register() {
   return (
     <div>
       <div className="mb-8 lg:hidden">
-        <h1 className="text-2xl font-bold text-secondary">SadakSewa</h1>
-        <p className="mt-1 text-sm text-muted">Create your citizen account</p>
+        <div className="flex items-center gap-3 mb-3">
+          <img src="/logoSadakSewa.png" alt="SadakSewa" className="h-10 w-10 rounded-xl object-cover" />
+          <h1 className="text-2xl font-bold text-secondary">SadakSewa</h1>
+        </div>
+        <p className="text-sm text-muted">Create your citizen account</p>
       </div>
 
       <div className="mb-8 hidden lg:block">
@@ -214,15 +218,26 @@ export default function Register() {
         </FormField>
 
         <FormField label="Confirm password" error={errors.confirmPassword} required>
-          <Input
-            type="password"
-            name="confirmPassword"
-            value={form.confirmPassword}
-            onChange={handleChange}
-            placeholder="Confirm your password"
-            autoComplete="new-password"
-            error={errors.confirmPassword}
-          />
+          <div className="relative">
+            <Input
+              type={showConfirmPassword ? 'text' : 'password'}
+              name="confirmPassword"
+              value={form.confirmPassword}
+              onChange={handleChange}
+              placeholder="Confirm your password"
+              autoComplete="new-password"
+              error={errors.confirmPassword}
+              className="pr-11"
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-secondary"
+              aria-label={showConfirmPassword ? 'Hide confirm password' : 'Show confirm password'}
+            >
+              {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            </button>
+          </div>
         </FormField>
 
         <FormField label="Phone number" error={errors.phone} required>
