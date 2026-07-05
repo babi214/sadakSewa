@@ -192,6 +192,31 @@ export default function ReportRoadScreen() {
     setImages(prev => [...prev, ...selected])
     analyzeImage(selected[0])
 
+    if (!location) {
+      const exif = selected[0]?.exif
+      if (exif) {
+        const keys = Object.keys(exif)
+        Toast.show({ type: 'info', text1: 'EXIF keys: ' + keys.slice(0, 5).join(', ') + (keys.length > 5 ? '...' : '') })
+      }
+      let lat, lng
+      if (exif) {
+        lat = exif.GPSLatitude ?? exif.GPS?.Latitude
+        lng = exif.GPSLongitude ?? exif.GPS?.Longitude
+        if (lat == null && lng == null) {
+          const gpsK = Object.keys(exif).find(k => /gps.*lat/i.test(k))
+          const lonK = Object.keys(exif).find(k => /gps.*(?:lng|lon)/i.test(k))
+          if (gpsK && lonK) { lat = exif[gpsK]; lng = exif[lonK] }
+        }
+        if (lat == null) Toast.show({ type: 'info', text1: 'No GPS found in EXIF' })
+      } else {
+        Toast.show({ type: 'info', text1: 'No EXIF data on this image' })
+      }
+      if (lat != null && lng != null) {
+        setLocation({ coordinates: [lng, lat], address: `${lat.toFixed(4)}, ${lng.toFixed(4)}`, gpsExtracted: true })
+        Toast.show({ type: 'success', text1: `GPS extracted: ${lat.toFixed(4)}, ${lng.toFixed(4)}` })
+      }
+    }
+
     if (assets.length > room) {
       Toast.show({ type: 'info', text1: `Only ${room} more photo${room === 1 ? '' : 's'} added` })
     }
@@ -204,7 +229,7 @@ export default function ReportRoadScreen() {
         Alert.alert('Permission Required', 'Camera access is needed to take a photo.')
         return
       }
-      const result = await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], quality: 1 })
+      const result = await ImagePicker.launchCameraAsync({ mediaTypes: ['images'], quality: 1, exif: true })
       if (!result.canceled) addAssets(result.assets)
     } catch {
       Toast.show({ type: 'error', text1: 'Failed to open camera' })
@@ -223,6 +248,7 @@ export default function ReportRoadScreen() {
         allowsMultipleSelection: true,
         selectionLimit: MAX_REPORT_IMAGES - images.length,
         quality: 1,
+        exif: true,
       })
       if (!result.canceled) addAssets(result.assets)
     } catch {

@@ -14,8 +14,10 @@ export default function LocationPicker({ location, onLocationSelect, style }) {
   const [region, setRegion] = useState(DEFAULT_MAP_REGION)
   const [marker, setMarker] = useState(null)
 
+  const isGpsExtracted = location?.gpsExtracted
+
   const handleOpen = () => {
-    setMarker(location?.coordinates ? { latitude: location.coordinates[1], longitude: location.coordinates[0] } : null)
+    setMarker(isGpsExtracted ? null : location?.coordinates ? { latitude: location.coordinates[1], longitude: location.coordinates[0] } : null)
     if (location?.coordinates) {
       setRegion({ latitude: location.coordinates[1], longitude: location.coordinates[0], latitudeDelta: 0.02, longitudeDelta: 0.02 })
     }
@@ -38,7 +40,10 @@ export default function LocationPicker({ location, onLocationSelect, style }) {
   }
 
   const handleConfirm = () => {
-    if (!marker) { Toast.show({ type: 'info', text1: 'Tap the map to place a pin' }); return }
+    if (!marker) {
+      if (isGpsExtracted) { setVisible(false); return }
+      Toast.show({ type: 'info', text1: 'Tap the map to place a pin' }); return
+    }
     onLocationSelect({ coordinates: [marker.longitude, marker.latitude], address: `${marker.latitude.toFixed(4)}, ${marker.longitude.toFixed(4)}` })
     setVisible(false)
   }
@@ -48,7 +53,7 @@ export default function LocationPicker({ location, onLocationSelect, style }) {
       <TouchableOpacity style={[styles.picker, style]} onPress={handleOpen}>
         <MapPin size={18} color={location?.coordinates ? COLORS.primary : COLORS.muted} />
         <Text style={[styles.pickerText, !location?.coordinates && { color: COLORS.muted }]}>
-          {location?.address || location?.coordinates ? `${location.coordinates[1].toFixed(4)}, ${location.coordinates[0].toFixed(4)}` : 'Pin on map'}
+          {isGpsExtracted ? `Location extracted  ${location.coordinates[1].toFixed(4)}, ${location.coordinates[0].toFixed(4)}` : location?.address || location?.coordinates ? `${location.coordinates[1].toFixed(4)}, ${location.coordinates[0].toFixed(4)}` : 'Pin on map'}
         </Text>
       </TouchableOpacity>
 
