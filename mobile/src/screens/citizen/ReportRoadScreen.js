@@ -289,6 +289,7 @@ export default function ReportRoadScreen() {
 
     setSubmitting(true)
     try {
+      const topDetection = aiResult?.detections?.[0]
       const payload = {
         title: form.title.trim(),
         description: form.description.trim(),
@@ -301,6 +302,15 @@ export default function ReportRoadScreen() {
       if (form.province) payload.province = form.province
       if (form.district) payload.district = form.district
       if (form.municipality) payload.municipality = form.municipality
+      if (topDetection) {
+        payload.aiAnalysis = {
+          detectedIssue: topDetection.type,
+          confidence: topDetection.confidence,
+        }
+      }
+      if (aiResult?.annotated_image) {
+        payload.annotatedImage = `data:image/jpeg;base64,${aiResult.annotated_image}`
+      }
 
       const response = await reportService.createReport(payload, images.map(img => img.uri))
       if (response.success) {

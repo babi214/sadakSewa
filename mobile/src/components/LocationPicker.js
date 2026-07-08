@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
 import { MapPin, Crosshair, Check } from 'lucide-react-native'
@@ -15,6 +15,25 @@ export default function LocationPicker({ location, onLocationSelect, style }) {
   const [marker, setMarker] = useState(null)
 
   const isGpsExtracted = location?.gpsExtracted
+
+  useEffect(() => {
+    if (!visible) return
+    if (location?.coordinates) return
+
+    let cancelled = false
+    ;(async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync()
+        if (status !== 'granted' || cancelled) return
+        const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High })
+        if (cancelled) return
+        const coord = { latitude: loc.coords.latitude, longitude: loc.coords.longitude }
+        setMarker(coord)
+        setRegion({ ...coord, latitudeDelta: 0.02, longitudeDelta: 0.02 })
+      } catch { /* silent */ }
+    })()
+    return () => { cancelled = true }
+  }, [visible])
 
   const handleOpen = () => {
     setMarker(isGpsExtracted ? null : location?.coordinates ? { latitude: location.coordinates[1], longitude: location.coordinates[0] } : null)

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { AlertCircle, FileText, UserPlus } from 'lucide-react'
+import { AlertCircle, BrainCircuit, FileText, UserPlus } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
 import Card from '../../components/common/Card'
@@ -137,6 +137,12 @@ export default function ManageReports() {
                       <span className="inline-flex items-center gap-1 rounded-md bg-danger/10 px-2 py-0.5 text-xs font-medium text-danger">
                         <AlertCircle strokeWidth={1.5} className="h-3 w-3" />
                         Flagged
+                      </span>
+                    )}
+                    {report.aiAnalysis && (
+                      <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+                        <BrainCircuit strokeWidth={1.5} className="h-3 w-3" />
+                        AI Detected
                       </span>
                     )}
                   </div>

@@ -162,6 +162,16 @@ const createReport = async (req, res) => {
       }
     }
 
+    let annotatedUrl = null;
+    if (req.body.annotatedImage && typeof req.body.annotatedImage === "string" && req.body.annotatedImage.startsWith("data:")) {
+      try {
+        const uploadResult = await cloudinary.uploader.upload(req.body.annotatedImage, {
+          folder: "reports/annotated",
+        });
+        annotatedUrl = uploadResult.secure_url;
+      } catch { }
+    }
+
     const report = await Report.create({
       title,
       description,
@@ -177,6 +187,8 @@ const createReport = async (req, res) => {
         type: "Point",
         coordinates: [lng, lat],
       },
+      annotatedImage: annotatedUrl,
+      aiAnalysis: req.body.aiAnalysis || null,
     });
 
     await logHistory(report._id, "created", req.user._id, { title: report.title });

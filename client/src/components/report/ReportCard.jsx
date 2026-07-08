@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { MapPin, Pencil, ThumbsUp, Trash2 } from 'lucide-react'
+import { BrainCircuit, MapPin, Pencil, ThumbsUp, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { CategoryBadge, SeverityBadge, StatusBadge } from '../common/Badge'
 import StatusShield from '../common/StatusShield'
@@ -94,6 +94,12 @@ export default function ReportCard({
         <div className="flex flex-wrap items-center gap-2">
           <CategoryBadge category={report.category} />
           <SeverityBadge severity={report.severity} />
+          {report.aiAnalysis && (
+            <span className="inline-flex items-center gap-1 rounded-md bg-primary/10 px-2 py-0.5 text-xs font-medium text-primary">
+              <BrainCircuit strokeWidth={1.5} className="h-3 w-3" />
+              AI Detected
+            </span>
+          )}
         </div>
 
         <h3 className="mt-3 line-clamp-1 text-base font-semibold text-secondary">

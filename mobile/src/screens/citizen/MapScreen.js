@@ -1,16 +1,16 @@
-import React, { useState, useCallback, useRef, useMemo } from 'react'
+import React, { useState, useCallback, useRef, useMemo, useEffect } from 'react'
 import {
   View, Text, StyleSheet, TouchableOpacity, FlatList, RefreshControl,
   Modal, Dimensions, Platform, TextInput, ScrollView, Image, Keyboard,
 } from 'react-native'
-import MapView, { Marker, Callout, PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView, { Marker, Callout, Polyline, PROVIDER_GOOGLE } from 'react-native-maps'
 import {
   Search, Crosshair, Plus, List, Layers, Filter, Navigation,
   MapPin, X, SlidersHorizontal, AlertTriangle, Trash2,
   Droplets, Lightbulb, TrafficCone, Zap, HelpCircle,
 } from 'lucide-react-native'
 import * as Location from 'expo-location'
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation, useRoute } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import Animated, { FadeInUp, FadeInDown } from 'react-native-reanimated'
@@ -64,10 +64,68 @@ export default function MapScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('')
   const [sheetVisible, setSheetVisible] = useState(false)
   const [nearMeOnly, setNearMeOnly] = useState(false)
+  const [routeCoords, setRouteCoords] = useState(null)
 
   useFocusEffect(useCallback(() => {
     fetchReports()
   }, [nearMeOnly]))
+
+  const route = useRoute()
+  const [initialRegion, setInitialRegion] = useState(null)
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        const { status } = await Location.requestForegroundPermissionsAsync()
+        if (status === 'granted') {
+          const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High })
+          const { latitude, longitude } = loc.coords
+          setUserLocation({ latitude, longitude })
+          setInitialRegion({ latitude, longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 })
+          return
+        }
+      } catch {}
+      setInitialRegion(DEFAULT_MAP_REGION)
+    })()
+  }, [])
+
+  useEffect(() => {
+    const dest = route.params?.destination
+    if (!dest) return
+    setRouteCoords(null)
+    ;(async () => {
+      const { status } = await Location.requestForegroundPermissionsAsync()
+      if (status !== 'granted') {
+        mapRef.current?.animateToRegion(
+          { latitude: dest.latitude, longitude: dest.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 },
+          500
+        )
+        return
+      }
+      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High })
+      const origin = `${loc.coords.longitude},${loc.coords.latitude}`
+      const destination = `${dest.longitude},${dest.latitude}`
+      try {
+        const res = await fetch(
+          `https://router.project-osrm.org/route/v1/driving/${origin};${destination}?geometries=geojson&overview=full`
+        )
+        const data = await res.json()
+        if (data.code === 'Ok' && data.routes?.[0]?.geometry?.coordinates) {
+          const coords = data.routes[0].geometry.coordinates.map(c => ({
+            latitude: c[1],
+            longitude: c[0],
+          }))
+          setRouteCoords(coords)
+          mapRef.current?.fitToCoordinates(coords, { edgePadding: { top: 80, right: 40, bottom: 80, left: 40 }, animated: true })
+          return
+        }
+      } catch {}
+      mapRef.current?.animateToRegion(
+        { latitude: dest.latitude, longitude: dest.longitude, latitudeDelta: 0.01, longitudeDelta: 0.01 },
+        500
+      )
+    })()
+  }, [route.params?.destination])
 
   const getUserLocation = async () => {
     try {
@@ -503,6 +561,10 @@ export default function MapScreen({ navigation }) {
     )
   }
 
+  if (!initialRegion) {
+    return <View style={styles.container} />
+  }
+
   if (loading && !refreshing) {
     return (
       <View style={styles.container}>
@@ -510,7 +572,7 @@ export default function MapScreen({ navigation }) {
           ref={mapRef}
           style={styles.map}
           provider={PROVIDER_GOOGLE}
-          initialRegion={DEFAULT_MAP_REGION}
+          initialRegion={initialRegion}
           showsUserLocation
           showsMyLocationButton={false}
         />
@@ -525,12 +587,18 @@ export default function MapScreen({ navigation }) {
         ref={mapRef}
         style={styles.map}
         provider={PROVIDER_GOOGLE}
-        initialRegion={region}
+        initialRegion={initialRegion}
         onRegionChangeComplete={setRegion}
         showsUserLocation
         showsMyLocationButton={false}
         onPress={handleMapPress}
       >
+        {routeCoords && (
+          <Polyline coordinates={routeCoords} strokeColor={COLORS.primary} strokeWidth={4} />
+        )}
+        {route.params?.destination && (
+          <Marker coordinate={route.params.destination} pinColor={COLORS.primary} />
+        )}
         {filteredMarkers.map(m => (
           <Marker
             key={m.id}
@@ -627,6 +695,21 @@ export default function MapScreen({ navigation }) {
               <Crosshair size={20} color={COLORS.secondary} />
             </LinearGradient>
           </TouchableOpacity>
+
+          {routeCoords && (
+            <TouchableOpacity
+              style={[styles.locateBtn, { bottom: 80 }]}
+              onPress={() => { setRouteCoords(null); navigation.setParams({ destination: undefined }) }}
+              activeOpacity={0.8}
+            >
+              <LinearGradient
+                colors={['rgba(255,255,255,0.97)', 'rgba(255,255,255,0.85)']}
+                style={styles.locateGrad}
+              >
+                <Text style={{ fontSize: 20, color: COLORS.primary }}>✕</Text>
+              </LinearGradient>
+            </TouchableOpacity>
+          )}
 
           <FloatingActionButton
             icon={Plus}

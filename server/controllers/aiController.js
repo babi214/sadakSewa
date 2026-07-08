@@ -87,7 +87,6 @@ const createAiReport = async (req, res) => {
       aiAnalysis: {
         detectedIssue: damageType,
         confidence: Number(confidence),
-        severityPrediction: confidence > 0.7 ? "high" : confidence > 0.4 ? "medium" : "low",
       },
       status: "pending",
     });

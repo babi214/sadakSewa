@@ -4,9 +4,11 @@ import { motion } from 'framer-motion'
 import {
   AlertCircle,
   ArrowLeft,
+  BrainCircuit,
   Calendar,
   Flag,
   MapPin,
+  Navigation,
   Pencil,
   ShieldCheck,
   ThumbsUp,
@@ -337,6 +339,47 @@ export default function ReportDetails() {
           </Card>
         )}
 
+        {/* AI Analysis */}
+        {report.annotatedImage && report.aiAnalysis && (
+          <Card padding="sm" className="mt-4 overflow-hidden">
+            <CardHeader
+              title={
+                <span className="flex items-center gap-2">
+                  <BrainCircuit strokeWidth={1.5} className="h-5 w-5 text-primary" />
+                  AI Analysis
+                </span>
+              }
+              subtitle="Automated damage detection results"
+            />
+            <div className="mt-3 flex flex-col gap-4 sm:flex-row">
+              <div className="flex-1 overflow-hidden rounded-xl bg-black/5">
+                <img
+                  src={report.annotatedImage}
+                  alt="AI annotated"
+                  className="w-full object-contain max-h-72"
+                />
+              </div>
+              <div className="flex flex-col gap-3 sm:w-64">
+                <div className="rounded-lg bg-primary/5 px-4 py-3">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted">Detected Issue</p>
+                  <p className="mt-1 text-sm font-semibold text-secondary capitalize">
+                    {report.aiAnalysis.detectedIssue?.replace(/_/g, ' ')}
+                  </p>
+                </div>
+                <div className="rounded-lg bg-accent/5 px-4 py-3">
+                  <p className="text-xs font-medium uppercase tracking-wider text-muted">Confidence</p>
+                  <p className="mt-1 text-sm font-semibold text-accent">
+                    {report.aiAnalysis.confidence != null
+                      ? `${(report.aiAnalysis.confidence * 100).toFixed(0)}%`
+                      : 'N/A'}
+                  </p>
+                </div>
+
+              </div>
+            </div>
+          </Card>
+        )}
+
         <div className="mt-4 grid gap-4 lg:grid-cols-3">
           {/* Main column */}
           <div className="space-y-4 lg:col-span-2">
@@ -368,6 +411,17 @@ export default function ReportDetails() {
                     )}
                   </div>
                 )}
+                <div className="mt-3">
+                  <a
+                    href={`https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
+                  >
+                    <Navigation strokeWidth={1.5} className="h-4 w-4" />
+                    Get directions
+                  </a>
+                </div>
               </Card>
             )}
 

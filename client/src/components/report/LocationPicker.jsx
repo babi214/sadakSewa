@@ -25,6 +25,17 @@ function MapRecenter({ center }) {
 export default function LocationPicker({ value, onChange, error }) {
   const position = value || DEFAULT_MAP_CENTER
 
+  useEffect(() => {
+    if (value) return
+    if (!navigator.geolocation) return
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => onChange({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+      () => {},
+      { enableHighAccuracy: true, timeout: 10000 }
+    )
+  }, [])
+
   const handleUseMyLocation = () => {
     if (!navigator.geolocation) return
 

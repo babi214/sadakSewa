@@ -1,8 +1,9 @@
 import React, { useState, useContext, useCallback, useRef } from 'react'
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Alert, FlatList, Dimensions, Modal, Share, Linking, TextInput } from 'react-native'
-import { AlertCircle, ChevronLeft, MapPin, Calendar, User, ArrowUp, Share2, Activity, Flag, Edit3, Trash2, Clock, CheckCircle2, X, ChevronDown, ChevronUp, Camera, UserMinus } from 'lucide-react-native'
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Alert, FlatList, Dimensions, Modal, Share, TextInput } from 'react-native'
+import { AlertCircle, ChevronLeft, MapPin, Calendar, User, ArrowUp, Share2, Activity, Flag, Edit3, Trash2, Clock, CheckCircle2, X, ChevronDown, ChevronUp, Camera, UserMinus, Navigation } from 'lucide-react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import MapView, { Marker } from 'react-native-maps'
+import * as Location from 'expo-location'
+import MapView, { Marker, Polyline } from 'react-native-maps'
 import Toast from 'react-native-toast-message'
 import { useFocusEffect } from '@react-navigation/native'
 import GlassCard from '../../components/GlassCard'
@@ -259,20 +260,38 @@ export default function ReportDetailsScreen({ route, navigation }) {
     }
   }
 
+  const [routeCoords, setRouteCoords] = useState(null)
+  const [routeLoading, setRouteLoading] = useState(false)
+
   const getCoords = () => {
     const coords = report?.location?.coordinates
     if (!coords || coords.length < 2) return null
     return { latitude: coords[1], longitude: coords[0] }
   }
 
-  const openMap = () => {
-    const coords = getCoords()
-    if (!coords) return
-    const { latitude, longitude } = coords
-    const url = `geo:${latitude},${longitude}?q=${latitude},${longitude}`
-    Linking.openURL(url).catch(() => {
-      Toast.show({ type: 'info', text1: 'Map not available' })
-    })
+  const fetchRoute = async () => {
+    const dest = getCoords()
+    if (!dest) return
+    setRouteLoading(true)
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync()
+      if (status !== 'granted') { Toast.show({ type: 'info', text1: 'Location permission needed' }); return }
+      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High })
+      const origin = `${loc.coords.longitude},${loc.coords.latitude}`
+      const destination = `${dest.longitude},${dest.latitude}`
+      const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${origin};${destination}?geometries=geojson&overview=full`)
+      const data = await res.json()
+      if (data.code === 'Ok' && data.routes?.[0]?.geometry?.coordinates) {
+        const coords = data.routes[0].geometry.coordinates.map(c => ({ latitude: c[1], longitude: c[0] }))
+        setRouteCoords(coords)
+      } else {
+        Toast.show({ type: 'info', text1: 'Could not find a route' })
+      }
+    } catch {
+      Toast.show({ type: 'error', text1: 'Failed to get route' })
+    } finally {
+      setRouteLoading(false)
+    }
   }
 
   const isOwnerMobile = user && (user._id === report?.reportedBy?._id || user._id === report?.reportedBy)
@@ -448,21 +467,33 @@ export default function ReportDetailsScreen({ route, navigation }) {
                   <MapPin size={16} color={COLORS.danger} />
                   <Text style={styles.mapTitle}>Location</Text>
                 </View>
-                <TouchableOpacity onPress={openMap} activeOpacity={0.9}>
-                  <MapView
-                    style={styles.mapPreview}
-                    region={{
-                      latitude: coords.latitude,
-                      longitude: coords.longitude,
-                      latitudeDelta: 0.01,
-                      longitudeDelta: 0.01,
-                    }}
-                    scrollEnabled={false}
-                    zoomEnabled={false}
-                  >
-                    <Marker coordinate={coords} />
-                  </MapView>
-                </TouchableOpacity>
+                <MapView
+                  style={styles.mapPreview}
+                  region={{
+                    latitude: coords.latitude,
+                    longitude: coords.longitude,
+                    latitudeDelta: 0.01,
+                    longitudeDelta: 0.01,
+                  }}
+                  scrollEnabled
+                  zoomEnabled
+                >
+                  <Marker coordinate={coords} />
+                  {routeCoords && <Polyline coordinates={routeCoords} strokeColor="#1B4B5E" strokeWidth={4} />}
+                </MapView>
+                <View style={styles.mapActions}>
+                  {!routeCoords ? (
+                    <TouchableOpacity style={styles.navigateBtn} onPress={fetchRoute} disabled={routeLoading}>
+                      <Navigation size={16} color="#fff" />
+                      <Text style={styles.navigateBtnText}>{routeLoading ? 'Loading...' : 'Navigate'}</Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity style={styles.clearRouteBtn} onPress={() => setRouteCoords(null)}>
+                      <X size={16} color={COLORS.secondary} />
+                      <Text style={styles.clearRouteText}>Clear route</Text>
+                    </TouchableOpacity>
+                  )}
+                </View>
                 {!!locationLabel && (
                   <Text style={styles.mapAddress}>{locationLabel}</Text>
                 )}
@@ -1027,6 +1058,40 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 140,
     borderRadius: RADIUS.md,
+  },
+  mapActions: {
+    flexDirection: 'row',
+    marginTop: 10,
+  },
+  navigateBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: COLORS.primary,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+  },
+  navigateBtnText: {
+    color: '#fff',
+    fontSize: 13,
+    fontWeight: '600',
+  },
+  clearRouteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: COLORS.background,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+  },
+  clearRouteText: {
+    color: COLORS.secondary,
+    fontSize: 13,
+    fontWeight: '600',
   },
   mapAddress: {
     fontSize: 13,

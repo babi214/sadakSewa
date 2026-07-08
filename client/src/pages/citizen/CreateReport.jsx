@@ -214,6 +214,7 @@ export default function CreateReport() {
 
     setIsSubmitting(true)
     try {
+      const topDetection = aiResult?.detections?.[0]
       const payload = {
         title: form.title.trim(),
         description: form.description.trim(),
@@ -228,6 +229,15 @@ export default function CreateReport() {
       if (form.district) payload.district = form.district
       if (form.municipality) payload.municipality = form.municipality
       if (form.locationName.trim()) payload.locationName = form.locationName.trim()
+      if (topDetection) {
+        payload.aiAnalysis = {
+          detectedIssue: topDetection.type,
+          confidence: topDetection.confidence,
+        }
+      }
+      if (aiResult?.annotated_image) {
+        payload.annotatedImage = `data:image/jpeg;base64,${aiResult.annotated_image}`
+      }
 
       const response = await reportService.createReport(payload)
 
