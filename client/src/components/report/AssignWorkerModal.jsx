@@ -64,7 +64,7 @@ export default function AssignWorkerModal({
       </FormField>
 
       {workers.length === 0 && !loadingWorkers && (
-        <p className="mt-2 text-xs text-muted">No available workers in this district/municipality. All workers in this area are currently busy with other assignments.</p>
+        <p className="mt-2 text-xs text-muted">No available workers in this area. All workers are currently busy with other assignments.</p>
       )}
 
       <div className="mt-6 flex justify-end gap-3">

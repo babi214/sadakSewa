@@ -10,15 +10,15 @@ import {
   X,
 } from 'lucide-react'
 import { useState, useRef, useEffect } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
 import { useAuth } from '../../hooks/useAuth'
 import { notificationService } from '../../services/notificationService'
 import Button from '../common/Button'
+import StatusShield from '../common/StatusShield'
 
 const publicLinks = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About' },
-  { to: '/reports', label: 'Public Reports' },
+  { to: '/reports', label: 'Reports' },
   { to: '/nearby', label: 'Nearby', icon: MapPin },
   { to: '/contact', label: 'Contact' },
 ]
@@ -32,14 +32,14 @@ const citizenLinks = [
 
 const workerLinks = [
   { to: '/worker/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/worker/assigned', label: 'Assigned Reports' },
+  { to: '/worker/assigned', label: 'Assigned' },
 ]
 
 const adminLinks = [
   { to: '/admin/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { to: '/admin/reports', label: 'Manage Reports' },
+  { to: '/admin/reports', label: 'Reports' },
   { to: '/admin/flagged-reports', label: 'Flagged' },
-  { to: '/admin/users', label: 'Manage Users' },
+  { to: '/admin/users', label: 'Users' },
 ]
 
 function getRoleLinks(role) {
@@ -75,7 +75,7 @@ function NavItem({ to, label, onClick }) {
       onClick={onClick}
       className={({ isActive }) =>
         [
-          'rounded-lg px-3 py-2 text-sm font-medium transition-colors duration-200',
+          'rounded-lg px-3 py-2 text-sm font-medium transition-colors',
           isActive
             ? 'bg-primary/10 text-primary'
             : 'text-secondary/70 hover:bg-secondary/5 hover:text-secondary',
@@ -127,9 +127,7 @@ export default function Navbar() {
 
   useEffect(() => {
     document.body.style.overflow = mobileOpen ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
-    }
+    return () => { document.body.style.overflow = '' }
   }, [mobileOpen])
 
   const handleLogout = async () => {
@@ -139,14 +137,13 @@ export default function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 glass border-b border-white/40 shadow-sm">
+    <header className="sticky top-0 z-50 border-b border-border bg-surface shadow-sm">
       <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        {/* Logo */}
         <Link to="/" className="flex items-center gap-2.5">
           <img
             src="/logoSadakSewa.png"
             alt="SadakSewa"
-            className="h-9 w-9 rounded-xl object-cover"
+            className="h-9 w-9 rounded-lg object-cover"
           />
           <div className="flex flex-col leading-none">
             <span className="text-lg font-bold tracking-tight text-secondary">
@@ -158,7 +155,6 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Navigation */}
         <div className="hidden items-center gap-1 lg:flex">
           {visibleLinks.map((link) => (
             <NavItem key={link.to} to={link.to} label={link.label} />
@@ -168,7 +164,6 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Desktop Actions */}
         <div className="hidden items-center gap-3 lg:flex">
           {isAuthenticated ? (
             <>
@@ -176,9 +171,9 @@ export default function Navbar() {
                 type="button"
                 aria-label="Notifications"
                 onClick={() => navigate('/notifications')}
-                className="relative rounded-xl p-2 text-secondary/60 transition-colors hover:bg-secondary/5 hover:text-secondary"
+                className="relative rounded-lg p-2 text-secondary/60 transition-colors hover:bg-secondary/5 hover:text-secondary"
               >
-                <Bell className="h-5 w-5" />
+                <Bell strokeWidth={1.5} className="h-5 w-5" />
                 {unreadCount > 0 && (
                   <span className="absolute right-0.5 top-0.5 h-2.5 w-2.5 rounded-full bg-danger ring-2 ring-white" />
                 )}
@@ -188,9 +183,9 @@ export default function Navbar() {
                 <button
                   type="button"
                   onClick={() => setProfileOpen((prev) => !prev)}
-                  className="flex items-center gap-2 rounded-xl border border-border bg-white px-3 py-1.5 transition-all hover:border-primary/20 hover:shadow-sm"
+                  className="flex items-center gap-2 rounded-lg border border-border bg-white px-3 py-1.5 transition-colors hover:bg-background"
                 >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-sm font-semibold text-primary">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary/10 text-sm font-semibold text-primary">
                     {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
                   </div>
                   <div className="hidden text-left xl:block">
@@ -200,60 +195,51 @@ export default function Navbar() {
                     <p className="text-xs capitalize text-muted">{user?.role}</p>
                   </div>
                   <ChevronDown
+                    strokeWidth={1.5}
                     className={`h-4 w-4 text-muted transition-transform ${profileOpen ? 'rotate-180' : ''}`}
                   />
                 </button>
 
-                <AnimatePresence>
-                  {profileOpen && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.96 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.96 }}
-                      transition={{ duration: 0.15 }}
-                      className="absolute right-0 mt-2 w-56 overflow-hidden rounded-xl border border-border bg-white shadow-lg shadow-secondary/10"
-                    >
-                      <div className="border-b border-border px-4 py-3">
-                        <p className="text-sm font-medium text-secondary">{user?.fullName}</p>
-                        <p className="text-xs text-muted">{user?.email}</p>
-                      </div>
-                      <div className="p-1.5">
-                        <Link
-                          to={getDashboardPath()}
-                          onClick={() => setProfileOpen(false)}
-                          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-secondary/80 hover:bg-background"
-                        >
-                          <LayoutDashboard className="h-4 w-4" />
-                          Dashboard
-                        </Link>
-                        <Link
-                          to={profilePath}
-                          onClick={() => setProfileOpen(false)}
-                          className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-secondary/80 hover:bg-background"
-                        >
-                          <User className="h-4 w-4" />
-                          Profile
-                        </Link>
-                        <button
-                          type="button"
-                          onClick={handleLogout}
-                          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-danger hover:bg-red-50"
-                        >
-                          <LogOut className="h-4 w-4" />
-                          Logout
-                        </button>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
+                {profileOpen && (
+                  <div className="absolute right-0 mt-2 w-56 overflow-hidden rounded-lg border border-border bg-surface shadow-lg shadow-secondary/5">
+                    <div className="border-b border-border px-4 py-3">
+                      <p className="text-sm font-medium text-secondary">{user?.fullName}</p>
+                      <p className="text-xs text-muted">{user?.email}</p>
+                    </div>
+                    <div className="p-1.5">
+                      <Link
+                        to={getDashboardPath()}
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-secondary/80 hover:bg-background"
+                      >
+                        <LayoutDashboard strokeWidth={1.5} className="h-4 w-4" />
+                        Dashboard
+                      </Link>
+                      <Link
+                        to={profilePath}
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-secondary/80 hover:bg-background"
+                      >
+                        <User strokeWidth={1.5} className="h-4 w-4" />
+                        Profile
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-danger hover:bg-danger/5"
+                      >
+                        <LogOut strokeWidth={1.5} className="h-4 w-4" />
+                        Logout
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </>
           ) : (
             <>
               <Link to="/login">
-                <Button variant="ghost" size="sm">
-                  Log in
-                </Button>
+                <Button variant="ghost" size="sm">Log in</Button>
               </Link>
               <Link to="/register">
                 <Button size="sm">Get Started</Button>
@@ -262,90 +248,79 @@ export default function Navbar() {
           )}
         </div>
 
-        {/* Mobile Menu Toggle */}
         <button
           type="button"
           onClick={() => setMobileOpen((prev) => !prev)}
-          className="rounded-xl p-2 text-secondary transition-colors hover:bg-secondary/5 lg:hidden"
+          className="rounded-lg p-2 text-secondary transition-colors hover:bg-secondary/5 lg:hidden"
           aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
         >
-          {mobileOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+          {mobileOpen ? <X strokeWidth={1.5} className="h-6 w-6" /> : <Menu strokeWidth={1.5} className="h-6 w-6" />}
         </button>
       </nav>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileOpen && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            className="overflow-hidden border-t border-border/50 lg:hidden"
-          >
-            <div className="space-y-1 px-4 py-4">
-              {visibleLinks.map((link) => (
-                <NavItem
-                  key={link.to}
-                  to={link.to}
-                  label={link.label}
-                  onClick={() => setMobileOpen(false)}
-                />
-              ))}
-              {roleLinks.map((link) => (
-                <NavItem
-                  key={link.to}
-                  to={link.to}
-                  label={link.label}
-                  onClick={() => setMobileOpen(false)}
-                />
-              ))}
+      {mobileOpen && (
+        <div className="border-t border-border lg:hidden">
+          <div className="space-y-1 px-4 py-4">
+            {visibleLinks.map((link) => (
+              <NavItem
+                key={link.to}
+                to={link.to}
+                label={link.label}
+                onClick={() => setMobileOpen(false)}
+              />
+            ))}
+            {roleLinks.map((link) => (
+              <NavItem
+                key={link.to}
+                to={link.to}
+                label={link.label}
+                onClick={() => setMobileOpen(false)}
+              />
+            ))}
 
-              <div className="mt-4 border-t border-border pt-4">
-                {isAuthenticated ? (
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-3 px-3 py-2">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-sm font-semibold text-primary">
-                        {user?.fullName?.charAt(0)?.toUpperCase()}
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-secondary">{user?.fullName}</p>
-                        <p className="text-xs capitalize text-muted">{user?.role}</p>
-                      </div>
+            <div className="mt-4 border-t border-border pt-4">
+              {isAuthenticated ? (
+                <div className="space-y-2">
+                  <div className="flex items-center gap-3 px-3 py-2">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-md bg-primary/10 text-sm font-semibold text-primary">
+                      {user?.fullName?.charAt(0)?.toUpperCase()}
                     </div>
-                    <Link
-                      to={profilePath}
-                      onClick={() => setMobileOpen(false)}
-                      className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-secondary/80 hover:bg-background"
-                    >
-                      <User className="h-4 w-4" />
-                      Profile
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={handleLogout}
-                      className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-danger hover:bg-red-50"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      Logout
-                    </button>
+                    <div>
+                      <p className="text-sm font-medium text-secondary">{user?.fullName}</p>
+                      <p className="text-xs capitalize text-muted">{user?.role}</p>
+                    </div>
                   </div>
-                ) : (
-                  <div className="flex flex-col gap-2">
-                    <Link to="/login" onClick={() => setMobileOpen(false)}>
-                      <Button variant="outline" className="w-full">
-                        Log in
-                      </Button>
-                    </Link>
-                    <Link to="/register" onClick={() => setMobileOpen(false)}>
-                      <Button className="w-full">Get Started</Button>
-                    </Link>
-                  </div>
-                )}
-              </div>
+                  <Link
+                    to={profilePath}
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 rounded-md px-3 py-2 text-sm text-secondary/80 hover:bg-background"
+                  >
+                    <User strokeWidth={1.5} className="h-4 w-4" />
+                    Profile
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleLogout}
+                    className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-danger hover:bg-danger/5"
+                  >
+                    <LogOut strokeWidth={1.5} className="h-4 w-4" />
+                    Logout
+                  </button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <Link to="/login" onClick={() => setMobileOpen(false)}>
+                    <Button variant="outline" className="w-full">Log in</Button>
+                  </Link>
+                  <Link to="/register" onClick={() => setMobileOpen(false)}>
+                    <Button className="w-full">Get Started</Button>
+                  </Link>
+                </div>
+              )}
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+          </div>
+        </div>
+      )}
     </header>
   )
 }

@@ -34,7 +34,7 @@ export default function WeeklyTrendChart({
                 style={{ height: BAR_AREA_HEIGHT }}
               >
                 <div
-                  className="w-full rounded-t-lg bg-gradient-to-t from-primary to-primary/40 transition-all duration-500"
+                  className="w-full rounded-t-md bg-gradient-to-t from-primary to-primary/40 transition-all duration-500"
                   style={{ height: barHeight }}
                   title={`${day.value} report(s)`}
                 />

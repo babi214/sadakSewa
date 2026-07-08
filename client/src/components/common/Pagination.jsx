@@ -31,7 +31,7 @@ export default function Pagination({ page, pages, onPageChange, total }) {
     <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
       {total !== undefined && (
         <p className="text-sm text-muted">
-          Page {page} of {pages} · {total} total reports
+          Page {page} of {pages} &middot; {total} total
         </p>
       )}
       <div className="flex items-center gap-1">
@@ -47,9 +47,7 @@ export default function Pagination({ page, pages, onPageChange, total }) {
         <div className="hidden sm:flex sm:items-center sm:gap-1">
           {getPageNumbers(false).map((item, i) =>
             item === '...' ? (
-              <span key={`dots-${i}`} className="px-2 text-muted">
-                ...
-              </span>
+              <span key={`dots-${i}`} className="px-2 text-muted">...</span>
             ) : (
               <Button
                 key={item}
@@ -66,9 +64,7 @@ export default function Pagination({ page, pages, onPageChange, total }) {
         <div className="flex sm:hidden">
           {getPageNumbers(true).map((item, i) =>
             item === '...' ? (
-              <span key={`dots-${i}`} className="px-1 text-muted">
-                ...
-              </span>
+              <span key={`dots-${i}`} className="px-1 text-muted">...</span>
             ) : (
               <Button
                 key={item}

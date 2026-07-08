@@ -1,11 +1,10 @@
 import { Link } from 'react-router-dom'
 import { Mail, MapPin, Phone } from 'lucide-react'
 import { useAuth } from '../../hooks/useAuth'
-
 const footerLinks = {
   platform: [
-    { to: '/reports', label: 'Public Reports' },
-    { to: '/about', label: 'About Us' },
+    { to: '/reports', label: 'Reports' },
+    { to: '/about', label: 'About' },
     { to: '/contact', label: 'Contact' },
   ],
   citizen: [
@@ -24,12 +23,13 @@ export default function Footer() {
     <footer className="border-t border-border bg-secondary text-white">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
-          {/* Brand */}
           <div className="sm:col-span-2 lg:col-span-1">
             <Link to="/" className="flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary">
-                <MapPin className="h-5 w-5 text-white" />
-              </div>
+              <img
+                src="/logoSadakSewa.png"
+                alt="SadakSewa"
+                className="h-8 w-8 rounded-lg object-cover"
+              />
               <span className="text-lg font-bold">SadakSewa</span>
             </Link>
             <p className="mt-4 max-w-full text-sm leading-relaxed text-slate-400 sm:max-w-xs">
@@ -38,7 +38,6 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Platform Links */}
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
               Platform
@@ -57,7 +56,6 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Citizen Links */}
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
               Get Involved
@@ -76,22 +74,21 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Contact */}
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-300">
               Contact
             </h3>
             <ul className="mt-4 space-y-3">
               <li className="flex items-start gap-2.5 text-sm text-slate-400">
-                <Mail className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <Mail strokeWidth={1.5} className="mt-0.5 h-4 w-4 shrink-0 text-primary-light" />
                 Bimalbhandari563@gmail.com
               </li>
               <li className="flex items-start gap-2.5 text-sm text-slate-400">
-                <Phone className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <Phone strokeWidth={1.5} className="mt-0.5 h-4 w-4 shrink-0 text-primary-light" />
                 +977 9816604620
               </li>
               <li className="flex items-start gap-2.5 text-sm text-slate-400">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                <MapPin strokeWidth={1.5} className="mt-0.5 h-4 w-4 shrink-0 text-primary-light" />
                 Pokhara, Nepal
               </li>
             </ul>
@@ -103,7 +100,7 @@ export default function Footer() {
             &copy; {currentYear} SadakSewa. All rights reserved.
           </p>
           <p className="text-xs text-slate-600">
-            Final Year Project — Civic Technology Platform
+            Final Year Project &mdash; Civic Technology Platform
           </p>
         </div>
       </div>

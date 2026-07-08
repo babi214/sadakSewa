@@ -70,7 +70,7 @@ export default function Contact() {
         className="mb-12 text-center"
       >
         <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary">
-          <MessageSquare className="h-4 w-4" />
+          <MessageSquare strokeWidth={1.5} className="h-4 w-4" />
           Contact Us
         </div>
         <h1 className="text-3xl font-bold text-secondary sm:text-4xl">Get in Touch</h1>
@@ -180,7 +180,7 @@ export default function Contact() {
                 type="submit"
                 size="lg"
                 isLoading={isSubmitting}
-                leftIcon={!isSubmitting && <Send className="h-4 w-4" />}
+                leftIcon={!isSubmitting && <Send strokeWidth={1.5} className="h-4 w-4" />}
               >
                 Send Message
               </Button>

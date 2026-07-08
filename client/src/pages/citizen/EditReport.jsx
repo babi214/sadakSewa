@@ -190,7 +190,7 @@ export default function EditReport() {
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-secondary">Edit Report</h1>
+          <h1 className="font-display text-2xl font-bold text-secondary">Edit Report</h1>
           <p className="mt-1 text-sm text-muted">Update your submitted issue details</p>
         </div>
       </div>
@@ -277,7 +277,7 @@ export default function EditReport() {
           <Link to="/citizen/reports">
             <Button type="button" variant="outline" className="w-full sm:w-auto">Cancel</Button>
           </Link>
-          <Button type="submit" size="lg" isLoading={isSubmitting} leftIcon={!isSubmitting && <Save className="h-4 w-4" />} className="w-full sm:w-auto">
+          <Button type="submit" size="lg" isLoading={isSubmitting} leftIcon={!isSubmitting && <Save strokeWidth={1.5} className="h-4 w-4" />} className="w-full sm:w-auto">
             Save Changes
           </Button>
         </div>

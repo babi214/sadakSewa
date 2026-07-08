@@ -91,7 +91,7 @@ export default function PublicReports() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="mt-8 flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-white py-20 text-center"
+          className="mt-8 flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-white py-20 text-center"
         >
           <FileText className="h-12 w-12 text-muted/30" />
           <h3 className="mt-4 text-lg font-medium text-secondary">No reports found</h3>

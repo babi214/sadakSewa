@@ -1,3 +1,4 @@
+@import "https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap";
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
@@ -7,24 +8,31 @@
 }
 
 @theme {
-  --color-primary: #2563eb;
-  --color-primary-dark: #1d4ed8;
-  --color-primary-light: #3b82f6;
-  --color-secondary: #0f172a;
-  --color-secondary-light: #1e293b;
-  --color-accent: #10b981;
-  --color-accent-dark: #059669;
-  --color-warning: #f59e0b;
-  --color-danger: #ef4444;
-  --color-background: #f8fafc;
-  --color-surface: #ffffff;
-  --color-muted: #64748b;
-  --color-border: #e2e8f0;
+  --color-primary: #1B4B5E;
+  --color-primary-dark: #0F3443;
+  --color-primary-light: #2D708C;
+  --color-secondary: #1F2429;
+  --color-secondary-light: #30363D;
+  --color-accent: #207A46;
+  --color-accent-dark: #155D33;
+  --color-warning: #C47F24;
+  --color-danger: #C62828;
+  --color-background: #EFF0EC;
+  --color-surface: #FFFFFF;
+  --color-muted: #6F777D;
+  --color-border: #D6D8D2;
 
+  --color-status-pending: #C47F24;
+  --color-status-verified: #1B4B5E;
+  --color-status-in-progress: #D47A22;
+  --color-status-resolved: #207A46;
+  --color-status-rejected: #C62828;
+
+  --font-display: "Archivo", "Inter", system-ui, sans-serif;
   --font-sans: "Inter", system-ui, -apple-system, sans-serif;
 
-  --shadow-glass: 0 8px 32px rgba(15, 23, 42, 0.08);
-  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 4px 16px rgba(15, 23, 42, 0.04);
+  --shadow-glass: 0 8px 32px rgba(31, 36, 41, 0.08);
+  --shadow-card: 0 1px 3px rgba(31, 36, 41, 0.06), 0 4px 16px rgba(31, 36, 41, 0.04);
 }
 
 @layer base {
@@ -51,7 +59,38 @@
   }
 }
 
-/* Leaflet custom markers */
+/* ── Status Shield markers (map, cards, timeline) ── */
+
+.status-shield {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  transform: rotate(45deg);
+  border-radius: 4px;
+  border: 2px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 6px rgba(31, 36, 41, 0.25);
+  flex-shrink: 0;
+}
+
+.status-shield svg {
+  transform: rotate(-45deg);
+}
+
+.status-shield--sm {
+  width: 20px;
+  height: 20px;
+}
+
+.status-shield--lg {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+}
+
+/* ── Leaflet marker overrides ── */
+
 .report-map-marker {
   position: relative;
   display: flex;
@@ -59,37 +98,39 @@
   align-items: center;
 }
 
-.report-map-marker__pin {
+.report-map-marker__shield {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 50% 50% 50% 0;
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-  color: white;
-  transform: rotate(-45deg);
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);
-  border: 2px solid white;
+  width: 34px;
+  height: 34px;
+  transform: rotate(45deg);
+  border-radius: 5px;
+  border: 2.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 3px 8px rgba(31, 36, 41, 0.3);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.report-map-marker__pin svg {
-  transform: rotate(45deg);
+.report-map-marker__shield svg {
+  transform: rotate(-45deg);
 }
 
-.report-map-marker--active .report-map-marker__pin {
-  background: linear-gradient(135deg, #2563eb, #1d4ed8);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.5);
-  transform: rotate(-45deg) scale(1.15);
+.report-map-marker--active .report-map-marker__shield {
+  transform: rotate(45deg) scale(1.2);
+  box-shadow: 0 4px 14px rgba(31, 36, 41, 0.4);
 }
 
 .report-map-marker__shadow {
   width: 14px;
   height: 4px;
-  margin-top: 2px;
+  margin-top: 3px;
   border-radius: 50%;
-  background: rgba(15, 23, 42, 0.2);
+  background: rgba(31, 36, 41, 0.2);
+}
+
+.report-map-marker--active .report-map-marker__shadow {
+  width: 18px;
+  background: rgba(31, 36, 41, 0.3);
 }
 
 .user-map-marker {
@@ -102,9 +143,9 @@
   position: absolute;
   inset: 6px;
   border-radius: 50%;
-  background: #2563eb;
+  background: #1B4B5E;
   border: 2px solid white;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+  box-shadow: 0 2px 8px rgba(27, 75, 94, 0.4);
   z-index: 2;
 }
 
@@ -112,7 +153,7 @@
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: rgba(37, 99, 235, 0.25);
+  background: rgba(27, 75, 94, 0.25);
   animation: map-pulse 2s ease-out infinite;
 }
 

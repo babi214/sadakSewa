@@ -15,6 +15,7 @@ import {
   UserMinus,
   UserPlus,
 } from 'lucide-react'
+import StatusShield from '../../components/common/StatusShield'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
 import Card, { CardHeader } from '../../components/common/Card'
@@ -150,7 +151,7 @@ export default function ReportDetails() {
   if (notFound || !report) {
     return (
       <div className="mx-auto max-w-lg px-4 py-20 text-center">
-        <h1 className="text-2xl font-bold text-secondary">Report Not Found</h1>
+        <h1 className="font-display text-2xl font-bold text-secondary">Report Not Found</h1>
         <p className="mt-2 text-muted">This report may have been removed or does not exist.</p>
         <Link to="/reports" className="mt-6 inline-block">
           <Button variant="outline">Browse Reports</Button>
@@ -232,8 +233,7 @@ export default function ReportDetails() {
         onClick={() => navigate(-1)}
         className="mb-4 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-secondary"
       >
-        <ArrowLeft className="h-4 w-4" />
-        Back
+        <ArrowLeft strokeWidth={1.5} className="h-4 w-4" />
       </button>
 
       <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}>
@@ -256,14 +256,14 @@ export default function ReportDetails() {
               variant={hasUpvoted ? 'accent' : 'outline'}
               onClick={handleUpvote}
               isLoading={upvoteLoading}
-              leftIcon={<ThumbsUp className={`h-4 w-4 ${hasUpvoted ? 'fill-current' : ''}`} />}
+              leftIcon={<ThumbsUp strokeWidth={1.5} className={`h-4 w-4 ${hasUpvoted ? 'fill-current' : ''}`} />}
               size="sm"
             >
               {upvoteCount} {upvoteCount === 1 ? 'Upvote' : 'Upvotes'}
             </Button>
             {canManage && (
               <Link to={`/citizen/reports/${id}/edit`}>
-                <Button variant="outline" size="sm" leftIcon={<Pencil className="h-4 w-4" />}>
+                <Button variant="outline" size="sm" leftIcon={<Pencil strokeWidth={1.5} className="h-4 w-4" />}>
                   Edit
                 </Button>
               </Link>
@@ -272,7 +272,7 @@ export default function ReportDetails() {
               <Button
                 variant="danger"
                 size="sm"
-                leftIcon={<Trash2 className="h-4 w-4" />}
+                leftIcon={<Trash2 strokeWidth={1.5} className="h-4 w-4" />}
                 onClick={() => setDeleteOpen(true)}
               >
                 Delete
@@ -282,7 +282,7 @@ export default function ReportDetails() {
               <Button
                 variant="warning"
                 size="sm"
-                leftIcon={<ShieldCheck className="h-4 w-4" />}
+                leftIcon={<ShieldCheck strokeWidth={1.5} className="h-4 w-4" />}
                 onClick={() => setStatusReport(report)}
               >
                 Review
@@ -292,7 +292,7 @@ export default function ReportDetails() {
               <Button
                 variant="outline"
                 size="sm"
-                leftIcon={<UserPlus className="h-4 w-4" />}
+                leftIcon={<UserPlus strokeWidth={1.5} className="h-4 w-4" />}
                 onClick={() => setAssignReport(report)}
               >
                 Assign Worker
@@ -356,13 +356,13 @@ export default function ReportDetails() {
                   <div className="mt-3 flex flex-wrap gap-4 text-sm text-muted">
                     {report.locationName && (
                       <span className="flex items-center gap-1.5">
-                        <MapPin className="h-4 w-4 text-primary" />
+                        <MapPin strokeWidth={1.5} className="h-4 w-4 text-primary" />
                         {report.locationName}
                       </span>
                     )}
                     {[report.province, report.district, report.municipality].filter(Boolean).length > 0 && (
                       <span className="flex items-center gap-1.5">
-                        <MapPin className="h-4 w-4 text-primary" />
+                        <MapPin strokeWidth={1.5} className="h-4 w-4 text-primary" />
                         {[report.province, report.district, report.municipality].filter(Boolean).join(', ')}
                       </span>
                     )}
@@ -397,7 +397,7 @@ export default function ReportDetails() {
               <CardHeader title="Report Info" />
               <dl className="mt-3 space-y-3">
                 <div className="flex items-start gap-2.5">
-                  <User className="mt-0.5 h-4 w-4 text-muted" />
+                  <User strokeWidth={1.5} className="mt-0.5 h-4 w-4 text-muted" />
                   <div>
                     <dt className="text-xs text-muted">Reported by</dt>
                     <dd className="text-sm font-medium text-secondary">
@@ -406,7 +406,7 @@ export default function ReportDetails() {
                   </div>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <Calendar className="mt-0.5 h-4 w-4 text-muted" />
+                  <Calendar strokeWidth={1.5} className="mt-0.5 h-4 w-4 text-muted" />
                   <div>
                     <dt className="text-xs text-muted">Submitted</dt>
                     <dd className="text-sm font-medium text-secondary">
@@ -415,7 +415,7 @@ export default function ReportDetails() {
                   </div>
                 </div>
                 <div className="flex items-start gap-2.5">
-                  <MapPin className="mt-0.5 h-4 w-4 text-muted" />
+                  <MapPin strokeWidth={1.5} className="mt-0.5 h-4 w-4 text-muted" />
                   <div>
                     <dt className="text-xs text-muted">Category</dt>
                     <dd className="text-sm font-medium text-secondary">
@@ -425,7 +425,7 @@ export default function ReportDetails() {
                 </div>
                 {report.assignedWorker && (
                   <div className="flex items-start gap-2.5">
-                    <User className="mt-0.5 h-4 w-4 text-muted" />
+                    <User strokeWidth={1.5} className="mt-0.5 h-4 w-4 text-muted" />
                     <div className="flex-1">
                       <dt className="text-xs text-muted">Assigned worker</dt>
                       <dd className="text-sm font-medium text-secondary">
@@ -446,14 +446,14 @@ export default function ReportDetails() {
                         className="rounded-lg p-1.5 text-muted transition-colors hover:bg-danger/10 hover:text-danger"
                         title="Unassign worker"
                       >
-                        <UserMinus className="h-4 w-4" />
+                        <UserMinus strokeWidth={1.5} className="h-4 w-4" />
                       </button>
                     )}
                   </div>
                 )}
                 {report.rejectionReason && report.status === 'rejected' && (
                   <div className="flex items-start gap-2.5">
-                    <AlertCircle className="mt-0.5 h-4 w-4 text-danger" />
+                    <AlertCircle strokeWidth={1.5} className="mt-0.5 h-4 w-4 text-danger" />
                     <div>
                       <dt className="text-xs text-danger">Rejected</dt>
                       <dd className="text-sm font-medium text-secondary">
@@ -464,7 +464,7 @@ export default function ReportDetails() {
                 )}
                 {report.resolvedAt && (
                   <div className="flex items-start gap-2.5">
-                    <Calendar className="mt-0.5 h-4 w-4 text-muted" />
+                    <Calendar strokeWidth={1.5} className="mt-0.5 h-4 w-4 text-muted" />
                     <div>
                       <dt className="text-xs text-muted">Resolved</dt>
                       <dd className="text-sm font-medium text-secondary">
@@ -483,7 +483,7 @@ export default function ReportDetails() {
                   outline
                   className="w-full"
                   size="sm"
-                  leftIcon={<Flag className="h-4 w-4" />}
+                  leftIcon={<Flag strokeWidth={1.5} className="h-4 w-4" />}
                   onClick={() => setFlagOpen(true)}
                 >
                   Report this issue
@@ -506,7 +506,7 @@ export default function ReportDetails() {
                   {report?.status === 'pending' && (
                     <Button
                       size="sm"
-                      leftIcon={<ShieldCheck className="h-4 w-4" />}
+                      leftIcon={<ShieldCheck strokeWidth={1.5} className="h-4 w-4" />}
                       onClick={() => setStatusReport(report)}
                     >
                       Review Report
@@ -516,7 +516,7 @@ export default function ReportDetails() {
                     <Button
                       variant="outline"
                       size="sm"
-                      leftIcon={<UserPlus className="h-4 w-4" />}
+                      leftIcon={<UserPlus strokeWidth={1.5} className="h-4 w-4" />}
                       onClick={() => setAssignReport(report)}
                     >
                       Assign Worker
@@ -558,7 +558,7 @@ export default function ReportDetails() {
       {/* Flag Report Modal */}
       {flagOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+          <div className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl">
             <h3 className="text-lg font-semibold text-secondary">Report this issue</h3>
             <p className="mt-1 text-sm text-muted">Why are you reporting this report?</p>
 

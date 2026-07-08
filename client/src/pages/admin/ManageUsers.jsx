@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import { motion } from 'framer-motion'
 import { ChevronDown, ChevronRight, Mail, MapPin, Phone, Search, Shield, Users } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
@@ -125,7 +124,7 @@ export default function ManageUsers() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-secondary sm:text-3xl">Manage Users</h1>
+        <h1 className="font-display text-2xl font-bold text-secondary sm:text-3xl">Manage Users</h1>
         <p className="mt-1 text-muted">View users, assign roles, and manage account status</p>
       </div>
 
@@ -133,7 +132,7 @@ export default function ManageUsers() {
         <div className="grid gap-4 sm:grid-cols-2">
           <FormField label="Search users">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+              <Search strokeWidth={1.5} className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
@@ -187,156 +186,145 @@ export default function ManageUsers() {
       {loading ? (
         <div className="space-y-3">
           {Array.from({ length: 5 }).map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-2xl" />
+            <Skeleton key={i} className="h-20 rounded-xl" />
           ))}
         </div>
       ) : users.length === 0 ? (
-        <div className="flex flex-col items-center rounded-2xl border border-dashed border-border bg-white py-20 text-center">
-          <Users className="h-12 w-12 text-muted/30" />
+        <div className="flex flex-col items-center rounded-xl border border-dashed border-border bg-white py-20 text-center">
+          <Users strokeWidth={1.5} className="h-12 w-12 text-muted/30" />
           <p className="mt-4 text-muted">No users found</p>
         </div>
       ) : (
         <div className="space-y-3">
           {users.map((user, index) => (
-            <motion.div
-              key={user._id}
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.03 }}
-            >
-              <Card className="flex flex-col gap-4">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                  <div className="flex items-center gap-4">
-                    <button
-                      type="button"
-                      onClick={() => setExpandedId(expandedId === user._id ? null : user._id)}
-                      className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-sm font-bold text-primary hover:bg-primary/20 transition-colors"
-                    >
-                      {user.profilePicture ? (
-                        <img
-                          src={user.profilePicture}
-                          alt={user.fullName}
-                          className="h-full w-full rounded-xl object-cover"
-                        />
-                      ) : (
-                        user.fullName?.charAt(0)?.toUpperCase()
+            <Card key={user._id} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-4">
+                  <button
+                    type="button"
+                    onClick={() => setExpandedId(expandedId === user._id ? null : user._id)}
+                    className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-sm font-bold text-primary hover:bg-primary/20 transition-colors"
+                  >
+                    {user.profilePicture ? (
+                      <img
+                        src={user.profilePicture}
+                        alt={user.fullName}
+                        className="h-full w-full rounded-lg object-cover"
+                      />
+                    ) : (
+                      user.fullName?.charAt(0)?.toUpperCase()
+                    )}
+                  </button>
+                  <div className="flex-1">
+                    <p className="font-semibold text-secondary">{user.fullName}</p>
+                    <p className="flex items-center gap-1 text-sm text-muted">
+                      <Mail strokeWidth={1.5} className="h-3 w-3" />
+                      {user.email}
+                    </p>
+                    <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted">
+                      <span className="capitalize">{user.role}</span>
+                      <span>&middot;</span>
+                      <span>{formatDate(user.createdAt)}</span>
+                      {user.phone && <><span>&middot;</span><span>{user.phone}</span></>}
+                      {!user.isActive && (
+                        <span className="font-medium text-danger">Inactive</span>
                       )}
-                    </button>
-                    <div className="flex-1">
-                      <p className="font-semibold text-secondary">{user.fullName}</p>
-                      <p className="flex items-center gap-1 text-sm text-muted">
-                        <Mail className="h-3 w-3" />
-                        {user.email}
-                      </p>
-                      <div className="mt-1 flex flex-wrap gap-2 text-xs text-muted">
-                        <span className="capitalize">{user.role}</span>
-                        <span>·</span>
-                        <span>{formatDate(user.createdAt)}</span>
-                        {user.phone && <><span>·</span><span>{user.phone}</span></>}
-                        {!user.isActive && (
-                          <span className="font-medium text-danger">Inactive</span>
-                        )}
-                        {user.isVerified && (
-                          <span className="font-medium text-accent">Verified</span>
-                        )}
-                      </div>
+                      {user.isVerified && (
+                        <span className="font-medium text-accent">Verified</span>
+                      )}
                     </div>
-                  </div>
-
-                  <div className="flex flex-wrap items-center gap-2">
-                    <Select
-                      value={user.role}
-                      onChange={(e) => handleRoleChange(user._id, e.target.value)}
-                      disabled={updatingId === user._id}
-                      className="w-full sm:w-32 py-2 text-xs"
-                    >
-                      {ROLES.map((r) => (
-                        <option key={r.value} value={r.value}>{r.label}</option>
-                      ))}
-                    </Select>
-                    <Button
-                      variant={user.isActive ? 'outline' : 'accent'}
-                      size="sm"
-                      disabled={updatingId === user._id}
-                      onClick={() => handleToggleActive(user._id, user.isActive)}
-                    >
-                      {user.isActive ? 'Deactivate' : 'Activate'}
-                    </Button>
-                    <button
-                      type="button"
-                      onClick={() => setExpandedId(expandedId === user._id ? null : user._id)}
-                      className="rounded-lg p-2 text-muted hover:bg-secondary/5 transition-colors"
-                    >
-                      {expandedId === user._id ? (
-                        <ChevronDown className="h-4 w-4" />
-                      ) : (
-                        <ChevronRight className="h-4 w-4" />
-                      )}
-                    </button>
                   </div>
                 </div>
 
-                {expandedId === user._id && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="border-t border-border pt-4"
+                <div className="flex flex-wrap items-center gap-2">
+                  <Select
+                    value={user.role}
+                    onChange={(e) => handleRoleChange(user._id, e.target.value)}
+                    disabled={updatingId === user._id}
+                    className="w-full sm:w-32 py-2 text-xs"
                   >
-                    <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-                      <div>
-                        <p className="text-xs font-medium uppercase tracking-wider text-muted">Contact</p>
-                        <div className="mt-2 space-y-1.5">
-                          <p className="flex items-center gap-2 text-sm text-secondary">
-                            <Mail className="h-3.5 w-3.5 text-muted" />
-                            {user.email}
-                          </p>
-                          <p className="flex items-center gap-2 text-sm text-secondary">
-                            <Phone className="h-3.5 w-3.5 text-muted" />
-                            {user.phone || 'Not provided'}
-                          </p>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium uppercase tracking-wider text-muted">Location</p>
-                        <div className="mt-2 space-y-1.5">
-                          <p className="flex items-center gap-2 text-sm text-secondary">
-                            <MapPin className="h-3.5 w-3.5 text-muted" />
-                            {[user.province, user.district, user.municipality].filter(Boolean).join(', ') || 'Not provided'}
-                          </p>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-xs font-medium uppercase tracking-wider text-muted">Account</p>
-                        <div className="mt-2 space-y-1.5">
-                          <p className="text-sm text-secondary">
-                            <span className="text-muted">Role:</span> <span className="capitalize font-medium">{user.role}</span>
-                          </p>
-                          <p className="text-sm text-secondary">
-                            <span className="text-muted">Status:</span>{' '}
-                            <span className={user.isActive ? 'text-accent font-medium' : 'text-danger font-medium'}>
-                              {user.isActive ? 'Active' : 'Inactive'}
-                            </span>
-                          </p>
-                          <p className="text-sm text-secondary">
-                            <span className="text-muted">Email verified:</span>{' '}
-                            {user.isVerified ? <span className="text-accent font-medium">Yes</span> : <span className="text-danger font-medium">No</span>}
-                          </p>
-                          <p className="text-sm text-secondary">
-                            <span className="text-muted">Joined:</span> {formatDate(user.createdAt)}
-                          </p>
-                        </div>
+                    {ROLES.map((r) => (
+                      <option key={r.value} value={r.value}>{r.label}</option>
+                    ))}
+                  </Select>
+                  <Button
+                    variant={user.isActive ? 'outline' : 'accent'}
+                    size="sm"
+                    disabled={updatingId === user._id}
+                    onClick={() => handleToggleActive(user._id, user.isActive)}
+                  >
+                    {user.isActive ? 'Deactivate' : 'Activate'}
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => setExpandedId(expandedId === user._id ? null : user._id)}
+                    className="rounded-md p-2 text-muted hover:bg-secondary/5 transition-colors"
+                  >
+                    {expandedId === user._id ? (
+                      <ChevronDown strokeWidth={1.5} className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight strokeWidth={1.5} className="h-4 w-4" />
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              {expandedId === user._id && (
+                <div className="border-t border-border pt-4">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wider text-muted">Contact</p>
+                      <div className="mt-2 space-y-1.5">
+                        <p className="flex items-center gap-2 text-sm text-secondary">
+                          <Mail strokeWidth={1.5} className="h-3.5 w-3.5 text-muted" />
+                          {user.email}
+                        </p>
+                        <p className="flex items-center gap-2 text-sm text-secondary">
+                          <Phone strokeWidth={1.5} className="h-3.5 w-3.5 text-muted" />
+                          {user.phone || 'Not provided'}
+                        </p>
                       </div>
                     </div>
-                  </motion.div>
-                )}
-              </Card>
-            </motion.div>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wider text-muted">Location</p>
+                      <div className="mt-2 space-y-1.5">
+                        <p className="flex items-center gap-2 text-sm text-secondary">
+                          <MapPin strokeWidth={1.5} className="h-3.5 w-3.5 text-muted" />
+                          {[user.province, user.district, user.municipality].filter(Boolean).join(', ') || 'Not provided'}
+                        </p>
+                      </div>
+                    </div>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wider text-muted">Account</p>
+                      <div className="mt-2 space-y-1.5">
+                        <p className="text-sm text-secondary">
+                          <span className="text-muted">Role:</span> <span className="capitalize font-medium">{user.role}</span>
+                        </p>
+                        <p className="text-sm text-secondary">
+                          <span className="text-muted">Status:</span>{' '}
+                          <span className={user.isActive ? 'text-accent font-medium' : 'text-danger font-medium'}>
+                            {user.isActive ? 'Active' : 'Inactive'}
+                          </span>
+                        </p>
+                        <p className="text-sm text-secondary">
+                          <span className="text-muted">Email verified:</span>{' '}
+                          {user.isVerified ? <span className="text-accent font-medium">Yes</span> : <span className="text-danger font-medium">No</span>}
+                        </p>
+                        <p className="text-sm text-secondary">
+                          <span className="text-muted">Joined:</span> {formatDate(user.createdAt)}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </Card>
           ))}
         </div>
       )}
 
-      <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-secondary">
-        <Shield className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+      <div className="flex items-start gap-3 rounded-lg border border-primary/20 bg-primary/5 px-4 py-3 text-sm text-secondary">
+        <Shield strokeWidth={1.5} className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
         <p>
           Promote users to <strong>Worker</strong> to allow admins to assign them reports.
           Workers can update report status on their assigned tasks.

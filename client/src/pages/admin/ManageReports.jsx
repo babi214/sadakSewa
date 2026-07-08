@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { AlertCircle, FileText, UserPlus } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
@@ -71,7 +70,7 @@ export default function ManageReports() {
     try {
       const response = await reportService.assignWorker(assignReport._id, workerId)
       if (response.success) {
-        toast.success('Worker assigned successfully')
+        toast.success('Worker assigned')
         setAssignReport(null)
         fetchReports()
       }
@@ -102,8 +101,8 @@ export default function ManageReports() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-secondary sm:text-3xl">Manage Reports</h1>
-        <p className="mt-1 text-muted">Review pending reports, assign verified reports, and monitor progress</p>
+        <h1 className="font-display text-2xl font-bold text-secondary sm:text-3xl">Manage Reports</h1>
+        <p className="mt-1 text-muted">Review, assign, and track report progress</p>
       </div>
 
       <ReportFilters
@@ -120,65 +119,58 @@ export default function ManageReports() {
           ))}
         </div>
       ) : reports.length === 0 ? (
-        <div className="flex flex-col items-center rounded-2xl border border-dashed border-border bg-white py-20 text-center">
-          <FileText className="h-12 w-12 text-muted/30" />
+        <div className="flex flex-col items-center rounded-xl border border-dashed border-border bg-white py-20 text-center">
+          <FileText strokeWidth={1.5} className="h-12 w-12 text-muted/30" />
           <p className="mt-4 text-muted">No reports found</p>
         </div>
       ) : (
         <>
           <div className="space-y-4">
-            {reports.map((report, index) => (
-              <motion.div
-                key={report._id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.03 }}
-              >
-                <Card className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                  <div className="min-w-0 flex-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <StatusBadge status={report.status} />
-                      <CategoryBadge category={report.category} />
-                      <SeverityBadge severity={report.severity} />
-                      {report.flagged && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-700">
-                          <AlertCircle className="h-3 w-3" />
-                          Flagged
-                        </span>
-                      )}
-                    </div>
-                    <h3 className="mt-2 font-semibold text-secondary">{report.title}</h3>
-                    <p className="mt-1 line-clamp-2 text-sm text-muted">{report.description}</p>
-                    <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted">
-                      <span>{formatDate(report.createdAt)}</span>
-                      {report.reportedBy?.fullName && <span>By {report.reportedBy.fullName}</span>}
-                      {report.assignedWorker?.fullName && (
-                        <span className="text-primary">Assigned: {report.assignedWorker.fullName}</span>
-                      )}
-                    </div>
-                  </div>
-                  <div className="flex shrink-0 flex-wrap gap-2">
-                    <Link to={`/reports/${report._id}`}>
-                      <Button variant="outline" size="sm">View</Button>
-                    </Link>
-                    {report.status === 'verified' && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        leftIcon={<UserPlus className="h-3.5 w-3.5" />}
-                        onClick={() => setAssignReport(report)}
-                      >
-                        {report.assignedWorker ? 'Reassign' : 'Assign'}
-                      </Button>
-                    )}
-                    {report.status === 'pending' && (
-                      <Button size="sm" onClick={() => setStatusReport(report)}>
-                        Review
-                      </Button>
+            {reports.map((report) => (
+              <Card key={report._id} className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <StatusBadge status={report.status} />
+                    <CategoryBadge category={report.category} />
+                    <SeverityBadge severity={report.severity} />
+                    {report.flagged && (
+                      <span className="inline-flex items-center gap-1 rounded-md bg-danger/10 px-2 py-0.5 text-xs font-medium text-danger">
+                        <AlertCircle strokeWidth={1.5} className="h-3 w-3" />
+                        Flagged
+                      </span>
                     )}
                   </div>
-                </Card>
-              </motion.div>
+                  <h3 className="mt-2 font-semibold text-secondary">{report.title}</h3>
+                  <p className="mt-1 line-clamp-2 text-sm text-muted">{report.description}</p>
+                  <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted">
+                    <span>{formatDate(report.createdAt)}</span>
+                    {report.reportedBy?.fullName && <span>By {report.reportedBy.fullName}</span>}
+                    {report.assignedWorker?.fullName && (
+                      <span className="text-primary">Assigned: {report.assignedWorker.fullName}</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex shrink-0 flex-wrap gap-2">
+                  <Link to={`/reports/${report._id}`}>
+                    <Button variant="outline" size="sm">View</Button>
+                  </Link>
+                  {report.status === 'verified' && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      leftIcon={<UserPlus strokeWidth={1.5} className="h-3.5 w-3.5" />}
+                      onClick={() => setAssignReport(report)}
+                    >
+                      {report.assignedWorker ? 'Reassign' : 'Assign'}
+                    </Button>
+                  )}
+                  {report.status === 'pending' && (
+                    <Button size="sm" onClick={() => setStatusReport(report)}>
+                      Review
+                    </Button>
+                  )}
+                </div>
+              </Card>
             ))}
           </div>
 

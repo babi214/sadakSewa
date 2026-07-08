@@ -62,7 +62,7 @@ export default function ImageUploader({ images, onChange, error, onFileSelect })
         {images.map((image, index) => (
           <div
             key={image.publicId || index}
-            className="group relative aspect-square overflow-hidden rounded-xl border border-border bg-background"
+            className="group relative aspect-square overflow-hidden rounded-lg border border-border bg-background"
           >
             <img
               src={image.url}
@@ -75,7 +75,7 @@ export default function ImageUploader({ images, onChange, error, onFileSelect })
               className="absolute right-1.5 top-1.5 rounded-lg bg-secondary/80 p-1 text-white opacity-0 transition-opacity group-hover:opacity-100"
               aria-label="Remove image"
             >
-              <X className="h-3.5 w-3.5" />
+              <X strokeWidth={1.5} className="h-3.5 w-3.5" />
             </button>
           </div>
         ))}
@@ -85,13 +85,13 @@ export default function ImageUploader({ images, onChange, error, onFileSelect })
             type="button"
             onClick={() => inputRef.current?.click()}
             disabled={uploading}
-            className="flex aspect-square flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border bg-background text-muted transition-colors hover:border-primary/40 hover:text-primary disabled:opacity-60"
+            className="flex aspect-square flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border bg-background text-muted transition-colors hover:border-primary/40 hover:text-primary disabled:opacity-60"
           >
             {uploading ? (
-              <Loader2 className="h-6 w-6 animate-spin" />
+              <Loader2 strokeWidth={1.5} className="h-6 w-6 animate-spin" />
             ) : (
               <>
-                <ImagePlus className="h-6 w-6" />
+                <ImagePlus strokeWidth={1.5} className="h-6 w-6" />
                 <span className="text-xs font-medium">Add Photo</span>
               </>
             )}

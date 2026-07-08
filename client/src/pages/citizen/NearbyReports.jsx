@@ -93,7 +93,7 @@ export default function NearbyReports() {
     <div className="mx-auto max-w-7xl space-y-6 px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-secondary sm:text-3xl">Nearby Reports</h1>
+          <h1 className="font-display text-2xl font-bold text-secondary sm:text-3xl">Nearby Reports</h1>
           <p className="mt-1 text-muted">
             Road issues reported near your current location
           </p>
@@ -114,7 +114,7 @@ export default function NearbyReports() {
             variant="outline"
             size="sm"
             onClick={requestLocation}
-            leftIcon={<Navigation className="h-4 w-4" />}
+            leftIcon={<Navigation strokeWidth={1.5} className="h-4 w-4" />}
           >
             Refresh Location
           </Button>
@@ -139,7 +139,7 @@ export default function NearbyReports() {
               height="h-[300px] sm:h-[400px] xl:h-[520px]"
             />
           ) : (
-            <div className="flex h-[300px] items-center justify-center rounded-2xl border border-border bg-white sm:h-[400px] xl:h-[520px]">
+            <div className="flex h-[300px] items-center justify-center rounded-xl border border-border bg-white sm:h-[400px] xl:h-[520px]">
               <RefreshCw className="h-8 w-8 animate-spin text-primary" />
             </div>
           )}

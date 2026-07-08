@@ -1,5 +1,3 @@
-import { motion } from 'framer-motion'
-
 const colorMap = {
   primary: {
     bg: 'bg-primary/10',
@@ -39,15 +37,10 @@ export default function StatCard({
   const colors = colorMap[color] || colorMap.primary
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 16 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.08 }}
-      className="rounded-2xl border border-border bg-white p-6 shadow-card"
-    >
+    <div className="rounded-xl border border-border bg-white p-6 shadow-card">
       <div className="flex items-center justify-between">
-        <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${colors.bg}`}>
-          {Icon && <Icon className={`h-5 w-5 ${colors.icon}`} />}
+        <div className={`flex h-11 w-11 items-center justify-center rounded-lg ${colors.bg}`}>
+          {Icon && <Icon strokeWidth={1.5} className={`h-5 w-5 ${colors.icon}`} />}
         </div>
         {trend && (
           <span className={`text-xs font-medium ${trend.positive ? 'text-accent' : 'text-danger'}`}>
@@ -57,6 +50,6 @@ export default function StatCard({
       </div>
       <p className={`mt-4 text-3xl font-bold ${colors.text}`}>{value}</p>
       <p className="mt-1 text-sm text-muted">{title}</p>
-    </motion.div>
+    </div>
   )
 }

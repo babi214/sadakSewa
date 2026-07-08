@@ -2,11 +2,11 @@ import { REPORT_STATUSES } from './constants'
 import { formatStatus } from './formatters'
 
 const STATUS_COLORS = {
-  pending: '#F59E0B',
-  verified: '#2563EB',
-  in_progress: '#64748B',
-  resolved: '#10B981',
-  rejected: '#EF4444',
+  pending: '#C47F24',
+  verified: '#1B4B5E',
+  in_progress: '#D47A22',
+  resolved: '#207A46',
+  rejected: '#C62828',
 }
 
 export function buildStatusChartData(stats = {}) {
@@ -24,8 +24,8 @@ export function buildWeeklyTrend(reports = []) {
 
   for (let i = 6; i >= 0; i -= 1) {
     const date = new Date(now)
-    date.setDate(now.getDate() - i)
     date.setHours(0, 0, 0, 0)
+    date.setDate(now.getDate() - i)
 
     const nextDay = new Date(date)
     nextDay.setDate(date.getDate() + 1)

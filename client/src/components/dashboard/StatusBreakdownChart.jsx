@@ -29,7 +29,7 @@ export default function StatusBreakdownChart({
                   <span className="text-xs">({Math.round((item.value / total) * 100)}%)</span>
                 </span>
               </div>
-              <div className="h-2.5 overflow-hidden rounded-full bg-background">
+              <div className="h-2 overflow-hidden rounded-full bg-background">
                 <div
                   className="h-full rounded-full transition-all duration-700"
                   style={{
@@ -41,7 +41,6 @@ export default function StatusBreakdownChart({
             </div>
           ))}
 
-          {/* Donut summary */}
           <div className="mt-6 flex flex-col items-center justify-center gap-6 border-t border-border pt-6 sm:flex-row">
             <div
               className="relative h-24 w-24 shrink-0 rounded-full"
@@ -56,7 +55,7 @@ export default function StatusBreakdownChart({
                         return `${item.color} ${start}deg ${end}deg`
                       })
                       .join(', ')})`
-                  : '#e2e8f0',
+                  : '#D6D8D2',
               }}
             >
               <div className="absolute inset-3 flex items-center justify-center rounded-full bg-white text-center">

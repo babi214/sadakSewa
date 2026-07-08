@@ -38,7 +38,7 @@ export default function RecentActivity({ reports = [] }) {
 
       {activities.length === 0 ? (
         <div className="mt-8 flex flex-col items-center justify-center py-8 text-center">
-          <Clock className="h-10 w-10 text-muted/40" />
+          <Clock strokeWidth={1.5} className="h-10 w-10 text-muted/40" />
           <p className="mt-3 text-sm text-muted">No activity yet</p>
           <p className="mt-1 text-xs text-muted/70">
             Submit your first report to see updates here
@@ -55,7 +55,7 @@ export default function RecentActivity({ reports = [] }) {
                 <div
                   className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${colorClass}`}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon strokeWidth={1.5} className="h-4 w-4" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-secondary">

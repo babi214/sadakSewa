@@ -57,7 +57,7 @@ export default function About() {
             className="mx-auto max-w-3xl text-center"
           >
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm">
-              <MapPin className="h-4 w-4 text-primary-light" />
+              <MapPin strokeWidth={1.5} className="h-4 w-4 text-primary-light" />
               About SadakSewa
             </div>
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">
@@ -100,7 +100,7 @@ export default function About() {
                   'Community upvoting to prioritize critical issues',
                 ].map((item) => (
                   <li key={item} className="flex items-center gap-2 text-sm text-secondary">
-                    <CheckCircle2 className="h-4 w-4 shrink-0 text-accent" />
+                    <CheckCircle2 strokeWidth={1.5} className="h-4 w-4 shrink-0 text-accent" />
                     {item}
                   </li>
                 ))}
@@ -142,7 +142,7 @@ export default function About() {
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="rounded-2xl border border-border bg-background p-6 text-center"
+                className="rounded-xl border border-border bg-background p-6 text-center"
               >
                 <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
                   <Users className="h-6 w-6" />
@@ -165,7 +165,7 @@ export default function About() {
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link to="/register">
-              <Button size="lg" rightIcon={<ArrowRight className="h-4 w-4" />}>
+              <Button size="lg" rightIcon={<ArrowRight strokeWidth={1.5} className="h-4 w-4" />}>
                 Get Started
               </Button>
             </Link>

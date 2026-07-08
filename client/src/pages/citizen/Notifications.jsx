@@ -97,7 +97,7 @@ export default function Notifications() {
   if (loading) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
-        <h1 className="mb-6 text-2xl font-bold text-secondary">Notifications</h1>
+        <h1 className="mb-6 font-display text-2xl font-bold text-secondary">Notifications</h1>
         <div className="space-y-4">
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="flex gap-3">
@@ -117,7 +117,7 @@ export default function Notifications() {
     <div className="mx-auto max-w-2xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-secondary">Notifications</h1>
+          <h1 className="font-display text-2xl font-bold text-secondary">Notifications</h1>
           {unreadCount > 0 && (
             <span className="rounded-full bg-primary px-2.5 py-0.5 text-xs font-bold text-white">
               {unreadCount}
@@ -126,7 +126,7 @@ export default function Notifications() {
         </div>
         {unreadCount > 0 && (
           <Button variant="ghost" size="sm" onClick={handleMarkAllRead}>
-            <CheckCheck className="mr-1.5 h-4 w-4" />
+            <CheckCheck strokeWidth={1.5} className="mr-1.5 h-4 w-4" />
             Mark All Read
           </Button>
         )}
@@ -142,7 +142,7 @@ export default function Notifications() {
               toast.error('Failed to delete notifications')
             }
           }}>
-            <Trash2 className="mr-1.5 h-4 w-4" />
+            <Trash2 strokeWidth={1.5} className="mr-1.5 h-4 w-4" />
             Delete All
           </Button>
         )}
@@ -199,7 +199,7 @@ export default function Notifications() {
                   className="shrink-0 self-start rounded-lg p-1.5 text-muted opacity-0 transition-opacity hover:bg-danger/10 hover:text-danger group-hover:opacity-100"
                   title="Delete notification"
                 >
-                  <Trash2 className="h-4 w-4" />
+                  <Trash2 strokeWidth={1.5} className="h-4 w-4" />
                 </button>
               </div>
             )

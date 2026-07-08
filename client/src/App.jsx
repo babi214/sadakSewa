@@ -13,16 +13,19 @@ export default function App() {
           toastOptions={{
             duration: 4000,
             style: {
-              borderRadius: '12px',
-              background: '#0F172A',
-              color: '#F8FAFC',
+              borderRadius: '8px',
+              background: '#1F2429',
+              color: '#EFF0EC',
               fontSize: '14px',
+              borderLeft: '3px solid #2D708C',
             },
             success: {
-              iconTheme: { primary: '#10B981', secondary: '#F8FAFC' },
+              iconTheme: { primary: '#207A46', secondary: '#EFF0EC' },
+              style: { borderLeftColor: '#207A46' },
             },
             error: {
-              iconTheme: { primary: '#EF4444', secondary: '#F8FAFC' },
+              iconTheme: { primary: '#C62828', secondary: '#EFF0EC' },
+              style: { borderLeftColor: '#C62828' },
             },
           }}
         />

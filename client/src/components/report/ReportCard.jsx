@@ -3,6 +3,7 @@ import { motion } from 'framer-motion'
 import { MapPin, Pencil, ThumbsUp, Trash2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { CategoryBadge, SeverityBadge, StatusBadge } from '../common/Badge'
+import StatusShield from '../common/StatusShield'
 import Button from '../common/Button'
 import { formatDate } from '../../utils/formatters'
 import { useAuth } from '../../hooks/useAuth'
@@ -65,14 +66,13 @@ export default function ReportCard({
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 16 }}
+      layout
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.06 }}
+      transition={{ delay: index * 0.04, duration: 0.3 }}
       onClick={handleCardClick}
-      className="group relative cursor-pointer overflow-hidden rounded-2xl border border-border bg-white shadow-card transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10"
+      className="group relative cursor-pointer overflow-hidden rounded-xl border border-border bg-white shadow-card transition-shadow hover:shadow-md"
     >
-      <div className="pointer-events-none absolute inset-0 z-10 bg-primary/0 transition-colors duration-300 group-hover:bg-primary/[0.03]" />
-
       <div className="relative h-40 overflow-hidden bg-background">
         {imageUrl ? (
           <img
@@ -82,28 +82,21 @@ export default function ReportCard({
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-gradient-to-br from-primary/5 to-accent/5">
-            <MapPin className="h-10 w-10 text-primary/30" />
+            <MapPin strokeWidth={1.5} className="h-10 w-10 text-primary/30" />
           </div>
         )}
-        <div className="absolute left-3 top-3 z-20">
+        <div className="absolute left-3 top-3 z-10">
           <StatusBadge status={report.status} />
-        </div>
-
-        {/* Hover hint */}
-        <div className="absolute inset-0 z-20 flex items-center justify-center bg-secondary/0 opacity-0 transition-all duration-300 group-hover:bg-secondary/20 group-hover:opacity-100">
-          <span className="rounded-full bg-white/90 px-3 py-1 text-xs font-medium text-secondary shadow-sm">
-            View details
-          </span>
         </div>
       </div>
 
-      <div className="relative z-20 p-4">
+      <div className="p-4">
         <div className="flex flex-wrap items-center gap-2">
           <CategoryBadge category={report.category} />
           <SeverityBadge severity={report.severity} />
         </div>
 
-        <h3 className="mt-3 line-clamp-1 text-base font-semibold text-secondary group-hover:text-primary">
+        <h3 className="mt-3 line-clamp-1 text-base font-semibold text-secondary">
           {report.title}
         </h3>
 
@@ -112,7 +105,7 @@ export default function ReportCard({
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted">
           {report.municipality && (
             <span className="flex items-center gap-1">
-              <MapPin className="h-3 w-3" />
+              <MapPin strokeWidth={1.5} className="h-3 w-3" />
               {report.municipality}
             </span>
           )}
@@ -124,19 +117,19 @@ export default function ReportCard({
         <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
           <span className="text-xs text-muted">{formatDate(report.createdAt)}</span>
 
-          <div className="relative z-30 flex items-center gap-1.5">
+          <div className="relative z-10 flex items-center gap-1.5">
             <button
               type="button"
               onClick={handleUpvote}
               className={[
-                'flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-medium transition-colors',
+                'flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium transition-colors',
                 hasUpvoted
                   ? 'bg-accent/10 text-accent'
                   : 'text-muted hover:bg-background hover:text-accent',
               ].join(' ')}
               title={hasUpvoted ? 'Remove upvote' : 'Upvote'}
             >
-              <ThumbsUp className={`h-3.5 w-3.5 ${hasUpvoted ? 'fill-current' : ''}`} />
+              <ThumbsUp strokeWidth={1.5} className={`h-3.5 w-3.5 ${hasUpvoted ? 'fill-current' : ''}`} />
               {upvotes}
             </button>
 
@@ -150,17 +143,17 @@ export default function ReportCard({
                   onClick={handleEdit}
                   title="Edit report"
                 >
-                  <Pencil className="h-3.5 w-3.5" />
+                  <Pencil strokeWidth={1.5} className="h-3.5 w-3.5" />
                 </Button>
                 <Button
                   type="button"
                   variant="ghost"
                   size="sm"
-                  className="!px-2 !py-1 text-danger hover:bg-red-50 hover:text-danger"
+                  className="!px-2 !py-1 text-danger hover:bg-danger/5 hover:text-danger"
                   onClick={handleDelete}
                   title="Delete report"
                 >
-                  <Trash2 className="h-3.5 w-3.5" />
+                  <Trash2 strokeWidth={1.5} className="h-3.5 w-3.5" />
                 </Button>
               </>
             )}

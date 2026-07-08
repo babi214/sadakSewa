@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { ClipboardList, RefreshCw } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
@@ -67,7 +66,7 @@ export default function AssignedReports() {
     try {
       const response = await reportService.updateReportStatus(selectedReport._id, status)
       if (response.success) {
-        toast.success('Status updated successfully')
+        toast.success('Status updated')
         setReports((prev) =>
           prev.map((r) => (r._id === selectedReport._id ? response.report : r))
         )
@@ -84,10 +83,10 @@ export default function AssignedReports() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-secondary sm:text-3xl">Assigned Reports</h1>
+          <h1 className="font-display text-2xl font-bold text-secondary sm:text-3xl">Assigned Reports</h1>
           <p className="mt-1 text-muted">Update status and track progress on assigned issues</p>
         </div>
-        <Button variant="outline" leftIcon={<RefreshCw className="h-4 w-4" />} onClick={fetchReports}>
+        <Button variant="outline" leftIcon={<RefreshCw strokeWidth={1.5} className="h-4 w-4" />} onClick={fetchReports}>
           Refresh
         </Button>
       </div>
@@ -106,54 +105,43 @@ export default function AssignedReports() {
           ))}
         </div>
       ) : filteredReports.length === 0 ? (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="flex flex-col items-center rounded-2xl border border-dashed border-border bg-white py-20 text-center"
-        >
-          <ClipboardList className="h-12 w-12 text-muted/30" />
+        <div className="flex flex-col items-center rounded-xl border border-dashed border-border bg-white py-20 text-center">
+          <ClipboardList strokeWidth={1.5} className="h-12 w-12 text-muted/30" />
           <h3 className="mt-4 text-lg font-medium text-secondary">
             {reports.length === 0 ? 'No assigned reports' : 'No matching reports'}
           </h3>
-        </motion.div>
+        </div>
       ) : (
         <div className="space-y-4">
-          {filteredReports.map((report, index) => (
-            <motion.div
-              key={report._id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.04 }}
-            >
-              <Card hover className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <StatusBadge status={report.status} />
-                    <CategoryBadge category={report.category} />
-                    <SeverityBadge severity={report.severity} />
-                  </div>
-                  <h3 className="mt-2 text-base font-semibold text-secondary">{report.title}</h3>
-                  <p className="mt-1 line-clamp-2 text-sm text-muted">{report.description}</p>
-                  <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted">
-                    <span>{formatCategory(report.category)}</span>
-                    <span>{formatDate(report.createdAt)}</span>
-                    {report.reportedBy?.fullName && (
-                      <span>By {report.reportedBy.fullName}</span>
-                    )}
-                  </div>
+          {filteredReports.map((report) => (
+            <Card key={report._id} hover className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
+                  <StatusBadge status={report.status} />
+                  <CategoryBadge category={report.category} />
+                  <SeverityBadge severity={report.severity} />
                 </div>
-                <div className="flex shrink-0 flex-wrap gap-2">
-                  <Link to={`/reports/${report._id}`}>
-                    <Button variant="outline" size="sm">View</Button>
-                  </Link>
-                  {getWorkerStatusOptions(report.status).length > 0 && (
-                    <Button size="sm" onClick={() => setSelectedReport(report)}>
-                      Update Status
-                    </Button>
+                <h3 className="mt-2 text-base font-semibold text-secondary">{report.title}</h3>
+                <p className="mt-1 line-clamp-2 text-sm text-muted">{report.description}</p>
+                <div className="mt-2 flex flex-wrap gap-3 text-xs text-muted">
+                  <span>{formatCategory(report.category)}</span>
+                  <span>{formatDate(report.createdAt)}</span>
+                  {report.reportedBy?.fullName && (
+                    <span>By {report.reportedBy.fullName}</span>
                   )}
                 </div>
-              </Card>
-            </motion.div>
+              </div>
+              <div className="flex shrink-0 flex-wrap gap-2">
+                <Link to={`/reports/${report._id}`}>
+                  <Button variant="outline" size="sm">View</Button>
+                </Link>
+                {getWorkerStatusOptions(report.status).length > 0 && (
+                  <Button size="sm" onClick={() => setSelectedReport(report)}>
+                    Update Status
+                  </Button>
+                )}
+              </div>
+            </Card>
           ))}
         </div>
       )}

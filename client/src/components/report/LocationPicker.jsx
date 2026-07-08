@@ -43,7 +43,7 @@ export default function LocationPicker({ value, onChange, error }) {
     <div className="space-y-3">
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2 text-sm text-muted break-all">
-          <MapPin className="h-4 w-4 shrink-0" />
+          <MapPin strokeWidth={1.5} className="h-4 w-4 shrink-0" />
           <span className="truncate">
             {value
               ? `${value.lat.toFixed(5)}, ${value.lng.toFixed(5)}`
@@ -55,7 +55,7 @@ export default function LocationPicker({ value, onChange, error }) {
           variant="outline"
           size="sm"
           onClick={handleUseMyLocation}
-          leftIcon={<Navigation className="h-3.5 w-3.5" />}
+          leftIcon={<Navigation strokeWidth={1.5} className="h-3.5 w-3.5" />}
         >
           My Location
         </Button>

@@ -52,7 +52,7 @@ export default function Modal({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 16 }}
             transition={{ duration: 0.2 }}
-            className={`relative mx-4 w-full ${sizes[size]} overflow-hidden rounded-2xl border border-border bg-white shadow-xl`}
+            className={`relative mx-4 w-full ${sizes[size]} overflow-hidden rounded-xl border border-border bg-white shadow-lg`}
             role="dialog"
             aria-modal="true"
           >
@@ -60,7 +60,7 @@ export default function Modal({
               <div className="flex items-start justify-between border-b border-border px-4 py-4 sm:px-6">
                 <div className="min-w-0 flex-1 pr-2">
                   {title && (
-                    <h2 className="text-lg font-semibold text-secondary">{title}</h2>
+                    <h2 className="text-base font-semibold text-secondary">{title}</h2>
                   )}
                   {description && (
                     <p className="mt-1 text-sm text-muted">{description}</p>
@@ -70,10 +70,10 @@ export default function Modal({
                   <button
                     type="button"
                     onClick={onClose}
-                    className="shrink-0 rounded-lg p-1.5 text-muted transition-colors hover:bg-background hover:text-secondary"
+                    className="shrink-0 rounded-md p-1.5 text-muted transition-colors hover:bg-background hover:text-secondary"
                     aria-label="Close modal"
                   >
-                    <X className="h-5 w-5" />
+                    <X strokeWidth={1.5} className="h-5 w-5" />
                   </button>
                 )}
               </div>

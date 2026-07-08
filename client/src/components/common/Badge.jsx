@@ -1,19 +1,21 @@
+import StatusShield from './StatusShield'
+
 const statusStyles = {
-  pending: 'bg-warning/10 text-warning border-warning/20',
-  verified: 'bg-primary/10 text-primary border-primary/20',
-  in_progress: 'bg-blue-100 text-blue-700 border-blue-200',
-  resolved: 'bg-accent/10 text-accent border-accent/20',
-  rejected: 'bg-danger/10 text-danger border-danger/20',
+  pending: 'bg-status-pending/10 text-status-pending border-status-pending/25',
+  verified: 'bg-status-verified/10 text-status-verified border-status-verified/25',
+  in_progress: 'bg-status-in-progress/10 text-status-in-progress border-status-in-progress/25',
+  resolved: 'bg-status-resolved/10 text-status-resolved border-status-resolved/25',
+  rejected: 'bg-status-rejected/10 text-status-rejected border-status-rejected/25',
 }
 
 const severityStyles = {
-  low: 'bg-slate-100 text-slate-600 border-slate-200',
+  low: 'bg-muted/10 text-muted border-muted/20',
   medium: 'bg-warning/10 text-warning border-warning/20',
   high: 'bg-danger/10 text-danger border-danger/20',
-  critical: 'bg-red-100 text-red-800 border-red-200',
+  critical: 'bg-danger/15 text-danger border-danger/30',
 }
 
-export function StatusBadge({ status }) {
+export function StatusBadge({ status, showShield = true }) {
   const key = status?.toLowerCase()
   const label = key
     ? key.split('_').map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
@@ -21,8 +23,9 @@ export function StatusBadge({ status }) {
 
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${statusStyles[key] || 'bg-secondary/5 text-muted border-border'}`}
+      className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-0.5 text-xs font-medium ${statusStyles[key] || 'bg-secondary/5 text-muted border-border'}`}
     >
+      {showShield && <StatusShield status={status} size="sm" />}
       {label}
     </span>
   )
@@ -34,7 +37,7 @@ export function SeverityBadge({ severity }) {
 
   return (
     <span
-      className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium ${severityStyles[key] || severityStyles.medium}`}
+      className={`inline-flex items-center rounded-md border px-2 py-0.5 text-xs font-medium ${severityStyles[key] || severityStyles.medium}`}
     >
       {label}
     </span>
@@ -47,7 +50,7 @@ export function CategoryBadge({ category }) {
     : 'Other'
 
   return (
-    <span className="inline-flex items-center rounded-full border border-border bg-background px-2.5 py-0.5 text-xs font-medium text-secondary/70">
+    <span className="inline-flex items-center rounded-md border border-border bg-background px-2 py-0.5 text-xs font-medium text-secondary/70">
       {label}
     </span>
   )

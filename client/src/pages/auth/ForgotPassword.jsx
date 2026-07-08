@@ -38,12 +38,12 @@ export default function ForgotPassword() {
   return (
     <div>
       <div className="mb-8 lg:hidden">
-        <h1 className="text-2xl font-bold text-secondary">SadakSewa</h1>
+        <h1 className="font-display text-2xl font-bold text-secondary">SadakSewa</h1>
         <p className="mt-1 text-sm text-muted">Reset your password</p>
       </div>
 
       <div className="mb-8 hidden lg:block">
-        <h1 className="text-2xl font-bold text-secondary">Forgot password?</h1>
+        <h1 className="font-display text-2xl font-bold text-secondary">Forgot password?</h1>
         <p className="mt-2 text-muted">
           Enter your email and we&apos;ll send a 6-digit reset code.
         </p>
@@ -69,7 +69,7 @@ export default function ForgotPassword() {
           className="w-full"
           size="lg"
           isLoading={isLoading}
-          leftIcon={!isLoading && <Mail className="h-4 w-4" />}
+          leftIcon={!isLoading && <Mail strokeWidth={1.5} className="h-4 w-4" />}
         >
           Send Reset Code
         </Button>

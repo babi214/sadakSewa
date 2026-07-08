@@ -70,13 +70,13 @@ export default function Login() {
       <div className="mb-8 lg:hidden">
         <div className="flex items-center gap-3 mb-3">
           <img src="/logoSadakSewa.png" alt="SadakSewa" className="h-10 w-10 rounded-xl object-cover" />
-          <h1 className="text-2xl font-bold text-secondary">SadakSewa</h1>
+          <h1 className="font-display text-2xl font-bold text-secondary">SadakSewa</h1>
         </div>
         <p className="text-sm text-muted">Sign in to your account</p>
       </div>
 
       <div className="mb-8 hidden lg:block">
-        <h1 className="text-2xl font-bold text-secondary">Welcome back</h1>
+        <h1 className="font-display text-2xl font-bold text-secondary">Welcome back</h1>
         <p className="mt-2 text-muted">Sign in to continue reporting and tracking issues</p>
       </div>
 
@@ -111,7 +111,7 @@ export default function Login() {
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-secondary"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ?           <EyeOff strokeWidth={1.5} className="h-4 w-4" /> : <Eye strokeWidth={1.5} className="h-4 w-4" />}
             </button>
           </div>
         </FormField>
@@ -130,7 +130,7 @@ export default function Login() {
           className="w-full"
           size="lg"
           isLoading={isLoading}
-          leftIcon={!isLoading && <LogIn className="h-4 w-4" />}
+          leftIcon={!isLoading && <LogIn strokeWidth={1.5} className="h-4 w-4" />}
         >
           Sign In
         </Button>

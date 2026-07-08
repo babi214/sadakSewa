@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import {
   AlertCircle,
   CheckCircle2,
@@ -80,13 +79,9 @@ export default function WorkerDashboard() {
 
   return (
     <div className="space-y-8">
-      <motion.div
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-      >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-secondary sm:text-3xl">
+          <h1 className="font-display text-2xl font-bold text-secondary sm:text-3xl">
             Welcome, {firstName}
           </h1>
           <p className="mt-1 text-muted">Manage your assigned road issue reports</p>
@@ -95,23 +90,23 @@ export default function WorkerDashboard() {
           <Button
             variant={isAvailable ? 'accent' : 'outline'}
             size="sm"
-            leftIcon={isAvailable ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
+            leftIcon={isAvailable ? <Wifi strokeWidth={1.5} className="h-4 w-4" /> : <WifiOff strokeWidth={1.5} className="h-4 w-4" />}
             onClick={handleToggleAvailability}
             isLoading={togglingAvail}
           >
             {isAvailable ? 'Available' : 'Unavailable'}
           </Button>
           <Link to="/worker/assigned">
-            <Button leftIcon={<ClipboardList className="h-4 w-4" />}>View Assigned</Button>
+            <Button leftIcon={<ClipboardList strokeWidth={1.5} className="h-4 w-4" />}>View Assigned</Button>
           </Link>
         </div>
-      </motion.div>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Total Assigned" value={stats.assigned} icon={ClipboardList} color="primary" index={0} />
-        <StatCard title="Pending" value={stats.pending} icon={Clock} color="warning" index={1} />
-        <StatCard title="In Progress" value={stats.in_progress} icon={AlertCircle} color="secondary" index={2} />
-        <StatCard title="Resolved" value={stats.resolved} icon={CheckCircle2} color="accent" index={3} />
+        <StatCard title="Total Assigned" value={stats.assigned} icon={ClipboardList} color="primary" />
+        <StatCard title="Pending" value={stats.pending} icon={Clock} color="warning" />
+        <StatCard title="In Progress" value={stats.in_progress} icon={AlertCircle} color="secondary" />
+        <StatCard title="Resolved" value={stats.resolved} icon={CheckCircle2} color="accent" />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -143,8 +138,8 @@ export default function WorkerDashboard() {
         </div>
 
         {reports.length === 0 ? (
-          <div className="flex flex-col items-center rounded-2xl border border-dashed border-border bg-white py-16 text-center">
-            <ClipboardList className="h-12 w-12 text-muted/30" />
+          <div className="flex flex-col items-center rounded-xl border border-dashed border-border bg-white py-16 text-center">
+            <ClipboardList strokeWidth={1.5} className="h-12 w-12 text-muted/30" />
             <h3 className="mt-4 text-lg font-medium text-secondary">No assignments yet</h3>
             <p className="mt-2 max-w-sm text-sm text-muted">
               Reports will appear here once an admin assigns them to you.

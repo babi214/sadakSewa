@@ -88,11 +88,11 @@ export default function MyReports() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-secondary sm:text-3xl">My Reports</h1>
+          <h1 className="font-display text-2xl font-bold text-secondary sm:text-3xl">My Reports</h1>
           <p className="mt-1 text-muted">View, edit, and manage your submitted issues</p>
         </div>
         <Link to="/citizen/reports/new">
-          <Button leftIcon={<Plus className="h-4 w-4" />}>New Report</Button>
+          <Button leftIcon={<Plus strokeWidth={1.5} className="h-4 w-4" />}>New Report</Button>
         </Link>
       </div>
 
@@ -113,7 +113,7 @@ export default function MyReports() {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-white py-20 text-center"
+          className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-white py-20 text-center"
         >
           <FileText className="h-12 w-12 text-muted/30" />
           <h3 className="mt-4 text-lg font-medium text-secondary">
@@ -126,7 +126,7 @@ export default function MyReports() {
           </p>
           {reports.length === 0 ? (
             <Link to="/citizen/reports/new" className="mt-6">
-              <Button leftIcon={<Plus className="h-4 w-4" />}>Create Report</Button>
+              <Button leftIcon={<Plus strokeWidth={1.5} className="h-4 w-4" />}>Create Report</Button>
             </Link>
           ) : (
             <Button variant="outline" className="mt-6" onClick={() => setFilters(emptyFilters)}>

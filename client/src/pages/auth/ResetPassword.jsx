@@ -67,12 +67,12 @@ export default function ResetPassword() {
   return (
     <div>
       <div className="mb-8 lg:hidden">
-        <h1 className="text-2xl font-bold text-secondary">SadakSewa</h1>
+        <h1 className="font-display text-2xl font-bold text-secondary">SadakSewa</h1>
         <p className="mt-1 text-sm text-muted">Create a new password</p>
       </div>
 
       <div className="mb-8 hidden lg:block">
-        <h1 className="text-2xl font-bold text-secondary">Reset password</h1>
+        <h1 className="font-display text-2xl font-bold text-secondary">Reset password</h1>
         <p className="mt-2 text-muted">Enter your 6-digit code and choose a new password.</p>
       </div>
 
@@ -121,7 +121,7 @@ export default function ResetPassword() {
               className="absolute right-3 top-1/2 -translate-y-1/2 text-muted hover:text-secondary"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ? <EyeOff strokeWidth={1.5} className="h-4 w-4" /> : <Eye strokeWidth={1.5} className="h-4 w-4" />}
             </button>
           </div>
         </FormField>
@@ -143,7 +143,7 @@ export default function ResetPassword() {
           className="w-full"
           size="lg"
           isLoading={isLoading}
-          leftIcon={!isLoading && <KeyRound className="h-4 w-4" />}
+          leftIcon={!isLoading && <KeyRound strokeWidth={1.5} className="h-4 w-4" />}
         >
           Reset Password
         </Button>

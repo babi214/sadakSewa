@@ -55,7 +55,7 @@ export default function VerifyEmail() {
   return (
     <div>
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-secondary">Verify your email</h1>
+        <h1 className="font-display text-2xl font-bold text-secondary">Verify your email</h1>
         <p className="mt-2 text-muted">Enter the 6-digit code we sent to your email.</p>
       </div>
 
@@ -91,7 +91,7 @@ export default function VerifyEmail() {
           className="w-full"
           size="lg"
           isLoading={isLoading}
-          leftIcon={!isLoading && <MailCheck className="h-4 w-4" />}
+          leftIcon={!isLoading && <MailCheck strokeWidth={1.5} className="h-4 w-4" />}
         >
           Verify Email
         </Button>

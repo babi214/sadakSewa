@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import {
   AlertCircle,
   CheckCircle2,
@@ -44,22 +43,22 @@ export default function AdminDashboard() {
 
   return (
     <div className="space-y-8">
-      <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }}>
-        <h1 className="text-2xl font-bold text-secondary sm:text-3xl">Admin Dashboard</h1>
-        <p className="mt-1 text-muted">Overview of platform activity and reports</p>
-      </motion.div>
+      <div>
+        <h1 className="font-display text-2xl font-bold text-secondary sm:text-3xl">Admin Dashboard</h1>
+        <p className="mt-1 text-muted">Platform overview and report activity</p>
+      </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Total Reports" value={stats.totalReports || 0} icon={FileText} color="primary" index={0} />
-        <StatCard title="Pending" value={stats.pending || 0} icon={Clock} color="warning" index={1} />
-        <StatCard title="In Progress" value={stats.inProgress || 0} icon={AlertCircle} color="secondary" index={2} />
-        <StatCard title="Resolved" value={stats.resolved || 0} icon={CheckCircle2} color="accent" index={3} />
+        <StatCard title="Total Reports" value={stats.totalReports || 0} icon={FileText} color="primary" />
+        <StatCard title="Pending" value={stats.pending || 0} icon={Clock} color="warning" />
+        <StatCard title="In Progress" value={stats.inProgress || 0} icon={AlertCircle} color="secondary" />
+        <StatCard title="Resolved" value={stats.resolved || 0} icon={CheckCircle2} color="accent" />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard title="Citizens" value={stats.totalCitizens || 0} icon={Users} color="primary" index={4} />
-        <StatCard title="Workers" value={stats.totalWorkers || 0} icon={Wrench} color="accent" index={5} />
-        <StatCard title="Admins" value={stats.totalAdmins || 0} icon={Shield} color="secondary" index={6} />
+        <StatCard title="Citizens" value={stats.totalCitizens || 0} icon={Users} color="primary" />
+        <StatCard title="Workers" value={stats.totalWorkers || 0} icon={Wrench} color="accent" />
+        <StatCard title="Admins" value={stats.totalAdmins || 0} icon={Shield} color="secondary" />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -83,8 +82,8 @@ export default function AdminDashboard() {
         />
       </div>
 
-      <div className="rounded-2xl border border-border bg-white p-6 shadow-card">
-        <h3 className="text-lg font-semibold text-secondary">Quick Actions</h3>
+      <div className="rounded-xl border border-border bg-white p-6 shadow-card">
+        <h3 className="text-base font-semibold text-secondary">Quick Actions</h3>
         <div className="mt-4 flex flex-wrap gap-3">
           <Link to="/admin/reports">
             <Button variant="outline">Manage Reports</Button>
@@ -93,7 +92,7 @@ export default function AdminDashboard() {
             <Button variant="outline">Manage Users</Button>
           </Link>
           <Link to="/admin/flagged-reports">
-            <Button variant="danger" outline>Review Flagged</Button>
+            <Button variant="danger">Review Flagged</Button>
           </Link>
           <Link to="/reports">
             <Button variant="ghost">View Public Reports</Button>
@@ -102,15 +101,15 @@ export default function AdminDashboard() {
       </div>
 
       {stats.flaggedReports > 0 && (
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 shadow-card">
+        <div className="rounded-xl border border-danger/20 bg-danger/5 p-6 shadow-card">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <AlertCircle className="h-6 w-6 text-red-600" />
+              <AlertCircle strokeWidth={1.5} className="h-6 w-6 text-danger" />
               <div>
-                <h3 className="text-lg font-semibold text-red-700">
+                <h3 className="text-base font-semibold text-danger">
                   Flagged Reports ({stats.flaggedReports})
                 </h3>
-                <p className="text-sm text-red-600">
+                <p className="text-sm text-danger/80">
                   Reports flagged as potential duplicates requiring review
                 </p>
               </div>
@@ -123,14 +122,14 @@ export default function AdminDashboard() {
             <div className="mt-4 space-y-3">
               {stats.flaggedReportList.map((report) => (
                 <Link key={report._id} to={`/reports/${report._id}`}>
-                  <div className="rounded-xl border border-red-200 bg-white p-4 transition hover:shadow-md">
+                  <div className="rounded-lg border border-danger/20 bg-white p-4 transition hover:shadow-md">
                     <p className="font-medium text-secondary">{report.title}</p>
                     <p className="mt-1 text-sm text-muted">
                       by {report.reportedBy?.fullName || 'Unknown'} &middot;{' '}
                       {new Date(report.createdAt).toLocaleDateString()}
                     </p>
                     {report.flaggedReason && (
-                      <p className="mt-1 text-xs text-red-500">{report.flaggedReason}</p>
+                      <p className="mt-1 text-xs text-danger/70">{report.flaggedReason}</p>
                     )}
                     {report.userFlags && report.userFlags.length > 0 && (
                       <p className="mt-1 text-xs text-muted">
@@ -157,7 +156,7 @@ export default function AdminDashboard() {
         </div>
 
         {(stats.recentReports || []).length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-border bg-white py-16 text-center text-sm text-muted">
+          <div className="rounded-xl border border-dashed border-border bg-white py-16 text-center text-sm text-muted">
             No reports yet
           </div>
         ) : (

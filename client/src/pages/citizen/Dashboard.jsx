@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import {
   AlertCircle,
   CheckCircle2,
@@ -64,14 +63,9 @@ export default function CitizenDashboard() {
 
   return (
     <div className="space-y-8">
-      {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -12 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
-      >
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-secondary sm:text-3xl">
+          <h1 className="font-display text-2xl font-bold text-secondary sm:text-3xl">
             Welcome back, {firstName}
           </h1>
           <p className="mt-1 text-muted">
@@ -80,62 +74,24 @@ export default function CitizenDashboard() {
         </div>
         <div className="flex gap-3">
           <Link to="/citizen/analyze">
-            <Button variant="outline" leftIcon={<Scan className="h-4 w-4" />}>Analyze Road</Button>
+            <Button variant="outline" leftIcon={<Scan strokeWidth={1.5} className="h-4 w-4" />}>Analyze Road</Button>
           </Link>
           <Link to="/citizen/reports/new">
-            <Button leftIcon={<Plus className="h-4 w-4" />}>New Report</Button>
+            <Button leftIcon={<Plus strokeWidth={1.5} className="h-4 w-4" />}>New Report</Button>
           </Link>
         </div>
-      </motion.div>
-
-      {/* Stats Grid */}
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          title="Total Reports"
-          value={stats.totalReports}
-          icon={FileText}
-          color="primary"
-          index={0}
-        />
-        <StatCard
-          title="Pending"
-          value={stats.pending}
-          icon={Clock}
-          color="warning"
-          index={1}
-        />
-        <StatCard
-          title="In Progress"
-          value={stats.in_progress}
-          icon={AlertCircle}
-          color="secondary"
-          index={2}
-        />
-        <StatCard
-          title="Resolved"
-          value={stats.resolved}
-          icon={CheckCircle2}
-          color="accent"
-          index={3}
-        />
       </div>
 
-      {/* Secondary Stats */}
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard title="Total Reports" value={stats.totalReports} icon={FileText} color="primary" />
+        <StatCard title="Pending" value={stats.pending} icon={Clock} color="warning" />
+        <StatCard title="In Progress" value={stats.in_progress} icon={AlertCircle} color="secondary" />
+        <StatCard title="Resolved" value={stats.resolved} icon={CheckCircle2} color="accent" />
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
-        <StatCard
-          title="Total Upvotes Received"
-          value={stats.totalUpvotes}
-          icon={ThumbsUp}
-          color="accent"
-          index={4}
-        />
-        <StatCard
-          title="Verified Reports"
-          value={stats.verified || 0}
-          icon={CheckCircle2}
-          color="primary"
-          index={5}
-        />
+        <StatCard title="Total Upvotes Received" value={stats.totalUpvotes} icon={ThumbsUp} color="accent" />
+        <StatCard title="Verified Reports" value={stats.verified || 0} icon={CheckCircle2} color="primary" />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -151,7 +107,6 @@ export default function CitizenDashboard() {
 
       <RecentActivity reports={reports} />
 
-      {/* Recent Reports */}
       <div>
         <div className="mb-6 flex items-center justify-between">
           <div>
@@ -160,29 +115,23 @@ export default function CitizenDashboard() {
           </div>
           {reports.length > 0 && (
             <Link to="/citizen/reports">
-              <Button variant="outline" size="sm">
-                View All
-              </Button>
+              <Button variant="outline" size="sm">View All</Button>
             </Link>
           )}
         </div>
 
         {reports.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-white py-16 text-center"
-          >
-            <FileText className="h-12 w-12 text-muted/30" />
+          <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border bg-white py-16 text-center">
+            <FileText strokeWidth={1.5} className="h-12 w-12 text-muted/30" />
             <h3 className="mt-4 text-lg font-medium text-secondary">No reports yet</h3>
             <p className="mt-2 max-w-sm text-sm text-muted">
               Start by reporting a road issue in your community. Your first report
               helps make roads safer for everyone.
             </p>
             <Link to="/citizen/reports/new" className="mt-6">
-              <Button leftIcon={<Plus className="h-4 w-4" />}>Create First Report</Button>
+              <Button leftIcon={<Plus strokeWidth={1.5} className="h-4 w-4" />}>Report an Issue</Button>
             </Link>
-          </motion.div>
+          </div>
         ) : (
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {reports.slice(0, 3).map((report, index) => (

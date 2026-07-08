@@ -61,7 +61,7 @@ export default function ReportsMap({
   const center = userLocation || DEFAULT_MAP_CENTER
 
   return (
-    <div className={`overflow-hidden rounded-2xl border border-border ${className}`}>
+    <div className={`border border-border ${className}`}>
       <MapContainer
         center={[center.lat, center.lng]}
         zoom={14}
@@ -92,7 +92,7 @@ export default function ReportsMap({
             <Marker
               key={report._id}
               position={[coords.lat, coords.lng]}
-              icon={createReportMarkerIcon(isActive)}
+              icon={createReportMarkerIcon(isActive, report.status)}
               eventHandlers={{
                 click: () => onMarkerClick?.(report._id),
               }}

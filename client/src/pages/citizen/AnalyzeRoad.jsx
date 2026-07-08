@@ -62,7 +62,7 @@ export default function AnalyzeRoad() {
           <ArrowLeft className="h-5 w-5" />
         </Link>
         <div>
-          <h1 className="text-2xl font-bold text-secondary">Analyze Road</h1>
+          <h1 className="font-display text-2xl font-bold text-secondary">Analyze Road</h1>
           <p className="mt-1 text-sm text-muted">
             Upload a road image for AI-powered damage detection
           </p>
@@ -98,7 +98,7 @@ export default function AnalyzeRoad() {
                   <Button
                     onClick={handleAnalyze}
                     isLoading={analyzing}
-                    leftIcon={!analyzing && <Scan className="h-4 w-4" />}
+                    leftIcon={!analyzing && <Scan strokeWidth={1.5} className="h-4 w-4" />}
                   >
                     Analyze
                   </Button>
@@ -144,7 +144,7 @@ export default function AnalyzeRoad() {
                 <div className="mt-4 space-y-3">
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-danger/10 px-3 py-1 text-sm font-medium text-danger">
-                      <XCircle className="h-4 w-4" />
+                      <XCircle strokeWidth={1.5} className="h-4 w-4" />
                       Issues Detected
                     </span>
                     <span className="text-sm text-muted">

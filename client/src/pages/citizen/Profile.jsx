@@ -161,7 +161,7 @@ export default function Profile() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-secondary sm:text-3xl">Profile</h1>
+        <h1 className="font-display text-2xl font-bold text-secondary sm:text-3xl">Profile</h1>
         <p className="mt-1 text-muted">Manage your account information</p>
       </div>
 
@@ -174,10 +174,10 @@ export default function Profile() {
               <img
                 src={user.profilePicture}
                 alt={user.fullName}
-                className="h-24 w-24 rounded-2xl object-cover ring-4 ring-primary/10"
+                className="h-24 w-24 rounded-xl object-cover ring-4 ring-primary/10"
               />
             ) : (
-              <div className="flex h-24 w-24 items-center justify-center rounded-2xl bg-primary/10 text-3xl font-bold text-primary ring-4 ring-primary/10">
+              <div className="flex h-24 w-24 items-center justify-center rounded-xl bg-primary/10 text-3xl font-bold text-primary ring-4 ring-primary/10">
                 {user?.fullName?.charAt(0)?.toUpperCase() || 'U'}
               </div>
             )}
@@ -188,7 +188,7 @@ export default function Profile() {
               className="absolute -bottom-2 -right-2 rounded-xl bg-primary p-2 text-white shadow-lg transition-colors hover:bg-primary-dark disabled:opacity-60"
               aria-label="Change profile picture"
             >
-              <Camera className="h-4 w-4" />
+              <Camera strokeWidth={1.5} className="h-4 w-4" />
             </button>
           </div>
 
@@ -222,14 +222,14 @@ export default function Profile() {
         <CardHeader title="Account Information" />
         <div className="mt-5 space-y-4">
           <div className="flex items-center gap-3 rounded-xl bg-background px-4 py-3">
-            <Mail className="h-4 w-4 text-muted" />
+            <Mail strokeWidth={1.5} className="h-4 w-4 text-muted" />
             <div>
               <p className="text-xs text-muted">Email</p>
               <p className="text-sm font-medium text-secondary">{user?.email}</p>
             </div>
           </div>
           <div className="flex items-center gap-3 rounded-xl bg-background px-4 py-3">
-            <User className="h-4 w-4 text-muted" />
+            <User strokeWidth={1.5} className="h-4 w-4 text-muted" />
             <div>
               <p className="text-xs text-muted">Member since</p>
               <p className="text-sm font-medium text-secondary">
@@ -260,7 +260,7 @@ export default function Profile() {
             required
           >
             <div className="relative">
-              <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+              <Phone strokeWidth={1.5} className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
               <Input
                 name="phone"
                 value={form.phone}
@@ -274,7 +274,7 @@ export default function Profile() {
 
           <FormField label="Province">
             <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+              <MapPin strokeWidth={1.5} className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
               <Select
                 value={selectedProvinceId}
                 onChange={handleProvinceChange}
@@ -290,7 +290,7 @@ export default function Profile() {
 
           <FormField label="District">
             <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+              <MapPin strokeWidth={1.5} className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
               <Select
                 value={selectedDistrictId}
                 onChange={handleDistrictChange}
@@ -307,7 +307,7 @@ export default function Profile() {
 
           <FormField label="Municipality">
             <div className="relative">
-              <MapPin className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
+              <MapPin strokeWidth={1.5} className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
               <Select
                 value={form.municipality}
                 onChange={handleMunicipalityChange}
@@ -326,7 +326,7 @@ export default function Profile() {
             <Button
               type="submit"
               isLoading={isSaving}
-              leftIcon={!isSaving && <Save className="h-4 w-4" />}
+              leftIcon={!isSaving && <Save strokeWidth={1.5} className="h-4 w-4" />}
             >
               Save Changes
             </Button>

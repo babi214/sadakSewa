@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, Send, Scan, XCircle, CheckCircle2, MapPin, AlertTriangle } from 'lucide-react'
+import { ArrowLeft, RotateCcw, Send, Scan, XCircle, CheckCircle2, MapPin, AlertTriangle } from 'lucide-react'
 import toast from 'react-hot-toast'
 import * as exifr from 'exifr'
 import Button from '../../components/common/Button'
@@ -53,6 +53,7 @@ export default function CreateReport() {
   const [selectedProvinceId, setSelectedProvinceId] = useState('')
   const [selectedDistrictId, setSelectedDistrictId] = useState('')
   const [duplicateDlg, setDuplicateDlg] = useState({ isOpen: false, title: '', message: '', similarReportId: '' })
+  const [showClearConfirm, setShowClearConfirm] = useState(false)
 
   useEffect(() => {
     api.get('/locations/provinces').then(({ data }) => {
@@ -101,6 +102,16 @@ export default function CreateReport() {
   const [aiResult, setAiResult] = useState(null)
   const [analyzing, setAnalyzing] = useState(false)
   const [gpsStatus, setGpsStatus] = useState('')
+
+  const clearForm = () => {
+    setForm({ ...initialForm, province: '', district: '', municipality: '' })
+    setLocation(null)
+    setImages([])
+    setErrors({})
+    setAiResult(null)
+    setGpsStatus('')
+    setShowClearConfirm(false)
+  }
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -242,19 +253,30 @@ export default function CreateReport() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
-      <div className="flex items-center gap-4">
-        <Link
-          to="/citizen/dashboard"
-          className="rounded-xl p-2 text-muted transition-colors hover:bg-white hover:text-secondary"
-        >
-          <ArrowLeft className="h-5 w-5" />
-        </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-secondary">Report an Issue</h1>
-          <p className="mt-1 text-sm text-muted">
-            Help improve your community by reporting road-related problems
-          </p>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Link
+            to="/citizen/dashboard"
+            className="rounded-lg p-2 text-muted transition-colors hover:bg-white hover:text-secondary"
+          >
+            <ArrowLeft strokeWidth={1.5} className="h-5 w-5" />
+          </Link>
+          <div>
+            <h1 className="font-display text-2xl font-bold text-secondary">Report an Issue</h1>
+            <p className="mt-1 text-sm text-muted">
+              Help improve your community by reporting road-related problems
+            </p>
+          </div>
         </div>
+        <button
+          type="button"
+          onClick={() => setShowClearConfirm(true)}
+          className="flex items-center gap-1.5 rounded-lg border border-border bg-white px-3 py-2 text-sm text-muted transition-colors hover:bg-background hover:text-secondary"
+          title="Clear form"
+        >
+          <RotateCcw strokeWidth={1.5} className="h-4 w-4" />
+          <span className="hidden sm:inline">Clear</span>
+        </button>
       </div>
 
       <form onSubmit={handleSubmit} noValidate>
@@ -334,7 +356,7 @@ export default function CreateReport() {
 
               {analyzing && (
                 <div className="mt-3 flex items-center gap-2 text-sm text-muted">
-                  <Scan className="h-4 w-4 animate-pulse" />
+                  <Scan strokeWidth={1.5} className="h-4 w-4 animate-pulse" />
                   Analyzing image with AI...
                 </div>
               )}
@@ -344,7 +366,7 @@ export default function CreateReport() {
                   {aiResult.detections?.length > 0 ? (
                     <div className="rounded-xl border border-border bg-background p-4">
                       <div className="mb-3 flex items-center gap-2 text-sm font-medium text-danger">
-                        <XCircle className="h-4 w-4" />
+                        <XCircle strokeWidth={1.5} className="h-4 w-4" />
                         AI Detected
                       </div>
                       <div className="space-y-2">
@@ -362,7 +384,7 @@ export default function CreateReport() {
                     </div>
                   ) : (
                     <div className="flex items-center gap-2 text-sm text-accent">
-                      <CheckCircle2 className="h-4 w-4" />
+                      <CheckCircle2 strokeWidth={1.5} className="h-4 w-4" />
                       No issues detected in image
                     </div>
                   )}
@@ -437,7 +459,7 @@ export default function CreateReport() {
                 <FormField label="Pin on map" error={errors.location} required>
                   {gpsStatus && (
                     <div className="mb-2 flex items-center gap-1.5 text-xs font-medium text-primary">
-                      <MapPin className="h-3.5 w-3.5" />
+                      <MapPin strokeWidth={1.5} className="h-3.5 w-3.5" />
                       {gpsStatus}
                     </div>
                   )}
@@ -463,10 +485,10 @@ export default function CreateReport() {
             type="submit"
             size="lg"
             isLoading={isSubmitting}
-            leftIcon={!isSubmitting && <Send className="h-4 w-4" />}
+            leftIcon={!isSubmitting && <Send strokeWidth={1.5} className="h-4 w-4" />}
             className="w-full sm:w-auto min-w-[200px]"
           >
-            Submit Report
+            Report Issue
           </Button>
           <Link to="/citizen/dashboard" className="w-full sm:w-auto">
             <Button type="button" variant="outline" className="w-full sm:w-auto min-w-[200px]">
@@ -484,7 +506,7 @@ export default function CreateReport() {
       >
         <div className="flex flex-col items-center text-center gap-4">
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-amber-100">
-            <AlertTriangle className="h-7 w-7 text-amber-600" />
+              <AlertTriangle strokeWidth={1.5} className="h-7 w-7 text-warning" />
           </div>
           <p className="text-sm text-muted">{duplicateDlg.message}</p>
           {duplicateDlg.similarReportId && (
@@ -502,6 +524,29 @@ export default function CreateReport() {
             className="min-w-[120px]"
           >
             Got it
+          </Button>
+        </div>
+      </Modal>
+
+      <Modal
+        isOpen={showClearConfirm}
+        onClose={() => setShowClearConfirm(false)}
+        title="Clear form"
+        description="This will reset all fields and cannot be undone."
+        size="sm"
+      >
+        <div className="flex gap-3 justify-end">
+          <Button
+            variant="outline"
+            onClick={() => setShowClearConfirm(false)}
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="danger"
+            onClick={clearForm}
+          >
+            Clear everything
           </Button>
         </div>
       </Modal>
