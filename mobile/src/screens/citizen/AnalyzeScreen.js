@@ -22,10 +22,10 @@ export default function AnalyzeScreen({ navigation }) {
       const response = await aiService.analyzeImage(asset)
       if (response.success) {
         setResult(response.data)
-        if (response.data?.damage_detected) {
-          Toast.show({ type: 'success', text1: 'AI detected road damage' })
+        if (response.data?.detections?.length > 0) {
+          Toast.show({ type: 'success', text1: 'AI detected issues in image' })
         } else {
-          Toast.show({ type: 'info', text1: 'AI did not detect damage' })
+          Toast.show({ type: 'info', text1: 'AI did not detect any issues' })
         }
       }
     } catch (err) {
@@ -122,17 +122,17 @@ export default function AnalyzeScreen({ navigation }) {
         {result && !analyzing && (
           <GlassCard style={styles.card}>
             <Text style={styles.cardTitle}>Analysis Result</Text>
-            <View style={[styles.resultBox, result.damage_detected ? styles.resultDanger : styles.resultGood]}>
-              {result.damage_detected ? (
+            <View style={[styles.resultBox, result.detections?.length > 0 ? styles.resultDanger : styles.resultGood]}>
+              {result.detections?.length > 0 ? (
                 <XCircle size={24} color={COLORS.danger} />
               ) : (
                 <CheckCircle2 size={24} color={COLORS.accent} />
               )}
               <View style={{ flex: 1 }}>
-                <Text style={[styles.resultTitle, { color: result.damage_detected ? COLORS.danger : COLORS.accentDark }]}>
-                  {result.damage_detected ? 'Damage Detected' : 'No Damage Detected'}
+                <Text style={[styles.resultTitle, { color: result.detections?.length > 0 ? COLORS.danger : COLORS.accentDark }]}>
+                  {result.detections?.length > 0 ? 'Issues Detected' : 'No Issues Detected'}
                 </Text>
-                {result.damage_detected && result.detections?.length > 0 && (
+                {result.detections?.length > 0 && (
                   <View style={{ marginTop: 8, gap: 6 }}>
                     {result.detections.map((d, i) => (
                       <View key={i} style={styles.detectionRow}>

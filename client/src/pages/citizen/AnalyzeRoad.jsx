@@ -190,7 +190,7 @@ export default function AnalyzeRoad() {
 
       {result && (
         <div className="space-y-6">
-          {result.damage_detected ? (
+          {result.detections?.length > 0 ? (
             <>
               <Card>
                 <h2 className="mb-4 text-lg font-semibold text-secondary">Analysis Result</h2>
@@ -206,7 +206,7 @@ export default function AnalyzeRoad() {
                   <div className="flex items-center gap-2">
                     <span className="inline-flex items-center gap-1.5 rounded-full bg-danger/10 px-3 py-1 text-sm font-medium text-danger">
                       <XCircle className="h-4 w-4" />
-                      Damage Detected
+                      Issues Detected
                     </span>
                     <span className="text-sm text-muted">
                       Status: {result.road_status}
@@ -296,10 +296,10 @@ export default function AnalyzeRoad() {
                   <CheckCircle2 className="h-8 w-8 text-accent" />
                 </div>
                 <h2 className="mt-4 text-xl font-semibold text-secondary">
-                  No road damage detected
+                  No issues detected
                 </h2>
                 <p className="mt-2 text-sm text-muted">
-                  The road appears to be in good condition. No report created.
+                  No road damage, landslide, or garbage detected in this image.
                 </p>
                 <div className="mt-8">
                   <Button variant="outline" onClick={resetAnalysis}>

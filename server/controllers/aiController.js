@@ -73,8 +73,8 @@ const createAiReport = async (req, res) => {
 
     const report = await Report.create({
       title: `AI Detected: ${damageType}`,
-      description: `Automatically detected ${damageType} on road surface.`,
-      category: damageType === "pothole" ? "pothole" : "road_damage",
+      description: `Automatically detected ${damageType}.`,
+      category: damageType === "pothole" ? "pothole" : damageType === "landslide" ? "landslide" : damageType === "garbage" ? "garbage" : damageType === "fire_smoke" ? "fire_smoke" : "road_damage",
       severity: confidence > 0.7 ? "high" : confidence > 0.4 ? "medium" : "low",
       images: [image],
       annotatedImage: annotatedUrl,

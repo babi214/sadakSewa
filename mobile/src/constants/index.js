@@ -20,6 +20,8 @@ export const STORAGE_KEYS = {
 export const REPORT_CATEGORIES = [
   { value: 'pothole', label: 'Pothole', icon: 'AlertTriangle' },
   { value: 'garbage', label: 'Garbage', icon: 'Trash2' },
+  { value: 'landslide', label: 'Landslide', icon: 'TriangleAlert' },
+  { value: 'fire_smoke', label: 'Fire/Smoke', icon: 'Flame' },
   { value: 'drainage', label: 'Drainage', icon: 'Droplets' },
   { value: 'streetlight', label: 'Streetlight', icon: 'Lightbulb' },
   { value: 'traffic_signal', label: 'Traffic Signal', icon: 'TrafficCone' },

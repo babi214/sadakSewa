@@ -134,10 +134,10 @@ export default function CreateReport() {
     setAiResult(null)
     try {
       const response = await aiService.analyzeImage(file)
-      if (response.success && response.data.damage_detected) {
+      if (response.success && response.data.detections?.length > 0) {
         setAiResult(response.data)
         const detectedType = response.data.detections[0]?.type || ''
-        const mappedCategory = detectedType === 'pothole' ? 'pothole' : 'road_damage'
+        const mappedCategory = detectedType === 'pothole' ? 'pothole' : detectedType === 'landslide' ? 'landslide' : detectedType === 'garbage' ? 'garbage' : 'road_damage'
         setForm((prev) => ({
           ...prev,
           category: prev.category || mappedCategory,
@@ -194,9 +194,9 @@ export default function CreateReport() {
     e.preventDefault()
     if (!validate()) return
 
-    if (aiResult && !aiResult.damage_detected) {
+    if (aiResult && aiResult.detections?.length === 0) {
       const confirmed = window.confirm(
-        'AI analysis did not detect road damage in the image. Are you sure you want to submit this report?'
+        'AI analysis did not detect any issue in the image. Are you sure you want to submit this report?'
       )
       if (!confirmed) return
     }
@@ -329,8 +329,7 @@ export default function CreateReport() {
               )}
 
               <p className="mt-3 text-xs text-muted">
-                AI detects road damage only (potholes, cracks, road surface issues). Other problems like
-                garbage, drainage, or streetlight issues should still be reported — just ignore "no damage detected".
+                AI detects road damage, landslides, and garbage. Other problems like drainage or streetlight issues should still be reported regardless.
               </p>
 
               {analyzing && (
@@ -342,11 +341,11 @@ export default function CreateReport() {
 
               {aiResult && !analyzing && (
                 <div className="mt-3">
-                  {aiResult.damage_detected ? (
+                  {aiResult.detections?.length > 0 ? (
                     <div className="rounded-xl border border-border bg-background p-4">
                       <div className="mb-3 flex items-center gap-2 text-sm font-medium text-danger">
                         <XCircle className="h-4 w-4" />
-                        AI Detected Damage
+                        AI Detected
                       </div>
                       <div className="space-y-2">
                         {aiResult.detections.map((d, i) => (
@@ -364,7 +363,7 @@ export default function CreateReport() {
                   ) : (
                     <div className="flex items-center gap-2 text-sm text-accent">
                       <CheckCircle2 className="h-4 w-4" />
-                      No damage detected in image
+                      No issues detected in image
                     </div>
                   )}
                 </div>

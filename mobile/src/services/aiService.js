@@ -5,12 +5,12 @@ function getImageUri(image) {
   return typeof image === 'string' ? image : image?.uri
 }
 
-function resolveUri(uri) {
+async function resolveUri(uri) {
   const file = new File(uri)
   if (file.exists && file.size > 0) return uri
   const ext = uri.split('.').pop() || 'jpg'
   const dest = new File(Paths.cache, `upload_${Date.now()}.${ext}`)
-  file.copy(dest)
+  await file.copy(dest)
   return dest.uri
 }
 
@@ -36,7 +36,7 @@ export const aiService = {
     const imageUri = getImageUri(image)
     if (!imageUri) throw new Error('No image selected')
 
-    const resolvedUri = resolveUri(imageUri)
+    const resolvedUri = await resolveUri(imageUri)
     const { name, type } = getUploadMeta(image, resolvedUri)
     const formData = new FormData()
     formData.append('image', {

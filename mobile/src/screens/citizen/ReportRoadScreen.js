@@ -40,8 +40,8 @@ const initialForm = {
 function confirmNoDamage() {
   return new Promise((resolve) => {
     Alert.alert(
-      'No damage detected',
-      'AI analysis did not detect road damage in the image. Are you sure you want to submit this report?',
+      'No issues detected',
+      'AI analysis did not detect any issues in the image. Are you sure you want to submit this report?',
       [
         { text: 'Cancel', style: 'cancel', onPress: () => resolve(false) },
         { text: 'Submit Anyway', style: 'destructive', onPress: () => resolve(true) },
@@ -146,11 +146,11 @@ export default function ReportRoadScreen() {
 
   const applyAiResult = (data) => {
     setAiResult(data)
-    if (!data?.damage_detected) return
+    if (!data?.detections?.length) return
 
-    const detected = data.detections?.[0]
+    const detected = data.detections[0]
     const detectedType = detected?.type || 'road_damage'
-    const mappedCategory = detectedType === 'pothole' ? 'pothole' : 'road_damage'
+    const mappedCategory = detectedType === 'pothole' ? 'pothole' : detectedType === 'landslide' ? 'landslide' : detectedType === 'garbage' ? 'garbage' : 'road_damage'
     const confidence = Number(detected?.confidence) || 0
 
     setForm(prev => ({
@@ -169,10 +169,10 @@ export default function ReportRoadScreen() {
       const response = await aiService.analyzeImage(asset)
       if (response.success) {
         applyAiResult(response.data)
-        if (response.data?.damage_detected) {
-          Toast.show({ type: 'success', text1: 'AI detected road damage' })
+        if (response.data?.detections?.length > 0) {
+          Toast.show({ type: 'success', text1: 'AI detected issues' })
         } else {
-          Toast.show({ type: 'info', text1: 'AI did not detect damage' })
+          Toast.show({ type: 'info', text1: 'AI did not detect issues' })
         }
       }
     } catch (err) {
@@ -282,7 +282,7 @@ export default function ReportRoadScreen() {
       return
     }
 
-    if (aiResult && !aiResult.damage_detected) {
+    if (aiResult && !aiResult.detections?.length) {
       const confirmed = await confirmNoDamage()
       if (!confirmed) return
     }
@@ -508,8 +508,7 @@ export default function ReportRoadScreen() {
           )}
 
           <Text style={styles.aiNote}>
-            AI only detects road damage (potholes, cracks, surface issues). Other problems like
-            garbage, drainage, or streetlights should still be reported.
+            AI detects road damage, landslides, and garbage. Other problems like drainage or streetlight issues should still be reported regardless.
           </Text>
 
           {analyzing && (
@@ -520,17 +519,17 @@ export default function ReportRoadScreen() {
           )}
 
           {aiResult && !analyzing && (
-            <View style={[styles.aiBox, aiResult.damage_detected ? styles.aiDanger : styles.aiGood]}>
-              {aiResult.damage_detected ? (
+            <View style={[styles.aiBox, aiResult.detections?.length > 0 ? styles.aiDanger : styles.aiGood]}>
+              {aiResult.detections?.length > 0 ? (
                 <XCircle size={18} color={COLORS.danger} />
               ) : (
                 <CheckCircle2 size={18} color={COLORS.accent} />
               )}
               <View style={{ flex: 1 }}>
-                <Text style={[styles.aiBoxTitle, { color: aiResult.damage_detected ? COLORS.danger : COLORS.accentDark }]}> 
-                  {aiResult.damage_detected ? 'AI detected damage' : 'No damage detected'}
+                <Text style={[styles.aiBoxTitle, { color: aiResult.detections?.length > 0 ? COLORS.danger : COLORS.accentDark }]}> 
+                  {aiResult.detections?.length > 0 ? 'AI detected issues' : 'No issues detected'}
                 </Text>
-                {aiResult.damage_detected && aiResult.detections?.length > 0 && (
+                {aiResult.detections?.length > 0 && (
                   <Text style={styles.aiBoxText}>
                     {aiResult.detections.map(d => `${d.type.replace(/_/g, ' ')} (${(d.confidence * 100).toFixed(0)}%)`).join(', ')}
                   </Text>
