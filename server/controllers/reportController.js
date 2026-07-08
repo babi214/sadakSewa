@@ -5,6 +5,7 @@ const cloudinary = require("../config/cloudinary");
 const { createNotification } = require("./notificationController");
 const Notification = require("../models/notificationModel");
 const { cosineSimilarity } = require("../utils/textSimilarity");
+const { haversineDistance } = require("../utils/haversineDistance");
 
 const VALID_STATUSES = ["pending", "verified", "in_progress", "resolved", "rejected"];
 
@@ -486,7 +487,22 @@ const getNearbyReports = async (req, res) => {
       reportsQuery = reportsQuery.limit(Number(limit));
     }
 
-    const reports = await reportsQuery;
+    let reports = await reportsQuery;
+
+    if (longitude !== undefined && longitude !== null && latitude !== undefined && latitude !== null) {
+      const lat = Number(latitude);
+      const lng = Number(longitude);
+      reports = reports.map((r) => {
+        const rLat = r.location?.coordinates?.[1];
+        const rLng = r.location?.coordinates?.[0];
+        const rDoc = r.toObject ? r.toObject() : { ...r };
+        rDoc.distance =
+          rLat != null && rLng != null
+            ? Math.round(haversineDistance(lat, lng, rLat, rLng))
+            : null;
+        return rDoc;
+      });
+    }
 
     res.status(200).json({
       success: true,
