@@ -57,6 +57,17 @@ export function AuthProvider({ children }) {
     setUser(updatedUser)
   }, [])
 
+  const refreshUser = useCallback(async () => {
+    try {
+      const response = await authService.getProfile()
+      if (response.success) {
+        updateUser(response.user)
+      }
+    } catch {
+      // silently fail
+    }
+  }, [updateUser])
+
   const getDashboardPath = useCallback(() => {
     if (!user?.role) return '/'
     return ROLE_DASHBOARD_PATHS[user.role] || '/'
@@ -95,9 +106,10 @@ export function AuthProvider({ children }) {
       register,
       logout,
       updateUser,
+      refreshUser,
       getDashboardPath,
     }),
-    [user, token, loading, login, register, logout, updateUser, getDashboardPath]
+    [user, token, loading, login, register, logout, updateUser, refreshUser, getDashboardPath]
   )
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>

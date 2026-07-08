@@ -41,6 +41,8 @@ const reportSchema = new mongoose.Schema(
       enum: [
         "pothole",
         "garbage",
+        "landslide",
+        "fire_smoke",
         "streetlight",
         "drainage",
         "water_leak",

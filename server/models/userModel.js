@@ -71,6 +71,10 @@ const userSchema = new mongoose.Schema(
       default: null,
       index: true,
     },
+    isAvailable: {
+      type: Boolean,
+      default: true,
+    },
     profilePicture: {
       type: String,
       default: null,

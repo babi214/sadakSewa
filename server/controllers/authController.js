@@ -490,6 +490,25 @@ const getProfile = async (req, res) => {
     });
   }
 };
+const toggleAvailability = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    user.isAvailable = !user.isAvailable;
+    await user.save();
+    res.status(200).json({
+      success: true,
+      message: `You are now marked as ${user.isAvailable ? "available" : "unavailable"}`,
+      isAvailable: user.isAvailable,
+    });
+  } catch (error) {
+    const isDev = process.env.NODE_ENV === "development";
+    res.status(500).json({ success: false, message: isDev ? error.message : "Internal server error" });
+  }
+};
+
 const updateProfile = async (req, res) => {
   try {
     const allowedFields = ["fullName", "phone", "province", "district", "municipality"];
@@ -580,4 +599,5 @@ module.exports = {
   getProfile,
   updateProfile,
   updateProfilePicture,
+  toggleAvailability,
 };

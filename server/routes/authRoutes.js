@@ -20,6 +20,7 @@ const {
   getProfile,
   updateProfile,
   updateProfilePicture,
+  toggleAvailability,
 } = require("../controllers/authController");
 
 router.post("/register", registerLimiter, registerUser);
@@ -37,5 +38,6 @@ router.patch(
   upload.single("profilePicture"),
   updateProfilePicture
 );
+router.patch("/profile/availability", protect, toggleAvailability);
 
 module.exports = router;

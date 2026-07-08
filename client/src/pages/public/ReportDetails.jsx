@@ -12,6 +12,7 @@ import {
   ThumbsUp,
   Trash2,
   User,
+  UserMinus,
   UserPlus,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -223,7 +224,7 @@ export default function ReportDetails() {
   const isOwner =
     String(report.reportedBy?._id || report.reportedBy) === String(user?._id)
   const canManage = isOwner && report?.status === 'pending'
-  const canDelete = isOwner && (report?.status === 'pending' || report?.status === 'rejected')
+  const canDelete = user?.role === 'admin' || (isOwner && (report?.status === 'pending' || report?.status === 'rejected'))
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-4 sm:px-6 lg:px-8">
@@ -351,7 +352,7 @@ export default function ReportDetails() {
                     popup={report.locationName || report.title}
                   />
                 </div>
-                {(report.locationName || report.municipality) && (
+                {(report.locationName || report.province || report.district || report.municipality) && (
                   <div className="mt-3 flex flex-wrap gap-4 text-sm text-muted">
                     {report.locationName && (
                       <span className="flex items-center gap-1.5">
@@ -359,8 +360,11 @@ export default function ReportDetails() {
                         {report.locationName}
                       </span>
                     )}
-                    {report.municipality && (
-                      <span>{report.municipality}</span>
+                    {[report.province, report.district, report.municipality].filter(Boolean).length > 0 && (
+                      <span className="flex items-center gap-1.5">
+                        <MapPin className="h-4 w-4 text-primary" />
+                        {[report.province, report.district, report.municipality].filter(Boolean).join(', ')}
+                      </span>
                     )}
                   </div>
                 )}
@@ -422,12 +426,29 @@ export default function ReportDetails() {
                 {report.assignedWorker && (
                   <div className="flex items-start gap-2.5">
                     <User className="mt-0.5 h-4 w-4 text-muted" />
-                    <div>
+                    <div className="flex-1">
                       <dt className="text-xs text-muted">Assigned worker</dt>
                       <dd className="text-sm font-medium text-secondary">
                         {report.assignedWorker.fullName}
                       </dd>
                     </div>
+                    {user?.role === 'admin' && (
+                      <button
+                        type="button"
+                        onClick={async () => {
+                          try {
+                            const res = await reportService.unassignWorker(report._id);
+                            if (res.success) { toast.success(res.message); fetchReport(); }
+                          } catch (e) {
+                            toast.error('Failed to unassign worker');
+                          }
+                        }}
+                        className="rounded-lg p-1.5 text-muted transition-colors hover:bg-danger/10 hover:text-danger"
+                        title="Unassign worker"
+                      >
+                        <UserMinus className="h-4 w-4" />
+                      </button>
+                    )}
                   </div>
                 )}
                 {report.rejectionReason && report.status === 'rejected' && (
@@ -455,7 +476,7 @@ export default function ReportDetails() {
               </dl>
             </Card>
 
-            {isAuthenticated && !isOwner && !hasFlagged && user?.role !== 'admin' && (
+            {isAuthenticated && !isOwner && !hasFlagged && user?.role !== 'admin' && report?.status !== 'resolved' && (
               <Card>
                 <Button
                   variant="danger"

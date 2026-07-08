@@ -6,6 +6,8 @@ import {
   CheckCircle2,
   ClipboardList,
   Clock,
+  Wifi,
+  WifiOff,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
@@ -16,13 +18,15 @@ import StatCard from '../../components/dashboard/StatCard'
 import ReportCard from '../../components/report/ReportCard'
 import { useAuth } from '../../hooks/useAuth'
 import { reportService } from '../../services/reportService'
+import { authService } from '../../services/authService'
 import { getApiErrorMessage } from '../../utils/validators'
 
 export default function WorkerDashboard() {
-  const { user } = useAuth()
+  const { user, refreshUser } = useAuth()
   const [dashboard, setDashboard] = useState(null)
   const [reports, setReports] = useState([])
   const [loading, setLoading] = useState(true)
+  const [togglingAvail, setTogglingAvail] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -41,6 +45,27 @@ export default function WorkerDashboard() {
     }
     fetchData()
   }, [])
+
+  const isAvailable = user?.isAvailable !== false
+
+  const handleToggleAvailability = async () => {
+    setTogglingAvail(true)
+    try {
+      const res = await authService.toggleAvailability()
+      if (res.success) {
+        if (res.isAvailable) {
+          toast.success(res.message)
+        } else {
+          toast.error(res.message)
+        }
+        if (refreshUser) await refreshUser()
+      }
+    } catch (error) {
+      toast.error(getApiErrorMessage(error, 'Failed to toggle availability'))
+    } finally {
+      setTogglingAvail(false)
+    }
+  }
 
   if (loading) return <DashboardSkeleton />
 
@@ -66,9 +91,20 @@ export default function WorkerDashboard() {
           </h1>
           <p className="mt-1 text-muted">Manage your assigned road issue reports</p>
         </div>
-        <Link to="/worker/assigned">
-          <Button leftIcon={<ClipboardList className="h-4 w-4" />}>View Assigned</Button>
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant={isAvailable ? 'accent' : 'outline'}
+            size="sm"
+            leftIcon={isAvailable ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
+            onClick={handleToggleAvailability}
+            isLoading={togglingAvail}
+          >
+            {isAvailable ? 'Available' : 'Unavailable'}
+          </Button>
+          <Link to="/worker/assigned">
+            <Button leftIcon={<ClipboardList className="h-4 w-4" />}>View Assigned</Button>
+          </Link>
+        </div>
       </motion.div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">

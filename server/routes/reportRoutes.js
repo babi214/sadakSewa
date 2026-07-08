@@ -21,6 +21,7 @@ const {
   getFlaggedReports,
   clearFlag,
   flagReport,
+  unassignWorker,
 } = require("../controllers/reportController");
 const {
   protect,
@@ -57,6 +58,7 @@ router.put("/:id", protect, updateReport);
 router.patch("/:id/status", protect, updateReportStatus);
 router.patch("/:id/upvote", protect, toggleUpvote);
 router.patch("/:id/assign", protect, adminOnly, assignWorker);
+router.patch("/:id/unassign", protect, adminOnly, unassignWorker);
 router.patch("/:id/clear-flag", protect, adminOnly, clearFlag);
 
 router.delete("/:id", protect, deleteReport);

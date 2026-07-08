@@ -1,6 +1,6 @@
 import React, { useState, useContext, useCallback, useRef } from 'react'
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Alert, FlatList, Dimensions, Modal, Share, Linking, TextInput } from 'react-native'
-import { AlertCircle, ChevronLeft, MapPin, Calendar, User, ArrowUp, Share2, Activity, Flag, Edit3, Trash2, Clock, CheckCircle2, X, ChevronDown, ChevronUp, Camera } from 'lucide-react-native'
+import { AlertCircle, ChevronLeft, MapPin, Calendar, User, ArrowUp, Share2, Activity, Flag, Edit3, Trash2, Clock, CheckCircle2, X, ChevronDown, ChevronUp, Camera, UserMinus } from 'lucide-react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import MapView, { Marker } from 'react-native-maps'
 import Toast from 'react-native-toast-message'
@@ -277,7 +277,7 @@ export default function ReportDetailsScreen({ route, navigation }) {
 
   const isOwnerMobile = user && (user._id === report?.reportedBy?._id || user._id === report?.reportedBy)
   const canEdit = isOwnerMobile && report?.status === 'pending'
-  const canDeleteMobile = isOwnerMobile && (report?.status === 'pending' || report?.status === 'rejected')
+  const canDeleteMobile = isAdmin || (isOwnerMobile && (report?.status === 'pending' || report?.status === 'rejected'))
   const isAdmin = user?.role === 'admin'
   const statusOptions = isAdmin
     ? (report?.status === 'pending' ? ['verified', 'rejected'] : [])
@@ -466,6 +466,11 @@ export default function ReportDetailsScreen({ route, navigation }) {
                 {!!locationLabel && (
                   <Text style={styles.mapAddress}>{locationLabel}</Text>
                 )}
+                {[report?.province, report?.district, report?.municipality].filter(Boolean).length > 0 && (
+                  <Text style={styles.locationHierarchy}>
+                    {[report?.province, report?.district, report?.municipality].filter(Boolean).join(', ')}
+                  </Text>
+                )}
               </GlassCard>
             )}
 
@@ -498,7 +503,17 @@ export default function ReportDetailsScreen({ route, navigation }) {
                   <View style={styles.metaRow}>
                     <User size={16} color={COLORS.muted} />
                     <Text style={styles.metaLabel}>Assigned to</Text>
-                    <Text style={styles.metaValue}>{report.assignedWorker?.fullName || 'Worker'}</Text>
+                    <Text style={[styles.metaValue, { flex: 1 }]}>{report.assignedWorker?.fullName || 'Worker'}</Text>
+                    {isAdmin && (
+                      <TouchableOpacity onPress={async () => {
+                        try {
+                          const res = await reportService.unassignWorker(reportId)
+                          if (res.success) { Toast.show({ type: 'success', text1: res.message }); fetchAll() }
+                        } catch { Toast.show({ type: 'error', text1: 'Failed to unassign' }) }
+                      }} style={{ padding: 4 }}>
+                        <UserMinus size={16} color={COLORS.danger} />
+                      </TouchableOpacity>
+                    )}
                   </View>
                 </>
               )}
@@ -535,7 +550,7 @@ export default function ReportDetailsScreen({ route, navigation }) {
               </Button>
             )}
 
-            {user && !isOwnerMobile && !hasFlagged && user?.role !== 'admin' && (
+            {user && !isOwnerMobile && !hasFlagged && user?.role !== 'admin' && report?.status !== 'resolved' && (
               <Button
                 variant="danger"
                 outline
@@ -1017,6 +1032,12 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: COLORS.mutedText,
     marginTop: 10,
+  },
+  locationHierarchy: {
+    fontSize: 12,
+    color: COLORS.primary,
+    marginTop: 4,
+    fontWeight: '600',
   },
 
   metaCard: {

@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useContext } from 'react'
 import { View, Text, ScrollView, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native'
-import { ClipboardList, AlertTriangle, CheckCircle2, TrendingUp, Bell, Settings, ArrowRight } from 'lucide-react-native'
+import { ClipboardList, AlertTriangle, CheckCircle2, TrendingUp, Bell, Settings, ArrowRight, Wifi, WifiOff } from 'lucide-react-native'
 import { useFocusEffect } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
@@ -10,6 +10,7 @@ import GlassCard from '../../components/GlassCard'
 import StatusBadge from '../../components/StatusBadge'
 import { SkeletonList } from '../../components/SkeletonLoader'
 import { reportService } from '../../services/reportService'
+import { authService } from '../../services/authService'
 import { notificationService } from '../../services/notificationService'
 import { AuthContext } from '../../context/AuthContext'
 import { COLORS, GRADIENTS, RADIUS, SHADOWS, SPACING } from '../../constants'
@@ -21,6 +22,7 @@ export default function WorkerHomeScreen({ navigation }) {
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
+  const [togglingAvail, setTogglingAvail] = useState(false)
 
   useFocusEffect(useCallback(() => {
     notificationService.getUnreadCount().then(res => setUnreadCount(res?.unreadCount ?? res?.count ?? 0)).catch(() => {})
@@ -48,6 +50,20 @@ export default function WorkerHomeScreen({ navigation }) {
   }, [])
 
   useFocusEffect(useCallback(() => { setLoading(true); fetchData() }, []))
+
+  const isAvailable = user?.isAvailable !== false
+
+  const handleToggleAvailability = async () => {
+    setTogglingAvail(true)
+    try {
+      const res = await authService.toggleAvailability()
+      Toast.show({ type: res?.isAvailable ? 'success' : 'error', text1: res?.message || 'Availability updated' })
+    } catch {
+      Toast.show({ type: 'error', text1: 'Failed to toggle availability' })
+    } finally {
+      setTogglingAvail(false)
+    }
+  }
 
   const onRefresh = () => { setRefreshing(true); fetchData(true) }
 
@@ -88,6 +104,9 @@ export default function WorkerHomeScreen({ navigation }) {
               </View>
             </View>
             <View style={styles.headerIcons}>
+              <TouchableOpacity style={[styles.iconBtn, { backgroundColor: isAvailable ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)' }]} onPress={handleToggleAvailability} disabled={togglingAvail}>
+                {isAvailable ? <Wifi size={18} color="#FFF" /> : <WifiOff size={18} color="#EF4444" />}
+              </TouchableOpacity>
               <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('Notifications')}>
                 <Bell size={20} color="#FFF" />
                 {unreadCount > 0 && <View style={styles.badgeDot} />}

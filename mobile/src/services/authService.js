@@ -46,4 +46,9 @@ export const authService = {
     const { data } = await api.patch('/auth/profile/picture', formData)
     return data
   },
+
+  toggleAvailability: async () => {
+    const { data } = await api.patch('/auth/profile/availability')
+    return data
+  },
 }

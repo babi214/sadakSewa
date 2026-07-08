@@ -359,6 +359,13 @@ const updateReportStatus = async (req, res) => {
       });
     }
 
+    if (report.status === "resolved") {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot update a resolved report",
+      });
+    }
+
     if (status === report.status) {
       return res.status(400).json({
         success: false,
@@ -611,6 +618,12 @@ const toggleUpvote = async (req, res) => {
       return res.status(404).json({
         success: false,
         message: "Report not found",
+      });
+    }
+    if (report.status === "resolved") {
+      return res.status(400).json({
+        success: false,
+        message: "Cannot upvote a resolved report",
       });
     }
     const added = report.toggleUpvote(req.user._id);
@@ -950,6 +963,35 @@ const flagReport = async (req, res) => {
   }
 };
 
+const unassignWorker = async (req, res) => {
+  try {
+    const report = await Report.findById(req.params.id).populate("assignedWorker", "fullName");
+    if (!report) {
+      return res.status(404).json({ success: false, message: "Report not found" });
+    }
+    if (!report.assignedWorker) {
+      return res.status(400).json({ success: false, message: "No worker assigned to this report" });
+    }
+    const workerName = report.assignedWorker.fullName || "Worker";
+    report.assignedWorker = null;
+    await report.save();
+
+    await logHistory(report._id, "assigned", req.user._id, {
+      unassigned: true,
+      workerName,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: `${workerName} has been unassigned from this report`,
+      report,
+    });
+  } catch (error) {
+    const isDev = process.env.NODE_ENV === "development";
+    res.status(500).json({ success: false, message: isDev ? error.message : "Internal server error" });
+  }
+};
+
 const getAvailableWorkers = async (req, res) => {
   try {
     const report = await Report.findById(req.params.id);
@@ -957,7 +999,7 @@ const getAvailableWorkers = async (req, res) => {
       return res.status(404).json({ success: false, message: "Report not found" });
     }
 
-    const matchConditions = { role: "worker", isActive: true };
+    const matchConditions = { role: "worker", isActive: true, isAvailable: { $ne: false } };
 
     const orConditions = [];
     if (report.district) orConditions.push({ district: report.district });
@@ -1088,4 +1130,5 @@ module.exports = {
   getFlaggedReports,
   clearFlag,
   flagReport,
+  unassignWorker,
 };

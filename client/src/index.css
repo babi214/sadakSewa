@@ -1,6 +1,11 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
 
+.leaflet-container {
+  z-index: 0;
+  position: relative;
+}
+
 @theme {
   --color-primary: #2563eb;
   --color-primary-dark: #1d4ed8;
