@@ -5,7 +5,7 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import Toast from 'react-native-toast-message'
 import * as Haptics from 'expo-haptics'
-import { FileText, Filter, Clock, MapPin, ChevronRight, CheckCircle2, AlertTriangle, XCircle, TrendingUp } from 'lucide-react-native'
+import { FileText, Filter, Clock, MapPin, ChevronRight, CheckCircle2, AlertTriangle, XCircle, TrendingUp, List, Globe } from 'lucide-react-native'
 import { COLORS, RADIUS, STATUS_COLORS } from '../../constants'
 import { reportService } from '../../services/reportService'
 import GlassCard from '../../components/GlassCard'
@@ -37,13 +37,15 @@ export default function MyReportsScreen() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [filter, setFilter] = useState('all')
   const [total, setTotal] = useState(0)
+  const [mode, setMode] = useState('my')
 
   const fetchReports = useCallback(async (pageNum = 1, append = false, isRefresh = false) => {
     try {
       const params = { page: pageNum, limit: LIMIT }
       if (filter !== 'all') params.status = filter
 
-      const res = await reportService.getMyReports(params)
+      const fetchFn = mode === 'explore' ? reportService.getReports : reportService.getMyReports
+      const res = await fetchFn(params)
       const data = res?.reports || res?.data || []
       const totalCount = res?.total || res?.totalCount || res?.pagination?.total || data.length
 
@@ -62,7 +64,7 @@ export default function MyReportsScreen() {
       setRefreshing(false)
       setLoadingMore(false)
     }
-  }, [filter])
+  }, [filter, mode])
 
   useFocusEffect(useCallback(() => {
     setLoading(true)
@@ -162,17 +164,38 @@ export default function MyReportsScreen() {
     )
   }, [handleCardPress])
 
+  const toggleMode = useCallback(() => {
+    setMode(prev => prev === 'my' ? 'explore' : 'my')
+    setReports([])
+    setTotal(0)
+    setLoading(true)
+    hasMoreRef.current = true
+    pageRef.current = 1
+  }, [])
+
   if (loading && reports.length === 0) {
     return (
       <SafeAreaView style={styles.safe} edges={['top']}>
         <View style={styles.header}>
           <View>
-            <Text style={styles.headerTitle}>My Reports</Text>
+            <Text style={styles.headerTitle}>{mode === 'explore' ? 'Explore' : 'My Reports'}</Text>
             <Text style={styles.headerSubtitle}>Loading...</Text>
           </View>
           <TouchableOpacity style={styles.filterBadge} activeOpacity={0.7}>
             <Filter size={18} color={COLORS.primary} />
           </TouchableOpacity>
+        </View>
+        <View style={styles.modeToggleOuter}>
+          <View style={styles.modeToggle}>
+            <TouchableOpacity style={[styles.modeBtn, mode === 'my' && styles.modeBtnActive]} onPress={() => { if (mode !== 'my') toggleMode() }}>
+              <List size={14} color={mode === 'my' ? COLORS.white : COLORS.muted} />
+              <Text style={[styles.modeBtnText, mode === 'my' && styles.modeBtnTextActive]}>My Reports</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.modeBtn, mode === 'explore' && styles.modeBtnActive]} onPress={() => { if (mode !== 'explore') toggleMode() }}>
+              <Globe size={14} color={mode === 'explore' ? COLORS.white : COLORS.muted} />
+              <Text style={[styles.modeBtnText, mode === 'explore' && styles.modeBtnTextActive]}>Explore</Text>
+            </TouchableOpacity>
+          </View>
         </View>
         <View style={styles.chipsOuter}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsContent}>
@@ -194,12 +217,25 @@ export default function MyReportsScreen() {
     <SafeAreaView style={styles.safe} edges={['top']}>
       <View style={styles.header}>
         <View>
-          <Text style={styles.headerTitle}>My Reports</Text>
+          <Text style={styles.headerTitle}>{mode === 'explore' ? 'Explore' : 'My Reports'}</Text>
           <Text style={styles.headerSubtitle}>{total} {total === 1 ? 'report' : 'reports'}</Text>
         </View>
         <TouchableOpacity style={styles.filterBadge} activeOpacity={0.7}>
           <Filter size={18} color={COLORS.primary} />
         </TouchableOpacity>
+      </View>
+
+      <View style={styles.modeToggleOuter}>
+        <View style={styles.modeToggle}>
+          <TouchableOpacity style={[styles.modeBtn, mode === 'my' && styles.modeBtnActive]} onPress={() => { if (mode !== 'my') toggleMode() }}>
+            <List size={14} color={mode === 'my' ? COLORS.white : COLORS.muted} />
+            <Text style={[styles.modeBtnText, mode === 'my' && styles.modeBtnTextActive]}>My Reports</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.modeBtn, mode === 'explore' && styles.modeBtnActive]} onPress={() => { if (mode !== 'explore') toggleMode() }}>
+            <Globe size={14} color={mode === 'explore' ? COLORS.white : COLORS.muted} />
+            <Text style={[styles.modeBtnText, mode === 'explore' && styles.modeBtnTextActive]}>Explore</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       <View style={styles.chipsOuter}>
@@ -278,6 +314,38 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary + '10',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  modeToggleOuter: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 4,
+    backgroundColor: COLORS.surface,
+  },
+  modeToggle: {
+    flexDirection: 'row',
+    backgroundColor: COLORS.background,
+    borderRadius: RADIUS.full,
+    padding: 3,
+  },
+  modeBtn: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 6,
+    paddingVertical: 8,
+    borderRadius: RADIUS.full - 2,
+  },
+  modeBtnActive: {
+    backgroundColor: COLORS.primary,
+  },
+  modeBtnText: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: COLORS.muted,
+  },
+  modeBtnTextActive: {
+    color: COLORS.white,
   },
   chipsOuter: {
     backgroundColor: COLORS.surface,

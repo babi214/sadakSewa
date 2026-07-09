@@ -619,9 +619,11 @@ const updateReport = async (req, res) => {
 
 const getMyReports = async (req, res) => {
   try {
-    const reports = await Report.find({
-      reportedBy: req.user._id,
-    })
+    const filter = { reportedBy: req.user._id };
+    if (req.query.status) {
+      filter.status = req.query.status;
+    }
+    const reports = await Report.find(filter)
       .populate("reportedBy", "fullName email profilePicture")
       .populate("assignedWorker", "fullName email")
       .sort({ createdAt: -1 });
@@ -748,9 +750,11 @@ const assignWorker = async (req, res) => {
 
 const getAssignedReports = async (req, res) => {
   try {
-    const reports = await Report.find({
-      assignedWorker: req.user._id,
-    })
+    const filter = { assignedWorker: req.user._id };
+    if (req.query.status) {
+      filter.status = req.query.status;
+    }
+    const reports = await Report.find(filter)
       .populate("reportedBy", "fullName email profilePicture")
       .populate("assignedWorker", "fullName email")
       .sort({ createdAt: -1 });
