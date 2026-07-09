@@ -56,6 +56,33 @@ export default function ReportDetails() {
   const [statusLoading, setStatusLoading] = useState(false)
   const [assignReport, setAssignReport] = useState(null)
   const [assignLoading, setAssignLoading] = useState(false)
+  const [routeCoords, setRouteCoords] = useState(null)
+  const [routeLoading, setRouteLoading] = useState(false)
+
+  const fetchRoute = useCallback(async () => {
+    const c = report ? getReportCoordinates(report) : null
+    if (!c) return
+    setRouteLoading(true)
+    try {
+      const pos = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 10000 })
+      })
+      const origin = `${pos.coords.longitude},${pos.coords.latitude}`
+      const destination = `${c.lng},${c.lat}`
+      const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${origin};${destination}?geometries=geojson&overview=full`)
+      const data = await res.json()
+      if (data.code === 'Ok' && data.routes?.[0]?.geometry?.coordinates) {
+        const coordsArr = data.routes[0].geometry.coordinates.map(c => [c[1], c[0]])
+        setRouteCoords(coordsArr)
+      } else {
+        toast.error('Could not find a route')
+      }
+    } catch {
+      toast.error('Could not get your location')
+    } finally {
+      setRouteLoading(false)
+    }
+  }, [report])
 
   const fetchReport = useCallback(async () => {
     try {
@@ -393,6 +420,7 @@ export default function ReportDetails() {
                     lng={coords.lng}
                     height="h-52"
                     popup={report.locationName || report.title}
+                    routeCoords={routeCoords}
                   />
                 </div>
                 {(report.locationName || report.province || report.district || report.municipality) && (
@@ -411,15 +439,33 @@ export default function ReportDetails() {
                     )}
                   </div>
                 )}
-                <div className="mt-3">
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {routeCoords ? (
+                    <button
+                      onClick={() => setRouteCoords(null)}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-200"
+                    >
+                      <MapPin strokeWidth={1.5} className="h-4 w-4" />
+                      Clear route
+                    </button>
+                  ) : (
+                    <button
+                      onClick={fetchRoute}
+                      disabled={routeLoading}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20 disabled:opacity-50"
+                    >
+                      <Navigation strokeWidth={1.5} className="h-4 w-4" />
+                      {routeLoading ? 'Loading...' : 'Navigate'}
+                    </button>
+                  )}
                   <a
                     href={`https://www.google.com/maps/dir/?api=1&destination=${coords.lat},${coords.lng}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1.5 rounded-lg bg-primary/10 px-3 py-2 text-sm font-medium text-primary transition-colors hover:bg-primary/20"
                   >
-                    <Navigation strokeWidth={1.5} className="h-4 w-4" />
-                    Get directions
+                    <MapPin strokeWidth={1.5} className="h-4 w-4" />
+                    Open in Google Maps
                   </a>
                 </div>
               </Card>

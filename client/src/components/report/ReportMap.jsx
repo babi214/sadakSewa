@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet'
 import '../../utils/leafletSetup'
 import { DEFAULT_MAP_CENTER } from '../../utils/constants'
 
@@ -11,6 +11,16 @@ function MapRecenter({ center, zoom }) {
   return null
 }
 
+function FitBounds({ coords }) {
+  const map = useMap()
+  useEffect(() => {
+    if (coords && coords.length > 0) {
+      map.fitBounds(coords, { padding: [40, 40] })
+    }
+  }, [coords, map])
+  return null
+}
+
 export default function ReportMap({
   lat,
   lng,
@@ -18,6 +28,7 @@ export default function ReportMap({
   height = 'h-72',
   popup,
   className = '',
+  routeCoords,
 }) {
   const center = lat && lng ? { lat, lng } : DEFAULT_MAP_CENTER
   const hasMarker = Boolean(lat && lng)
@@ -40,6 +51,15 @@ export default function ReportMap({
               {popup && <Popup>{popup}</Popup>}
             </Marker>
             <MapRecenter center={{ lat, lng }} zoom={zoom} />
+          </>
+        )}
+        {routeCoords && routeCoords.length > 0 && (
+          <Polyline positions={routeCoords} pathOptions={{ color: '#1B4B5E', weight: 4, opacity: 0.8 }} />
+        )}
+        {routeCoords && routeCoords.length > 0 && (
+          <>
+            <Marker position={routeCoords[routeCoords.length - 1]} />
+            <FitBounds coords={routeCoords} />
           </>
         )}
       </MapContainer>

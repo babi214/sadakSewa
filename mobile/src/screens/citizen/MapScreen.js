@@ -65,27 +65,25 @@ export default function MapScreen({ navigation }) {
   const [sheetVisible, setSheetVisible] = useState(false)
   const [nearMeOnly, setNearMeOnly] = useState(false)
   const [routeCoords, setRouteCoords] = useState(null)
+  const [routeLoading, setRouteLoading] = useState(false)
 
   useFocusEffect(useCallback(() => {
     fetchReports()
   }, [nearMeOnly]))
 
   const route = useRoute()
-  const [initialRegion, setInitialRegion] = useState(null)
+  const [initialRegion] = useState(DEFAULT_MAP_REGION)
 
   useEffect(() => {
     ;(async () => {
       try {
         const { status } = await Location.requestForegroundPermissionsAsync()
         if (status === 'granted') {
-          const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High })
+          const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.Balanced })
           const { latitude, longitude } = loc.coords
           setUserLocation({ latitude, longitude })
-          setInitialRegion({ latitude, longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 })
-          return
         }
       } catch {}
-      setInitialRegion(DEFAULT_MAP_REGION)
     })()
   }, [])
 
@@ -286,6 +284,31 @@ export default function MapScreen({ navigation }) {
 
   const navigateToCreate = () => {
     navigation.navigate('Report')
+  }
+
+  const fetchRoute = async (dest) => {
+    if (!dest) return
+    setRouteLoading(true)
+    try {
+      const { status } = await Location.requestForegroundPermissionsAsync()
+      if (status !== 'granted') { Toast.show({ type: 'info', text1: 'Location permission needed' }); setRouteLoading(false); return }
+      const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High })
+      const origin = `${loc.coords.longitude},${loc.coords.latitude}`
+      const destination = `${dest.longitude},${dest.latitude}`
+      const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${origin};${destination}?geometries=geojson&overview=full`)
+      const data = await res.json()
+      if (data.code === 'Ok' && data.routes?.[0]?.geometry?.coordinates) {
+        const coords = data.routes[0].geometry.coordinates.map(c => ({ latitude: c[1], longitude: c[0] }))
+        setRouteCoords(coords)
+        setSheetVisible(false)
+      } else {
+        Toast.show({ type: 'info', text1: 'Could not find a route' })
+      }
+    } catch {
+      Toast.show({ type: 'error', text1: 'Failed to get route' })
+    } finally {
+      setRouteLoading(false)
+    }
   }
 
   const MarkerPin = ({ color }) => (
@@ -496,9 +519,9 @@ export default function MapScreen({ navigation }) {
                 <Text style={styles.sheetBtnText}>View Details</Text>
               </LinearGradient>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.sheetNavBtn} activeOpacity={0.7}>
+            <TouchableOpacity style={styles.sheetNavBtn} onPress={() => fetchRoute(r.coordinate)} activeOpacity={0.7}>
               <Navigation size={16} color={COLORS.primary} />
-              <Text style={styles.sheetNavText}>Navigate</Text>
+              <Text style={styles.sheetNavText}>{routeLoading ? 'Loading...' : 'Navigate'}</Text>
             </TouchableOpacity>
           </View>
         </GlassCard>
@@ -596,8 +619,8 @@ export default function MapScreen({ navigation }) {
         {routeCoords && (
           <Polyline coordinates={routeCoords} strokeColor={COLORS.primary} strokeWidth={4} />
         )}
-        {route.params?.destination && (
-          <Marker coordinate={route.params.destination} pinColor={COLORS.primary} />
+        {routeCoords?.length > 0 && (
+          <Marker coordinate={routeCoords[routeCoords.length - 1]} pinColor={COLORS.primary} />
         )}
         {filteredMarkers.map(m => (
           <Marker
@@ -683,23 +706,25 @@ export default function MapScreen({ navigation }) {
             </GlassCard>
           </SafeAreaView>
 
-          <TouchableOpacity
-            style={styles.locateBtn}
-            onPress={focusLocation}
-            activeOpacity={0.8}
-          >
-            <LinearGradient
-              colors={['rgba(255,255,255,0.97)', 'rgba(255,255,255,0.85)']}
-              style={styles.locateGrad}
+          {!routeCoords && (
+            <TouchableOpacity
+              style={styles.locateBtn}
+              onPress={focusLocation}
+              activeOpacity={0.8}
             >
-              <Crosshair size={20} color={COLORS.secondary} />
-            </LinearGradient>
-          </TouchableOpacity>
+              <LinearGradient
+                colors={['rgba(255,255,255,0.97)', 'rgba(255,255,255,0.85)']}
+                style={styles.locateGrad}
+              >
+                <Crosshair size={20} color={COLORS.secondary} />
+              </LinearGradient>
+            </TouchableOpacity>
+          )}
 
           {routeCoords && (
             <TouchableOpacity
-              style={[styles.locateBtn, { bottom: 80 }]}
-              onPress={() => { setRouteCoords(null); navigation.setParams({ destination: undefined }) }}
+              style={styles.locateBtn}
+              onPress={() => setRouteCoords(null)}
               activeOpacity={0.8}
             >
               <LinearGradient
@@ -1003,7 +1028,7 @@ const styles = StyleSheet.create({
     right: 0,
     paddingHorizontal: 12,
     paddingBottom: 20,
-    zIndex: 80,
+    zIndex: 110,
   },
   bottomSheetCard: {
     paddingTop: 12,
