@@ -1,16 +1,25 @@
 import api from '../api/axios'
 import { File, Paths } from 'expo-file-system'
+import { copyAsync } from 'expo-file-system/legacy'
 
 function getImageUri(image) {
   return typeof image === 'string' ? image : image?.uri
 }
 
 async function resolveUri(uri) {
-  const file = new File(uri)
-  if (file.exists && file.size > 0) return uri
+  const isContentUri = uri.startsWith('content://')
+  if (!isContentUri) {
+    const file = new File(uri)
+    if (file.exists && file.size > 0) return uri
+  }
   const ext = uri.split('.').pop() || 'jpg'
   const dest = new File(Paths.cache, `upload_${Date.now()}.${ext}`)
-  await file.copy(dest)
+  if (isContentUri) {
+    await copyAsync({ from: uri, to: dest.uri })
+  } else {
+    const src = new File(uri)
+    await src.copy(dest)
+  }
   return dest.uri
 }
 
