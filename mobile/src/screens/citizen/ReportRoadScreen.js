@@ -6,7 +6,6 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { LinearGradient } from 'expo-linear-gradient'
 import * as ImagePicker from 'expo-image-picker'
-import * as Location from 'expo-location'
 import Toast from 'react-native-toast-message'
 import { useNavigation } from '@react-navigation/native'
 import {
@@ -205,20 +204,7 @@ export default function ReportRoadScreen() {
         setLocation({ coordinates: [lng, lat], address: `${lat.toFixed(4)}, ${lng.toFixed(4)}`, gpsExtracted: true })
         setGpsStatus(`GPS extracted from photo: ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
       } else {
-        setGpsStatus('Photo has no GPS — getting device location...')
-        try {
-          const { status } = await Location.requestForegroundPermissionsAsync()
-          if (status === 'granted') {
-            const loc = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High })
-            const { latitude, longitude } = loc.coords
-            setLocation({ coordinates: [longitude, latitude], address: `${latitude.toFixed(4)}, ${longitude.toFixed(4)}`, gpsExtracted: true })
-            setGpsStatus(`Device GPS: ${latitude.toFixed(4)}, ${longitude.toFixed(4)}`)
-          } else {
-            setGpsStatus('Location permission denied')
-          }
-        } catch {
-          setGpsStatus('Could not get device location')
-        }
+        setGpsStatus('No GPS in photo — pin the location on the map below')
       }
     }
 
