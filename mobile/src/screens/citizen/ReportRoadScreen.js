@@ -514,6 +514,16 @@ export default function ReportRoadScreen() {
             </View>
           )}
 
+          {aiResult?.annotated_image && !analyzing && (
+            <View style={{ marginTop: 12 }}>
+              <Text style={{ fontSize: 13, fontWeight: '700', color: COLORS.secondary, marginBottom: 6 }}>AI Detections</Text>
+              <Image
+                source={{ uri: `data:image/jpeg;base64,${aiResult.annotated_image}` }}
+                style={{ width: '100%', height: 220, borderRadius: RADIUS.md, backgroundColor: COLORS.skeleton }}
+                resizeMode="cover"
+              />
+            </View>
+          )}
           {aiResult && !analyzing && (
             <View style={[styles.aiBox, aiResult.detections?.length > 0 ? styles.aiDanger : styles.aiGood]}>
               {aiResult.detections?.length > 0 ? (

@@ -120,33 +120,44 @@ export default function AnalyzeScreen({ navigation }) {
         )}
 
         {result && !analyzing && (
-          <GlassCard style={styles.card}>
-            <Text style={styles.cardTitle}>Analysis Result</Text>
-            <View style={[styles.resultBox, result.detections?.length > 0 ? styles.resultDanger : styles.resultGood]}>
-              {result.detections?.length > 0 ? (
-                <XCircle size={24} color={COLORS.danger} />
-              ) : (
-                <CheckCircle2 size={24} color={COLORS.accent} />
-              )}
-              <View style={{ flex: 1 }}>
-                <Text style={[styles.resultTitle, { color: result.detections?.length > 0 ? COLORS.danger : COLORS.accentDark }]}>
-                  {result.detections?.length > 0 ? 'Issues Detected' : 'No Issues Detected'}
-                </Text>
-                {result.detections?.length > 0 && (
-                  <View style={{ marginTop: 8, gap: 6 }}>
-                    {result.detections.map((d, i) => (
-                      <View key={i} style={styles.detectionRow}>
-                        <Text style={styles.detectionType}>{d.type.replace(/_/g, ' ')}</Text>
-                        <Text style={styles.detectionConfidence}>
-                          {(d.confidence * 100).toFixed(0)}% confidence
-                        </Text>
-                      </View>
-                    ))}
-                  </View>
+          <>
+            {result.annotated_image && (
+              <GlassCard style={styles.card}>
+                <Text style={styles.cardTitle}>AI Detections</Text>
+                <Image
+                  source={{ uri: `data:image/jpeg;base64,${result.annotated_image}` }}
+                  style={styles.preview} resizeMode="cover"
+                />
+              </GlassCard>
+            )}
+            <GlassCard style={styles.card}>
+              <Text style={styles.cardTitle}>Analysis Result</Text>
+              <View style={[styles.resultBox, result.detections?.length > 0 ? styles.resultDanger : styles.resultGood]}>
+                {result.detections?.length > 0 ? (
+                  <XCircle size={24} color={COLORS.danger} />
+                ) : (
+                  <CheckCircle2 size={24} color={COLORS.accent} />
                 )}
+                <View style={{ flex: 1 }}>
+                  <Text style={[styles.resultTitle, { color: result.detections?.length > 0 ? COLORS.danger : COLORS.accentDark }]}>
+                    {result.detections?.length > 0 ? 'Issues Detected' : 'No Issues Detected'}
+                  </Text>
+                  {result.detections?.length > 0 && (
+                    <View style={{ marginTop: 8, gap: 6 }}>
+                      {result.detections.map((d, i) => (
+                        <View key={i} style={styles.detectionRow}>
+                          <Text style={styles.detectionType}>{d.type.replace(/_/g, ' ')}</Text>
+                          <Text style={styles.detectionConfidence}>
+                            {(d.confidence * 100).toFixed(0)}% confidence
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
+                  )}
+                </View>
               </View>
-            </View>
-          </GlassCard>
+            </GlassCard>
+          </>
         )}
 
         {!image && !analyzing && !result && (

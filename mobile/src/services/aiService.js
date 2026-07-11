@@ -1,26 +1,30 @@
 import api from '../api/axios'
 import { File, Paths } from 'expo-file-system'
-import { copyAsync } from 'expo-file-system/legacy'
 
 function getImageUri(image) {
   return typeof image === 'string' ? image : image?.uri
 }
 
 async function resolveUri(uri) {
-  const isContentUri = uri.startsWith('content://')
-  if (!isContentUri) {
-    const file = new File(uri)
-    if (file.exists && file.size > 0) return uri
+  if (!uri.startsWith('content://')) {
+    try {
+      const file = new File(uri)
+      if (file.exists && file.size > 0) return uri
+    } catch {}
   }
   const ext = uri.split('.').pop() || 'jpg'
-  const dest = new File(Paths.cache, `upload_${Date.now()}.${ext}`)
-  if (isContentUri) {
-    await copyAsync({ from: uri, to: dest.uri })
-  } else {
-    const src = new File(uri)
-    await src.copy(dest)
+  try {
+    const response = await fetch(uri)
+    const buffer = await response.arrayBuffer()
+    const dest = new File(Paths.cache, `upload_${Date.now()}.${ext}`)
+    const uint8 = new Uint8Array(buffer)
+    const writer = dest.writableStream().getWriter()
+    await writer.write(uint8)
+    await writer.close()
+    return dest.uri
+  } catch {
+    return uri
   }
-  return dest.uri
 }
 
 function getUploadMeta(image, resolvedUri) {
@@ -41,7 +45,7 @@ function getUploadMeta(image, resolvedUri) {
 }
 
 export const aiService = {
-  analyzeImage: async (image) => {
+  analyzeImage: async (image, retried = false) => {
     const imageUri = getImageUri(image)
     if (!imageUri) throw new Error('No image selected')
 
@@ -54,8 +58,15 @@ export const aiService = {
       name,
     })
 
-    const { data } = await api.post('/ai/analyze', formData, { timeout: 60000 })
-    return data
+    try {
+      const { data } = await api.post('/ai/analyze', formData, { timeout: 60000 })
+      return data
+    } catch (err) {
+      if (!retried && err.message?.includes('Network Error')) {
+        return aiService.analyzeImage(image, true)
+      }
+      throw err
+    }
   },
 
   createAiReport: async (reportData) => {
