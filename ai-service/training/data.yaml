@@ -1,0 +1,13 @@
+path: C:/Users/ACER/sadakSewa/ai-service/dataset
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: longitudinal_crack
+  1: transverse_crack
+  2: alligator_crack
+  3: pothole
+  4: landslide
+  5: garbage
+  6: fire_smoke

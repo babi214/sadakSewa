@@ -17,4 +17,19 @@ uploads/
 *.log
 RDD2022/
 runs/
-ai-service/
+
+# ai-service: exclude large datasets, include code + weights
+ai-service/dataset/
+ai-service/landslide*/
+ai-service/Garbage*/
+ai-service/electric pole fire*/
+ai-service/LMHLD/
+ai-service/taco/
+ai-service/testing/
+ai-service/test_images/
+ai-service/uploads/
+ai-service/outputs/
+ai-service/.venv/
+ai-service/__pycache__/
+ai-service/**/__pycache__/
+ai-service/*.egg-info/
