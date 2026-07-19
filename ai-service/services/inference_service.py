@@ -14,6 +14,7 @@ FULL_MODEL_PATH = WEIGHTS_DIR / "full.pt"
 
 CONFIDENCE_THRESHOLD = 0.15
 GARBAGE_CONFIDENCE_THRESHOLD = 0.35
+LANDSLIDE_CONFIDENCE_THRESHOLD = 0.10
 
 
 CLASS_NAMES = {
@@ -108,10 +109,10 @@ def run_inference(image_path: Path) -> Tuple[List[dict], str, str]:
     full_model = get_full_model()
 
     road_results = road_model.predict(source=str(image_path), verbose=False)
-    full_results = full_model.predict(source=str(image_path), verbose=False)
+    full_results = full_model.predict(source=str(image_path), verbose=False, conf=0.01)
 
     road_detections = _collect_detections(road_model, road_results, ROAD_DAMAGE_CLASSES)
-    new_detections = _collect_detections(full_model, full_results, NEW_CLASSES, class_thresholds={5: GARBAGE_CONFIDENCE_THRESHOLD})
+    new_detections = _collect_detections(full_model, full_results, NEW_CLASSES, class_thresholds={4: LANDSLIDE_CONFIDENCE_THRESHOLD, 5: GARBAGE_CONFIDENCE_THRESHOLD})
     new_detections = [d for d in new_detections if not (d["type"] == "garbage" and _is_tall_box(d["bbox"], 1.5))]
 
     detections = road_detections + new_detections

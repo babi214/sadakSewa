@@ -6,12 +6,7 @@ function getImageUri(image) {
 }
 
 async function resolveUri(uri) {
-  if (!uri.startsWith('content://')) {
-    try {
-      const file = new File(uri)
-      if (file.exists && file.size > 0) return uri
-    } catch {}
-  }
+  if (uri.startsWith('file://')) return uri
   const ext = uri.split('.').pop() || 'jpg'
   try {
     const response = await fetch(uri)
