@@ -510,7 +510,7 @@ export default function ReportRoadScreen() {
           {analyzing && (
             <View style={styles.aiStatusRow}>
               <Scan size={16} color={COLORS.primary} />
-              <Text style={styles.aiStatusText}>Analyzing image with AI...</Text>
+              <Text style={styles.aiStatusText}>Analyzing image...</Text>
             </View>
           )}
 

@@ -113,7 +113,7 @@ export default function AnalyzeScreen({ navigation }) {
           <GlassCard style={styles.card}>
             <View style={styles.statusRow}>
               <Scan size={20} color={COLORS.primary} />
-              <Text style={styles.statusText}>Analyzing image with AI...</Text>
+              <Text style={styles.statusText}>Analyzing image...</Text>
             </View>
             <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: 12 }} />
           </GlassCard>

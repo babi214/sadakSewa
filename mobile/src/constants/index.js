@@ -2,7 +2,7 @@ import { COLORS, GRADIENTS, SPACING, RADIUS, SHADOWS } from './theme'
 export { COLORS, GRADIENTS, SPACING, RADIUS, SHADOWS }
 export { ANIMATION_DURATION, EASING, FADE_IN, SLIDE_UP, SLIDE_LEFT, SCALE_IN, STAGGER_DELAY, SPRING_CONFIG } from './animations'
 
-export const API_BASE_URL = 'http://192.168.100.12:5000/api'
+export const API_BASE_URL = 'https://stencil-caddy-supplier.ngrok-free.dev/api'
 
 export const ROLES = {
   CITIZEN: 'citizen',

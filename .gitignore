@@ -17,7 +17,7 @@ uploads/
 *.log
 RDD2022/
 runs/
-
+colab_upload/
 # ai-service: exclude large datasets, include code + weights
 ai-service/dataset/
 ai-service/landslide*/

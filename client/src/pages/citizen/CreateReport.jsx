@@ -367,7 +367,7 @@ export default function CreateReport() {
               {analyzing && (
                 <div className="mt-3 flex items-center gap-2 text-sm text-muted">
                   <Scan strokeWidth={1.5} className="h-4 w-4 animate-pulse" />
-                  Analyzing image with AI...
+                  Analyzing image...
                 </div>
               )}
 
