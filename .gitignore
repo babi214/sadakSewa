@@ -33,3 +33,5 @@ ai-service/.venv/
 ai-service/__pycache__/
 ai-service/**/__pycache__/
 ai-service/*.egg-info/
+AI-Pothole-Detection-using-YOLO-1/
+GARBAGE-CLASSIFICATION-3-2/
