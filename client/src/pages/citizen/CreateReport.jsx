@@ -9,7 +9,6 @@ import { FormField, Input, Select, Textarea } from '../../components/common/Inpu
 import ImageUploader from '../../components/report/ImageUploader'
 import LocationPicker from '../../components/report/LocationPicker'
 import Modal from '../../components/common/Modal'
-import { useAuth } from '../../hooks/useAuth'
 import { reportService } from '../../services/reportService'
 import { aiService } from '../../services/aiService'
 import api from '../../api/axios'
@@ -35,14 +34,8 @@ const initialForm = {
 
 export default function CreateReport() {
   const navigate = useNavigate()
-  const { user } = useAuth()
 
-  const [form, setForm] = useState({
-    ...initialForm,
-    province: user?.province || '',
-    district: user?.district || '',
-    municipality: user?.municipality || '',
-  })
+  const [form, setForm] = useState(initialForm)
   const [location, setLocation] = useState(null)
   const [images, setImages] = useState([])
   const [errors, setErrors] = useState({})
@@ -54,6 +47,7 @@ export default function CreateReport() {
   const [selectedDistrictId, setSelectedDistrictId] = useState('')
   const [duplicateDlg, setDuplicateDlg] = useState({ isOpen: false, title: '', message: '', similarReportId: '' })
   const [showClearConfirm, setShowClearConfirm] = useState(false)
+  const [reverseResult, setReverseResult] = useState(null)
 
   useEffect(() => {
     api.get('/locations/provinces').then(({ data }) => {
@@ -99,12 +93,39 @@ export default function CreateReport() {
     }
   }, [selectedDistrictId])
 
+  useEffect(() => {
+    if (provinces.length && reverseResult?.province) {
+      const p = provinces.find((p) => p.name === reverseResult.province)
+      if (p && selectedProvinceId !== String(p.id)) {
+        setSelectedProvinceId(String(p.id))
+        setForm((prev) => ({ ...prev, province: p.name, district: '', municipality: '' }))
+      }
+    }
+  }, [provinces, reverseResult])
+
+  useEffect(() => {
+    if (districts.length && reverseResult?.district) {
+      const d = districts.find((d) => d.name === reverseResult.district)
+      if (d && selectedDistrictId !== String(d.id)) {
+        setSelectedDistrictId(String(d.id))
+        setForm((prev) => ({ ...prev, district: d.name, municipality: '' }))
+      }
+    }
+  }, [districts, reverseResult])
+
+  useEffect(() => {
+    if (municipalities.length && reverseResult?.municipality) {
+      const m = municipalities.find((m) => m.name === reverseResult.municipality)
+      if (m) setForm((prev) => ({ ...prev, municipality: m.name }))
+    }
+  }, [municipalities, reverseResult])
+
   const [aiResult, setAiResult] = useState(null)
   const [analyzing, setAnalyzing] = useState(false)
   const [gpsStatus, setGpsStatus] = useState('')
 
   const clearForm = () => {
-    setForm({ ...initialForm, province: '', district: '', municipality: '' })
+    setForm(initialForm)
     setLocation(null)
     setImages([])
     setErrors({})
@@ -175,7 +196,11 @@ export default function CreateReport() {
         }
       } catch { /* skip */ }
 
-      if (lat != null && lng != null) {
+      const valid = lat != null && lng != null
+        && !(lat === 0 && lng === 0)
+        && lat >= 26 && lat <= 31
+        && lng >= 79 && lng <= 89
+      if (valid) {
         setLocation({ lat, lng })
         setGpsStatus(`Location extracted from photo: ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
       } else {
@@ -478,6 +503,14 @@ export default function CreateReport() {
                     onChange={(coords) => {
                       setLocation(coords)
                       setGpsStatus('')
+                      setReverseResult(null)
+                      if (coords) {
+                        api.get('/locations/reverse-geocode', { params: { lat: coords.lat, lng: coords.lng } })
+                          .then(({ data }) => {
+                            if (data?.success) setReverseResult(data.data)
+                          })
+                          .catch(() => {})
+                      }
                       if (errors.location) {
                         setErrors((prev) => ({ ...prev, location: '' }))
                       }

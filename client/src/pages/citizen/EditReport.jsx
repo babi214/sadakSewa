@@ -29,6 +29,7 @@ export default function EditReport() {
   const [municipalities, setMunicipalities] = useState([])
   const [selectedProvinceId, setSelectedProvinceId] = useState('')
   const [selectedDistrictId, setSelectedDistrictId] = useState('')
+  const [reverseResult, setReverseResult] = useState(null)
 
   useEffect(() => {
     api.get('/locations/provinces').then(({ data }) => {
@@ -73,6 +74,33 @@ export default function EditReport() {
       if (d) setSelectedDistrictId(String(d.id))
     }
   }, [districts, form?.district, selectedDistrictId])
+
+  useEffect(() => {
+    if (provinces.length && reverseResult?.province) {
+      const p = provinces.find((p) => p.name === reverseResult.province)
+      if (p && selectedProvinceId !== String(p.id)) {
+        setSelectedProvinceId(String(p.id))
+        setForm((prev) => ({ ...prev, province: p.name, district: '', municipality: '' }))
+      }
+    }
+  }, [provinces, reverseResult])
+
+  useEffect(() => {
+    if (districts.length && reverseResult?.district) {
+      const d = districts.find((d) => d.name === reverseResult.district)
+      if (d && selectedDistrictId !== String(d.id)) {
+        setSelectedDistrictId(String(d.id))
+        setForm((prev) => ({ ...prev, district: d.name, municipality: '' }))
+      }
+    }
+  }, [districts, reverseResult])
+
+  useEffect(() => {
+    if (municipalities.length && reverseResult?.municipality) {
+      const m = municipalities.find((m) => m.name === reverseResult.municipality)
+      if (m) setForm((prev) => ({ ...prev, municipality: m.name }))
+    }
+  }, [municipalities, reverseResult])
 
   useEffect(() => {
     const fetchReport = async () => {
@@ -260,6 +288,14 @@ export default function EditReport() {
                 value={location}
                 onChange={(coords) => {
                   setLocation(coords)
+                  setReverseResult(null)
+                  if (coords) {
+                    api.get('/locations/reverse-geocode', { params: { lat: coords.lat, lng: coords.lng } })
+                      .then(({ data }) => {
+                        if (data?.success) setReverseResult(data.data)
+                      })
+                      .catch(() => {})
+                  }
                   if (errors.location) setErrors((prev) => ({ ...prev, location: '' }))
                 }}
                 error={errors.location}

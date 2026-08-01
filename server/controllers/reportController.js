@@ -139,11 +139,17 @@ const createReport = async (req, res) => {
       });
     }
 
-    // --- Anti-spam: text similarity check (same category/municipality, last 30 days) ---
+    // --- Anti-spam: text similarity check (same category/municipality, within 50m, last 30 days) ---
     const textCandidates = await Report.find({
       category,
       municipality,
       createdAt: { $gte: thirtyDaysAgo },
+      location: {
+        $nearSphere: {
+          $geometry: { type: "Point", coordinates: [lng, lat] },
+          $maxDistance: 50,
+        },
+      },
     }).select("title description").lean();
 
     const THRESHOLD = 0.7;

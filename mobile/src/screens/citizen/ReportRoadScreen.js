@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   View, Text, TouchableOpacity, Image, ScrollView, StyleSheet, Alert,
   TextInput, ActivityIndicator,
@@ -13,7 +13,6 @@ import {
   XCircle, ChevronLeft, Send, X, Scan,
 } from 'lucide-react-native'
 
-import { AuthContext } from '../../context/AuthContext'
 import { aiService } from '../../services/aiService'
 import { reportService } from '../../services/reportService'
 import api from '../../api/axios'
@@ -51,14 +50,8 @@ function confirmNoDamage() {
 
 export default function ReportRoadScreen() {
   const navigation = useNavigation()
-  const { user } = useContext(AuthContext)
 
-  const [form, setForm] = useState({
-    ...initialForm,
-    province: user?.province || '',
-    district: user?.district || '',
-    municipality: user?.municipality || '',
-  })
+  const [form, setForm] = useState(initialForm)
   const [images, setImages] = useState([])
   const [location, setLocation] = useState(null)
   const [aiResult, setAiResult] = useState(null)
@@ -73,6 +66,20 @@ export default function ReportRoadScreen() {
   const [showProvincePicker, setShowProvincePicker] = useState(false)
   const [showDistrictPicker, setShowDistrictPicker] = useState(false)
   const [showMunicipalityPicker, setShowMunicipalityPicker] = useState(false)
+  const [reverseResult, setReverseResult] = useState(null)
+
+  const resetForm = () => {
+    setForm(initialForm)
+    setImages([])
+    setLocation(null)
+    setAiResult(null)
+    setGpsStatus('')
+    setSelectedProvinceId('')
+    setSelectedDistrictId('')
+    setDistricts([])
+    setMunicipalities([])
+    setReverseResult(null)
+  }
 
   useEffect(() => {
     api.get('/locations/provinces').then(({ data }) => {
@@ -143,6 +150,45 @@ export default function ReportRoadScreen() {
     setForm(prev => ({ ...prev, municipality: m ? m.name : '' }))
   }
 
+  useEffect(() => {
+    if (provinces.length && reverseResult?.province) {
+      const p = provinces.find((p) => p.name === reverseResult.province)
+      if (p && selectedProvinceId !== String(p.id)) {
+        setSelectedProvinceId(String(p.id))
+        setForm(prev => ({ ...prev, province: p.name, district: '', municipality: '' }))
+      }
+    }
+  }, [provinces, reverseResult])
+
+  useEffect(() => {
+    if (districts.length && reverseResult?.district) {
+      const d = districts.find((d) => d.name === reverseResult.district)
+      if (d && selectedDistrictId !== String(d.id)) {
+        setSelectedDistrictId(String(d.id))
+        setForm(prev => ({ ...prev, district: d.name, municipality: '' }))
+      }
+    }
+  }, [districts, reverseResult])
+
+  useEffect(() => {
+    if (municipalities.length && reverseResult?.municipality) {
+      const m = municipalities.find((m) => m.name === reverseResult.municipality)
+      if (m) setForm(prev => ({ ...prev, municipality: m.name }))
+    }
+  }, [municipalities, reverseResult])
+
+  const handleLocationSelect = (loc) => {
+    setLocation(loc)
+    setReverseResult(null)
+    if (!loc?.coordinates) return
+    const [lng, lat] = loc.coordinates
+    api.get('/locations/reverse-geocode', { params: { lat, lng } })
+      .then(({ data }) => {
+        if (data?.success) setReverseResult(data.data)
+      })
+      .catch(() => {})
+  }
+
   const applyAiResult = (data) => {
     setAiResult(data)
     if (!data?.detections?.length) return
@@ -200,8 +246,14 @@ export default function ReportRoadScreen() {
         lat = exif.GPSLatitude ?? exif.GPS?.Latitude
         lng = exif.GPSLongitude ?? exif.GPS?.Longitude
       }
-      if (lat != null && lng != null) {
-        setLocation({ coordinates: [lng, lat], address: `${lat.toFixed(4)}, ${lng.toFixed(4)}`, gpsExtracted: true })
+      const valid = lat != null && lng != null
+        && !(lat === 0 && lng === 0)
+        && lat >= 26 && lat <= 31
+        && lng >= 79 && lng <= 89
+      if (valid) {
+        const loc = { coordinates: [lng, lat], address: `${lat.toFixed(4)}, ${lng.toFixed(4)}`, gpsExtracted: true }
+        setLocation(loc)
+        handleLocationSelect(loc)
         setGpsStatus(`GPS extracted from photo: ${lat.toFixed(4)}, ${lng.toFixed(4)}`)
       } else {
         setGpsStatus('No GPS in photo — pin the location on the map below')
@@ -301,6 +353,7 @@ export default function ReportRoadScreen() {
       const response = await reportService.createReport(payload, images.map(img => img.uri))
       if (response.success) {
         Toast.show({ type: 'success', text1: 'Report submitted successfully!' })
+        resetForm()
         navigation.navigate('Map')
       }
     } catch (err) {
@@ -329,13 +382,7 @@ export default function ReportRoadScreen() {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Report an Issue</Text>
         <TouchableOpacity
-          onPress={() => {
-            setForm({ ...initialForm, province: user?.province || '', district: user?.district || '', municipality: user?.municipality || '' })
-            setImages([])
-            setLocation(null)
-            setAiResult(null)
-            setGpsStatus('')
-          }}
+          onPress={resetForm}
           style={styles.clearBtn}
           activeOpacity={0.7}
         >
@@ -470,7 +517,7 @@ export default function ReportRoadScreen() {
               </ScrollView>
             </View>
           )}
-          <LocationPicker location={location} onLocationSelect={setLocation} />
+          <LocationPicker location={location} onLocationSelect={handleLocationSelect} />
           {gpsStatus ? <Text style={styles.gpsStatus}>{gpsStatus}</Text> : null}
         </GlassCard>
 

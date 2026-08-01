@@ -24,6 +24,7 @@ export default function EditReportScreen({ route, navigation }) {
   const [showProvincePicker, setShowProvincePicker] = useState(false)
   const [showDistrictPicker, setShowDistrictPicker] = useState(false)
   const [showMunicipalityPicker, setShowMunicipalityPicker] = useState(false)
+  const [reverseResult, setReverseResult] = useState(null)
 
   useEffect(() => {
     api.get('/locations/provinces').then(({ data }) => {
@@ -68,6 +69,45 @@ export default function EditReportScreen({ route, navigation }) {
       if (d) setSelectedDistrictId(String(d.id))
     }
   }, [districts, form.district, selectedDistrictId])
+
+  useEffect(() => {
+    if (provinces.length && reverseResult?.province) {
+      const p = provinces.find((p) => p.name === reverseResult.province)
+      if (p && selectedProvinceId !== String(p.id)) {
+        setSelectedProvinceId(String(p.id))
+        setForm(prev => ({ ...prev, province: p.name, district: '', municipality: '' }))
+      }
+    }
+  }, [provinces, reverseResult])
+
+  useEffect(() => {
+    if (districts.length && reverseResult?.district) {
+      const d = districts.find((d) => d.name === reverseResult.district)
+      if (d && selectedDistrictId !== String(d.id)) {
+        setSelectedDistrictId(String(d.id))
+        setForm(prev => ({ ...prev, district: d.name, municipality: '' }))
+      }
+    }
+  }, [districts, reverseResult])
+
+  useEffect(() => {
+    if (municipalities.length && reverseResult?.municipality) {
+      const m = municipalities.find((m) => m.name === reverseResult.municipality)
+      if (m) setForm(prev => ({ ...prev, municipality: m.name }))
+    }
+  }, [municipalities, reverseResult])
+
+  const handleLocationSelect = (loc) => {
+    setLocation(loc)
+    setReverseResult(null)
+    if (!loc?.coordinates) return
+    const [lng, lat] = loc.coordinates
+    api.get('/locations/reverse-geocode', { params: { lat, lng } })
+      .then(({ data }) => {
+        if (data?.success) setReverseResult(data.data)
+      })
+      .catch(() => {})
+  }
 
   useEffect(() => {
     let alive = true
@@ -244,7 +284,7 @@ export default function EditReportScreen({ route, navigation }) {
               </ScrollView>
             </View>
           )}
-          <LocationPicker location={location} onLocationSelect={setLocation} />
+          <LocationPicker location={location} onLocationSelect={handleLocationSelect} />
         </GlassCard>
         <TouchableOpacity style={styles.saveBtn} onPress={handleSave} disabled={saving}>
           {saving ? <ActivityIndicator size="small" color={COLORS.white} /> : <><Save size={18} color={COLORS.white} /><Text style={styles.saveText}>Save Changes</Text></>}

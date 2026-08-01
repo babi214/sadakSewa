@@ -1,5 +1,6 @@
 const Report = require("../models/reportModel");
 const cloudinary = require("../config/cloudinary");
+const { reverseGeocodeLocation } = require("./locationController");
 
 const AI_SERVICE_URL = process.env.AI_SERVICE_URL || "http://localhost:8000";
 
@@ -71,6 +72,11 @@ const createAiReport = async (req, res) => {
       annotatedUrl = uploadResult.secure_url;
     }
 
+    let reverse = null;
+    try {
+      reverse = await reverseGeocodeLocation(latitude, longitude);
+    } catch { }
+
     const report = await Report.create({
       title: `AI Detected: ${damageType}`,
       description: `Automatically detected ${damageType}.`,
@@ -83,7 +89,10 @@ const createAiReport = async (req, res) => {
         type: "Point",
         coordinates: [Number(longitude), Number(latitude)],
       },
-      locationName: locationName || "",
+      locationName: locationName || (reverse ? [reverse.province, reverse.district, reverse.municipality].filter(Boolean).join(", ") : ""),
+      province: reverse?.province || "",
+      district: reverse?.district || "",
+      municipality: reverse?.municipality || "",
       aiAnalysis: {
         detectedIssue: damageType,
         confidence: Number(confidence),
