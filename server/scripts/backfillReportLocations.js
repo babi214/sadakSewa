@@ -10,6 +10,8 @@ const { reverseGeocodeLocation } = require("../controllers/locationController");
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
+const COORDS_PATTERN = /^\s*-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?\s*$/;
+
 async function backfill() {
   await mongoose.connect(process.env.DB_URL);
   console.log("Connected to MongoDB");
@@ -20,6 +22,7 @@ async function backfill() {
       { district: { $in: [null, ""] } },
       { municipality: { $in: [null, ""] } },
       { locationName: { $in: [null, ""] } },
+      { locationName: { $regex: /^\s*-?\d+\.\d+\s*,\s*-?\d+\.\d+/ } },
     ],
     "location.coordinates.1": { $exists: true },
   }).cursor();
@@ -42,7 +45,8 @@ async function backfill() {
       if (!report.province) set.province = rev.province;
       if (!report.district) set.district = rev.district;
       if (!report.municipality) set.municipality = rev.municipality;
-      if (!report.locationName && locationName) set.locationName = locationName;
+      const locNameLooksLikeCoords = COORDS_PATTERN.test(report.locationName || "");
+      if ((!report.locationName || locNameLooksLikeCoords) && locationName) set.locationName = locationName;
 
       if (Object.keys(set).length) {
         await Report.updateOne({ _id: report._id }, { $set: set });

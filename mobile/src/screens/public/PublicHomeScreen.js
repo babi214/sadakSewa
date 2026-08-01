@@ -123,7 +123,7 @@ export default function PublicHomeScreen() {
                 <View style={styles.reportRow}>
                   <View style={{ flex: 1 }}>
                     <Text style={styles.reportTitle} numberOfLines={1}>{item.title}</Text>
-                    <Text style={styles.reportMeta} numberOfLines={1}>{item.locationName || item.district || ''}</Text>
+                    <Text style={styles.reportMeta} numberOfLines={1}>{[item.province, item.district, item.municipality].filter(Boolean).join(', ') || item.locationName || ''}</Text>
                   </View>
                   <StatusBadge status={item.status} size="sm" />
                 </View>

@@ -32,7 +32,9 @@ export default function ReportCard({ report, onPress, compact, showAdmin }) {
         <View style={styles.meta}>
           <View style={styles.metaItem}>
             <MapPin size={12} color={COLORS.muted} />
-            <Text style={styles.metaText} numberOfLines={1}>{report.location?.address || 'Location'}</Text>
+            <Text style={styles.metaText} numberOfLines={1}>
+              {[report.province, report.district, report.municipality].filter(Boolean).join(', ') || report.location?.address || 'Location'}
+            </Text>
           </View>
           <View style={styles.metaItem}>
             <Clock size={12} color={COLORS.muted} />

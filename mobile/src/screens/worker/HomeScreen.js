@@ -167,7 +167,7 @@ export default function WorkerHomeScreen({ navigation }) {
                     </View>
                     <Text style={styles.reportTitle} numberOfLines={1}>{r.title}</Text>
                     <Text style={styles.reportLocation} numberOfLines={1}>
-                      {r.location?.address || r.locationName || 'Location not set'}
+                      {[r.province, r.district, r.municipality].filter(Boolean).join(', ') || r.location?.address || r.locationName || 'Location not set'}
                     </Text>
                   </View>
                 </View>

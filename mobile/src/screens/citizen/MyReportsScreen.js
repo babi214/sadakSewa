@@ -122,7 +122,7 @@ export default function MyReportsScreen() {
       ? item.category.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
       : 'Other'
     const CategoryIcon = item.category === 'pothole' || item.category === 'road_damage' ? AlertTriangle : FileText
-    const locationLabel = item.locationName || item.location?.address || 'Location not specified'
+    const locationLabel = [item.province, item.district, item.municipality].filter(Boolean).join(', ') || item.locationName || item.location?.address || 'Location not specified'
     const upvoteCount = item.upvoteCount ?? item.upvotes?.length ?? 0
 
     return (

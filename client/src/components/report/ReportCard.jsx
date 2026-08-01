@@ -112,11 +112,8 @@ export default function ReportCard({
           {report.municipality && (
             <span className="flex items-center gap-1">
               <MapPin strokeWidth={1.5} className="h-3 w-3" />
-              {report.municipality}
+              {[report.province, report.district, report.municipality].filter(Boolean).join(', ')}
             </span>
-          )}
-          {report.locationName && (
-            <span className="truncate">{report.locationName}</span>
           )}
         </div>
 

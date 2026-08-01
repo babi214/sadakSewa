@@ -201,10 +201,10 @@ export default function NearbyReports() {
                             View details
                           </Link>
                         </div>
-                        {report.locationName && (
+                        {([report.province, report.district, report.municipality].filter(Boolean).join(', ') || report.locationName) && (
                           <p className="mt-1 flex items-center gap-1 text-xs text-muted">
                             <MapPin className="h-3 w-3" />
-                            {report.locationName}
+                            {[report.province, report.district, report.municipality].filter(Boolean).join(', ') || report.locationName}
                           </p>
                         )}
                       </button>

@@ -570,11 +570,11 @@ export default function MapScreen({ navigation }) {
               </Text>
             </View>
             <Text style={styles.listCardTitle} numberOfLines={1}>{item.title}</Text>
-            {(item.locationName || item.location?.address) && (
+            {(item.locationName || item.location?.address || item.province || item.district || item.municipality) && (
               <View style={styles.listCardAddress}>
                 <MapPin size={10} color={COLORS.muted} />
                 <Text style={styles.listCardAddressText} numberOfLines={1}>
-                  {item.locationName || item.location.address}
+                  {[item.province, item.district, item.municipality].filter(Boolean).join(', ') || item.locationName || item.location.address}
                 </Text>
               </View>
             )}
