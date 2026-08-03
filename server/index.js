@@ -31,6 +31,10 @@ app.use("/api/users", userRoutes);
 app.use("/api/ai", aiRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/locations", locationRoutes);
+
+app.get("/", (req, res) => {
+  res.json({ success: true, message: "SadakSewa API is running. Use /api routes." });
+});
 // app.use((err, req, res, next) => {
 //     console.error("--- SERVER ERROR STACK ---");
 //     console.error(err); // This prints the actual error to your VS Code terminal

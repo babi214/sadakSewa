@@ -386,7 +386,7 @@ export default function CreateReport() {
               )}
 
               <p className="mt-3 text-xs text-muted">
-                AI detects road damage, landslides, and garbage. Other problems like drainage or streetlight issues should still be reported regardless.
+                Model detects road damage, landslides, and garbage. Other problems like drainage or streetlight issues should still be reported regardless.
               </p>
 
               {analyzing && (
