@@ -100,7 +100,7 @@ export default function ResetPasswordScreen({ navigation, route }) {
                 />
               </FormField>
 
-              <FormField label="New password" error={errors.password} required>
+              <FormField label="New password" error={errors.password} required hint="8+ characters with uppercase, lowercase, number, and special character">
                 <View style={styles.inputOuter}>
                   <Lock size={18} color={COLORS.mutedText} style={styles.leftIcon} />
                   <Input

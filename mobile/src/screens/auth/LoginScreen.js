@@ -9,7 +9,7 @@ import { FormField, Input } from '../../components/Input'
 import Button from '../../components/Button'
 import { AuthContext } from '../../context/AuthContext'
 import { COLORS, GRADIENTS, RADIUS, SPACING, SHADOWS } from '../../constants'
-import { validateEmail, validatePassword, getApiErrorMessage } from '../../utils/validators'
+import { validateEmail, validatePasswordRequired, getApiErrorMessage } from '../../utils/validators'
 
 export default function LoginScreen({ navigation }) {
   const { login } = useContext(AuthContext)
@@ -37,7 +37,7 @@ export default function LoginScreen({ navigation }) {
   const validate = () => {
     const e = {
       email: validateEmail(form.email),
-      password: validatePassword(form.password),
+      password: validatePasswordRequired(form.password),
     }
     setErrors(e)
     return !Object.values(e).some(Boolean)

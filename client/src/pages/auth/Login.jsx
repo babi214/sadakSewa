@@ -9,7 +9,7 @@ import { ROLE_DASHBOARD_PATHS } from '../../utils/constants'
 import {
   getApiErrorMessage,
   validateEmail,
-  validatePassword,
+  validatePasswordRequired,
 } from '../../utils/validators'
 
 export default function Login() {
@@ -33,7 +33,7 @@ export default function Login() {
   const validate = () => {
     const newErrors = {
       email: validateEmail(form.email),
-      password: validatePassword(form.password),
+      password: validatePasswordRequired(form.password),
     }
     setErrors(newErrors)
     return !Object.values(newErrors).some(Boolean)

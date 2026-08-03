@@ -103,7 +103,7 @@ export default function ResetPassword() {
           />
         </FormField>
 
-        <FormField label="New password" error={errors.password} required hint="Minimum 8 characters">
+        <FormField label="New password" error={errors.password} required hint="8+ characters with uppercase, lowercase, number, and special character">
           <div className="relative">
             <Input
               type={showPassword ? 'text' : 'password'}

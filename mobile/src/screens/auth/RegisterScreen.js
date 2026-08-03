@@ -216,7 +216,7 @@ export default function RegisterScreen({ navigation }) {
                 </View>
               </FormField>
 
-              <FormField label="Password" error={errors.password} required hint="Minimum 8 characters">
+              <FormField label="Password" error={errors.password} required hint="8+ characters with uppercase, lowercase, number, and special character">
                 <View style={styles.inputOuter}>
                   <Lock size={18} color={COLORS.mutedText} style={styles.leftIcon} />
                   <Input

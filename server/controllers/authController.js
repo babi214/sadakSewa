@@ -4,6 +4,7 @@ const generateToken = require("../utils/generateToken");
 const cloudinary = require("../config/cloudinary");
 const crypto = require("crypto");
 const sendEmail = require("../utils/sendEmail");
+const { validatePassword } = require("../utils/validatePassword");
 
 const createOtpCode = () => {
   const code = crypto.randomInt(100000, 1000000).toString();
@@ -30,10 +31,11 @@ const registerUser = async (req, res) => {
       });
     }
 
-    if (password.length < 8) {
+    const passwordError = validatePassword(password);
+    if (passwordError) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 8 characters",
+        message: passwordError,
       });
     }
 
@@ -215,10 +217,11 @@ const changePassword = async (req, res) => {
       });
     }
 
-    if (newPassword.length < 8) {
+    const passwordError = validatePassword(newPassword);
+    if (passwordError) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 8 characters",
+        message: passwordError,
       });
     }
 
@@ -420,10 +423,11 @@ const resetPassword = async (req, res) => {
       });
     }
 
-    if (password.length < 8) {
+    const passwordError = validatePassword(password);
+    if (passwordError) {
       return res.status(400).json({
         success: false,
-        message: "Password must be at least 8 characters",
+        message: passwordError,
       });
     }
 

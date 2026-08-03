@@ -9,7 +9,7 @@ import { FormField, Input } from '../../components/Input'
 import { AuthContext } from '../../context/AuthContext'
 import { authService } from '../../services/authService'
 import { COLORS, RADIUS, SHADOWS, SPACING } from '../../constants'
-import { getApiErrorMessage, validateConfirmPassword, validatePassword } from '../../utils/validators'
+import { getApiErrorMessage, validateConfirmPassword, validatePassword, validatePasswordRequired } from '../../utils/validators'
 
 export default function ChangePasswordScreen({ navigation }) {
   const { logout } = useContext(AuthContext)
@@ -33,7 +33,7 @@ export default function ChangePasswordScreen({ navigation }) {
 
   const validate = () => {
     const nextErrors = {
-      currentPassword: validatePassword(form.currentPassword),
+      currentPassword: validatePasswordRequired(form.currentPassword),
       newPassword: validatePassword(form.newPassword),
       confirmPassword: validateConfirmPassword(form.newPassword, form.confirmPassword),
     }
