@@ -1039,14 +1039,6 @@ const getAvailableWorkers = async (req, res) => {
 
     const matchConditions = { role: "worker", isActive: true, isAvailable: { $ne: false } };
 
-    const orConditions = [];
-    if (report.district) orConditions.push({ district: report.district });
-    if (report.municipality) orConditions.push({ municipality: report.municipality });
-
-    if (orConditions.length > 0) {
-      matchConditions.$or = orConditions;
-    }
-
     const candidateWorkers = await User.find(matchConditions).select("_id");
 
     const candidateIds = candidateWorkers.map(w => w._id);

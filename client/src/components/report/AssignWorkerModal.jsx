@@ -57,14 +57,14 @@ export default function AssignWorkerModal({
           </option>
           {workers.map((worker) => (
             <option key={worker._id} value={worker._id}>
-              {worker.fullName} ({worker.email}){worker.district ? ` - ${worker.district}` : ''}
+              {worker.fullName} - {worker.district || 'No district'}{worker.municipality ? `, ${worker.municipality}` : ''}
             </option>
           ))}
         </Select>
       </FormField>
 
       {workers.length === 0 && !loadingWorkers && (
-        <p className="mt-2 text-xs text-muted">No available workers in this area. All workers are currently busy with other assignments.</p>
+        <p className="mt-2 text-xs text-muted">          No available workers found. All workers are currently busy with other assignments.</p>
       )}
 
       <div className="mt-6 flex justify-end gap-3">
