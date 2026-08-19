@@ -104,4 +104,16 @@ export const reportService = {
     const { data } = await api.post(`/reports/${id}/flag`, { reason, customReason })
     return data
   },
+  getNewReports: async () => {
+    const { data } = await api.get('/reports/new-reports')
+    return data
+  },
+  markReportAsSeen: async (id) => {
+    const { data } = await api.patch(`/reports/${id}/mark-seen`)
+    return data
+  },
+  markAllReportsAsSeen: async () => {
+    const { data } = await api.patch('/reports/mark-all-seen')
+    return data
+  },
 }

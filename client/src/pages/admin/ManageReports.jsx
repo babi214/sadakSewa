@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { AlertCircle, BrainCircuit, FileText, UserPlus } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Button from '../../components/common/Button'
@@ -18,8 +18,10 @@ const emptyFilters = { search: '', status: '', category: '', severity: '' }
 const ADMIN_REVIEW_STATUSES = ['verified', 'rejected']
 
 export default function ManageReports() {
+  const location = useLocation()
+  const initialStatus = location.state?.status || ''
   const [reports, setReports] = useState([])
-  const [filters, setFilters] = useState(emptyFilters)
+  const [filters, setFilters] = useState({ ...emptyFilters, status: initialStatus })
   const [debouncedSearch, setDebouncedSearch] = useState('')
   const [page, setPage] = useState(1)
   const [pagination, setPagination] = useState({ total: 0, pages: 1 })

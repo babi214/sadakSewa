@@ -1147,6 +1147,60 @@ const getPublicStats = async (req, res) => {
   }
 };
 
+const getNewReports = async (req, res) => {
+  try {
+    const reports = await Report.find({ viewedByAdmin: false })
+      .populate("reportedBy", "fullName email")
+      .sort({ createdAt: -1 })
+      .limit(20);
+    const newCount = await Report.countDocuments({ viewedByAdmin: false });
+    res.status(200).json({
+      success: true,
+      reports,
+      newCount,
+    });
+  } catch (error) {
+    const isDev = process.env.NODE_ENV === "development";
+    res.status(500).json({
+      success: false,
+      message: isDev ? error.message : "Internal server error",
+    });
+  }
+};
+
+const markReportAsSeen = async (req, res) => {
+  try {
+    const report = await Report.findByIdAndUpdate(
+      req.params.id,
+      { viewedByAdmin: true },
+      { new: true }
+    );
+    if (!report) {
+      return res.status(404).json({ success: false, message: "Report not found" });
+    }
+    res.status(200).json({ success: true, report });
+  } catch (error) {
+    const isDev = process.env.NODE_ENV === "development";
+    res.status(500).json({
+      success: false,
+      message: isDev ? error.message : "Internal server error",
+    });
+  }
+};
+
+const markAllReportsAsSeen = async (req, res) => {
+  try {
+    await Report.updateMany({ viewedByAdmin: false }, { viewedByAdmin: true });
+    res.status(200).json({ success: true, message: "All reports marked as seen" });
+  } catch (error) {
+    const isDev = process.env.NODE_ENV === "development";
+    res.status(500).json({
+      success: false,
+      message: isDev ? error.message : "Internal server error",
+    });
+  }
+};
+
 module.exports = {
   createReport,
   getAllReports,
@@ -1169,4 +1223,7 @@ module.exports = {
   clearFlag,
   flagReport,
   unassignWorker,
+  getNewReports,
+  markReportAsSeen,
+  markAllReportsAsSeen,
 };

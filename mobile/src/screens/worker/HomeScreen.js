@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useContext } from 'react'
-import { View, Text, ScrollView, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native'
+import { View, Text, ScrollView, StyleSheet, RefreshControl, TouchableOpacity, Image } from 'react-native'
 import { ClipboardList, AlertTriangle, CheckCircle2, TrendingUp, Bell, Settings, ArrowRight, Wifi, WifiOff } from 'lucide-react-native'
 import { useFocusEffect } from '@react-navigation/native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -86,6 +86,27 @@ export default function WorkerHomeScreen({ navigation }) {
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>
+      <LinearGradient colors={GRADIENTS.primary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+        <View style={styles.header}>
+          <View style={styles.brandRow}>
+            <Image source={require('../../../assets/logoSadakSewa.png')} style={styles.logo} resizeMode="contain" />
+            <Text style={styles.appName}>SadakSewa</Text>
+          </View>
+          <View style={styles.headerIcons}>
+            <TouchableOpacity style={[styles.iconBtn, { backgroundColor: isAvailable ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)' }]} onPress={handleToggleAvailability} disabled={togglingAvail}>
+              {isAvailable ? <Wifi size={18} color="#FFF" /> : <WifiOff size={18} color="#EF4444" />}
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('Notifications')}>
+              <Bell size={20} color="#FFF" />
+              {unreadCount > 0 && <View style={styles.badgeDot} />}
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('Settings')}>
+              <Settings size={20} color="#FFF" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </LinearGradient>
+
       <ScrollView
         style={styles.scroll}
         contentContainerStyle={styles.container}
@@ -93,28 +114,12 @@ export default function WorkerHomeScreen({ navigation }) {
         showsVerticalScrollIndicator={false}
       >
         <LinearGradient colors={GRADIENTS.primary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}
-          style={styles.gradientHeader}>
-          <View style={styles.headerRow}>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.greetText}>{timeGreeting()}</Text>
-              <Text style={styles.nameText}>{user?.fullName?.split(' ')[0] || 'Worker'}</Text>
-              <View style={styles.roleBadge}>
-                <ClipboardList size={12} color="#FFF" />
-                <Text style={styles.roleText}>Municipal Worker</Text>
-              </View>
-            </View>
-            <View style={styles.headerIcons}>
-              <TouchableOpacity style={[styles.iconBtn, { backgroundColor: isAvailable ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)' }]} onPress={handleToggleAvailability} disabled={togglingAvail}>
-                {isAvailable ? <Wifi size={18} color="#FFF" /> : <WifiOff size={18} color="#EF4444" />}
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('Notifications')}>
-                <Bell size={20} color="#FFF" />
-                {unreadCount > 0 && <View style={styles.badgeDot} />}
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.iconBtn} onPress={() => navigation.navigate('Settings')}>
-                <Settings size={20} color="#FFF" />
-              </TouchableOpacity>
-            </View>
+          style={styles.greetingSection}>
+          <Text style={styles.greetText}>{timeGreeting()}</Text>
+          <Text style={styles.nameText}>{user?.fullName?.split(' ')[0] || 'Worker'}</Text>
+          <View style={styles.roleBadge}>
+            <ClipboardList size={12} color="#FFF" />
+            <Text style={styles.roleText}>Municipal Worker</Text>
           </View>
         </LinearGradient>
 
@@ -184,14 +189,37 @@ const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: COLORS.background },
   scroll: { flex: 1 },
   container: { paddingBottom: 32 },
-  gradientHeader: {
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     paddingHorizontal: 24,
     paddingTop: 8,
+    paddingBottom: 12,
+  },
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  logo: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+  },
+  appName: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: -0.3,
+  },
+  greetingSection: {
+    paddingHorizontal: 24,
+    paddingTop: 4,
     paddingBottom: 28,
     borderBottomLeftRadius: RADIUS.xxl,
     borderBottomRightRadius: RADIUS.xxl,
   },
-  headerRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
   greetText: { fontSize: 14, color: 'rgba(255,255,255,0.8)', fontWeight: '500' },
   nameText: { fontSize: 26, fontWeight: '800', color: '#FFF', marginTop: 2, letterSpacing: -0.5 },
   roleBadge: {

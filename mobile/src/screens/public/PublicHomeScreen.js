@@ -47,14 +47,17 @@ export default function PublicHomeScreen() {
       <LinearGradient colors={GRADIENTS.primary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
-            <View style={styles.headerLeft}>
+            <View style={styles.brandRow}>
+              <Image source={require('../../../assets/logoSadakSewa.png')} style={styles.logo} resizeMode="contain" />
               <Text style={styles.greeting}>SadakSewa</Text>
-              <Text style={styles.tagline}>Report road issues in your community</Text>
             </View>
             <TouchableOpacity style={styles.signInBtn} onPress={() => navigation.navigate('Login')} activeOpacity={0.7}>
               <LogIn size={18} color="#FFF" />
               <Text style={styles.signInText}>Sign In</Text>
             </TouchableOpacity>
+          </View>
+          <View style={styles.taglineSection}>
+            <Text style={styles.tagline}>Report road issues in your community</Text>
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -154,10 +157,23 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   header: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
-    paddingHorizontal: 24, paddingVertical: 20, paddingTop: 8,
+    paddingHorizontal: 24, paddingTop: 8, paddingBottom: 12,
   },
-  headerLeft: {},
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+  },
+  logo: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
+  },
   greeting: { fontSize: 26, fontWeight: '800', color: '#FFF' },
+  taglineSection: {
+    paddingHorizontal: 24,
+    paddingBottom: 16,
+  },
   tagline: { fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
   signInBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 6,

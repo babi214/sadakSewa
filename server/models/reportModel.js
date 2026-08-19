@@ -185,6 +185,11 @@ const reportSchema = new mongoose.Schema(
       type: String,
       default: null,
     },
+    viewedByAdmin: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
     userFlags: [
       {
         user: {

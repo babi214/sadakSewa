@@ -262,9 +262,9 @@ export default function HomeScreen() {
       <LinearGradient colors={GRADIENTS.primary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
         <SafeAreaView edges={['top']}>
           <View style={styles.header}>
-            <View style={styles.headerLeft}>
-              <Text style={styles.greeting}>{greeting}</Text>
-              <Text style={styles.userName} numberOfLines={1}>{firstName}</Text>
+            <View style={styles.brandRow}>
+              <Image source={require('../../../assets/logoSadakSewa.png')} style={styles.logo} resizeMode="contain" />
+              <Text style={styles.appName}>SadakSewa</Text>
             </View>
             <View style={styles.headerActions}>
               <TouchableOpacity style={styles.headerBtn} onPress={() => navigateTo('Notifications')} activeOpacity={0.7}>
@@ -277,6 +277,13 @@ export default function HomeScreen() {
             </View>
           </View>
         </SafeAreaView>
+      </LinearGradient>
+
+      <LinearGradient colors={GRADIENTS.primary} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }}>
+        <View style={styles.greetingSection}>
+          <Text style={styles.greeting}>{greeting}</Text>
+          <Text style={styles.userName} numberOfLines={1}>{firstName}</Text>
+        </View>
       </LinearGradient>
 
       <ScrollView
@@ -435,24 +442,23 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: H_GUTTER,
     paddingTop: 8,
-    paddingBottom: 20,
+    paddingBottom: 12,
   },
-  headerLeft: {
-    flex: 1,
-    marginRight: 16,
+  brandRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
-  greeting: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: 'rgba(255,255,255,0.75)',
-    letterSpacing: 0.3,
-    marginBottom: 2,
+  logo: {
+    width: 32,
+    height: 32,
+    borderRadius: 8,
   },
-  userName: {
-    fontSize: 24,
+  appName: {
+    fontSize: 18,
     fontWeight: '800',
     color: '#FFFFFF',
-    letterSpacing: -0.4,
+    letterSpacing: -0.3,
   },
   headerActions: {
     flexDirection: 'row',
@@ -466,6 +472,23 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.15)',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  greetingSection: {
+    paddingHorizontal: H_GUTTER,
+    paddingBottom: 20,
+  },
+  greeting: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: 'rgba(255,255,255,0.75)',
+    letterSpacing: 0.3,
+    marginBottom: 2,
+  },
+  userName: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: -0.4,
   },
   badgeDot: {
     position: 'absolute',

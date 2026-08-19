@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import { View, Text, FlatList, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native'
 import { AlertCircle, FileText, Filter, Clock, TrendingUp, CheckCircle2, XCircle, ShieldCheck, Flag } from 'lucide-react-native'
 import { useFocusEffect } from '@react-navigation/native'
@@ -23,20 +23,21 @@ const STATUS_FILTERS = [
   { key: 'flagged', label: 'Flagged', icon: AlertCircle },
 ]
 
-export default function ManageReportsScreen({ navigation }) {
+export default function ManageReportsScreen({ navigation, route }) {
   const [reports, setReports] = useState([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
-  const [filter, setFilter] = useState('all')
+  const [filter, setFilter] = useState(route.params?.initialFilter || 'all')
+  const lastFilterParam = useRef(route.params?.initialFilter)
 
-  const fetchReports = useCallback(async (isRefresh = false) => {
+  const fetchReports = useCallback(async (statusFilter, isRefresh = false) => {
     try {
       let res
-      if (filter === 'flagged') {
+      if (statusFilter === 'flagged') {
         res = await reportService.getFlaggedReports()
       } else {
         const params = { limit: 50 }
-        if (filter !== 'all') params.status = filter
+        if (statusFilter !== 'all') params.status = statusFilter
         res = await reportService.getAllReports(params)
       }
       setReports(res?.reports || res?.data || [])
@@ -46,11 +47,22 @@ export default function ManageReportsScreen({ navigation }) {
       setLoading(false)
       setRefreshing(false)
     }
-  }, [filter])
+  }, [])
 
-  useFocusEffect(useCallback(() => { setLoading(true); fetchReports() }, [filter]))
+  useFocusEffect(useCallback(() => {
+    const paramFilter = route.params?.initialFilter
+    if (paramFilter && paramFilter !== lastFilterParam.current) {
+      lastFilterParam.current = paramFilter
+      setFilter(paramFilter)
+      setLoading(true)
+      fetchReports(paramFilter)
+    } else {
+      setLoading(true)
+      fetchReports(filter)
+    }
+  }, [route.params?.initialFilter]))
 
-  const onRefresh = () => { setRefreshing(true); fetchReports(true) }
+  const onRefresh = () => { setRefreshing(true); fetchReports(filter, true) }
 
   const renderItem = ({ item, index }) => (
     <Animated.View entering={FadeInUp.delay(index * 60).springify()}>

@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import {
   AlertCircle,
   CheckCircle2,
+  CheckCheck,
   Clock,
+  Eye,
   FileText,
   Shield,
   Users,
@@ -20,14 +22,22 @@ import { reportService } from '../../services/reportService'
 import { getApiErrorMessage } from '../../utils/validators'
 
 export default function AdminDashboard() {
+  const navigate = useNavigate()
   const [dashboard, setDashboard] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [newReports, setNewReports] = useState([])
+  const [newReportsCount, setNewReportsCount] = useState(0)
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await reportService.getAdminDashboard()
-        if (response.success) setDashboard(response.dashboard)
+        const [dashRes, newRes] = await Promise.all([
+          reportService.getAdminDashboard(),
+          reportService.getNewReports().catch(() => ({ reports: [], newCount: 0 })),
+        ])
+        if (dashRes.success) setDashboard(dashRes.dashboard)
+        setNewReports(newRes?.reports || [])
+        setNewReportsCount(newRes?.newCount || 0)
       } catch (error) {
         toast.error(getApiErrorMessage(error, 'Failed to load dashboard'))
       } finally {
@@ -36,6 +46,27 @@ export default function AdminDashboard() {
     }
     fetchData()
   }, [])
+
+  const handleMarkSeen = async (reportId) => {
+    setNewReports(prev => prev.filter(r => r._id !== reportId))
+    setNewReportsCount(prev => Math.max(0, prev - 1))
+    try {
+      await reportService.markReportAsSeen(reportId)
+    } catch {
+      toast.error('Failed to mark as seen')
+    }
+  }
+
+  const handleMarkAllSeen = async () => {
+    setNewReports([])
+    setNewReportsCount(0)
+    try {
+      await reportService.markAllReportsAsSeen()
+      toast.success('All reports marked as seen')
+    } catch {
+      toast.error('Failed to mark all as seen')
+    }
+  }
 
   if (loading) return <DashboardSkeleton />
 
@@ -49,16 +80,24 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard title="Total Reports" value={stats.totalReports || 0} icon={FileText} color="primary" />
-        <StatCard title="Pending" value={stats.pending || 0} icon={Clock} color="warning" />
-        <StatCard title="In Progress" value={stats.inProgress || 0} icon={AlertCircle} color="secondary" />
-        <StatCard title="Resolved" value={stats.resolved || 0} icon={CheckCircle2} color="accent" />
+        <StatCard title="Total Reports" value={stats.totalReports || 0} icon={FileText} color="primary"
+          onClick={() => navigate('/admin/reports')} />
+        <StatCard title="Pending" value={stats.pending || 0} icon={Clock} color="warning"
+          onClick={() => navigate('/admin/reports', { state: { status: 'pending' } })} />
+        <StatCard title="In Progress" value={stats.inProgress || 0} icon={AlertCircle} color="secondary"
+          onClick={() => navigate('/admin/reports', { state: { status: 'in_progress' } })} />
+        <StatCard title="Resolved" value={stats.resolved || 0} icon={CheckCircle2} color="accent"
+          onClick={() => navigate('/admin/reports', { state: { status: 'resolved' } })} />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
-        <StatCard title="Citizens" value={stats.totalCitizens || 0} icon={Users} color="primary" />
-        <StatCard title="Workers" value={stats.totalWorkers || 0} icon={Wrench} color="accent" />
+      <div className="grid gap-4 sm:grid-cols-4">
+        <StatCard title="Citizens" value={stats.totalCitizens || 0} icon={Users} color="primary"
+          onClick={() => navigate('/admin/users')} />
+        <StatCard title="Workers" value={stats.totalWorkers || 0} icon={Wrench} color="accent"
+          onClick={() => navigate('/admin/users')} />
         <StatCard title="Admins" value={stats.totalAdmins || 0} icon={Shield} color="secondary" />
+        <StatCard title="Unchecked" value={newReportsCount} icon={Eye} color="danger"
+          onClick={() => document.getElementById('new-reports-section')?.scrollIntoView({ behavior: 'smooth' })} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
@@ -99,6 +138,56 @@ export default function AdminDashboard() {
           </Link>
         </div>
       </div>
+
+      {newReports.length > 0 && (
+        <div id="new-reports-section" className="rounded-xl border border-primary/20 bg-primary/5 p-6 shadow-card">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-lg bg-danger/10">
+                <Eye strokeWidth={1.5} className="h-5 w-5 text-danger" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <h3 className="text-base font-semibold text-secondary">New Reports</h3>
+                  <span className="rounded-full bg-danger px-2.5 py-0.5 text-xs font-bold text-white">
+                    {newReportsCount}
+                  </span>
+                </div>
+                <p className="text-sm text-muted">Reports not yet reviewed</p>
+              </div>
+            </div>
+            <Button variant="outline" size="sm" onClick={handleMarkAllSeen}>
+              <CheckCheck className="mr-1.5 h-4 w-4" /> Mark All Seen
+            </Button>
+          </div>
+          <div className="mt-4 space-y-3">
+            {newReports.map((report) => (
+              <div key={report._id} className="flex items-center gap-4 rounded-lg border border-primary/20 bg-white p-4 transition hover:shadow-md">
+                <div className="h-2.5 w-2.5 shrink-0 rounded-full bg-danger" />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <Link to={`/reports/${report._id}`} className="font-medium text-secondary hover:text-primary truncate">
+                      {report.title}
+                    </Link>
+                    <span className="shrink-0 rounded bg-primary px-1.5 py-0.5 text-[10px] font-bold uppercase text-white">NEW</span>
+                  </div>
+                  <p className="mt-0.5 text-sm text-muted">
+                    by {report.reportedBy?.fullName || 'Unknown'} &middot;{' '}
+                    {new Date(report.createdAt).toLocaleDateString()}
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleMarkSeen(report._id)}
+                  className="shrink-0 rounded-lg border border-border p-2 text-muted transition hover:border-primary/30 hover:text-primary"
+                  title="Mark as seen"
+                >
+                  <Eye className="h-4 w-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {stats.flaggedReports > 0 && (
         <div className="rounded-xl border border-danger/20 bg-danger/5 p-6 shadow-card">

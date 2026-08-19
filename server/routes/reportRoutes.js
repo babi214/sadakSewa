@@ -22,6 +22,9 @@ const {
   clearFlag,
   flagReport,
   unassignWorker,
+  getNewReports,
+  markReportAsSeen,
+  markAllReportsAsSeen,
 } = require("../controllers/reportController");
 const {
   protect,
@@ -39,6 +42,7 @@ router.get("/my-dashboard", protect, getMyDashboard);
 router.get("/worker-dashboard", protect, workerOnly, getWorkerDashboard);
 router.get("/admin-dashboard", protect, adminOnly, getAdminDashboard);
 router.get("/flagged", protect, adminOnly, getFlaggedReports);
+router.get("/new-reports", protect, adminOnly, getNewReports);
 //Test
 router.get("/test", (req, res) => {
   res.json({
@@ -55,11 +59,13 @@ router.post("/", protect, createReport);
 
 router.put("/:id", protect, updateReport);
 
+router.patch("/mark-all-seen", protect, adminOnly, markAllReportsAsSeen);
 router.patch("/:id/status", protect, updateReportStatus);
 router.patch("/:id/upvote", protect, toggleUpvote);
 router.patch("/:id/assign", protect, adminOnly, assignWorker);
 router.patch("/:id/unassign", protect, adminOnly, unassignWorker);
 router.patch("/:id/clear-flag", protect, adminOnly, clearFlag);
+router.patch("/:id/mark-seen", protect, adminOnly, markReportAsSeen);
 
 router.delete("/:id", protect, deleteReport);
 

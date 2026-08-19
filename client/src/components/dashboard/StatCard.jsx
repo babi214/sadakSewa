@@ -33,11 +33,15 @@ export default function StatCard({
   color = 'primary',
   trend,
   index = 0,
+  onClick,
 }) {
   const colors = colorMap[color] || colorMap.primary
 
   return (
-    <div className="rounded-xl border border-border bg-white p-6 shadow-card">
+    <div
+      className={`rounded-xl border border-border bg-white p-6 shadow-card transition hover:shadow-md ${onClick ? 'cursor-pointer hover:border-primary/30' : ''}`}
+      onClick={onClick}
+    >
       <div className="flex items-center justify-between">
         <div className={`flex h-11 w-11 items-center justify-center rounded-lg ${colors.bg}`}>
           {Icon && <Icon strokeWidth={1.5} className={`h-5 w-5 ${colors.icon}`} />}

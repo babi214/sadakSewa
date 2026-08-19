@@ -33,7 +33,8 @@ function AdminDashboardStack() {
 function AdminReportsStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false, animation: 'slide_from_right' }}>
-      <Stack.Screen name="ManageReportsHome" component={ManageReportsScreen} />
+      <Stack.Screen name="ManageReportsHome" component={ManageReportsScreen}
+        initialParams={{ initialFilter: 'all' }} />
       <Stack.Screen name="FlaggedReports" component={FlaggedReportsScreen} />
       <Stack.Screen name="ReportDetails" component={ReportDetailsScreen} />
       <Stack.Screen name="EditReport" component={EditReportScreen} />
